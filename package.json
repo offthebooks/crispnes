@@ -1,0 +1,22 @@
+{
+  "name": "crispnes",
+  "description": "NES Sprite and Background Editor",
+  "scripts": {
+    "server": "npx http-server -a localhost -p 4242 -d false -c-1 -o"
+  },
+  "keywords": [
+    "nes",
+    "famicom",
+    "pixel editor",
+    "pixel art",
+    "sprites",
+    "tilesets",
+    "graphics",
+    "video games",
+    "animation"
+  ],
+  "author": "Chuck Skoda",
+  "devDependencies": {
+    "prettier": "^3.1.1"
+  }
+}
