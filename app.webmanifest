@@ -1,0 +1,16 @@
+{
+  "name": "CrispNES",
+  "description": "NES Sprite and Background Editor",
+  "id": "crispnes",
+  "icons": [
+    {
+      "src": "./img/icon.png",
+      "type": "image/png",
+      "sizes": "1024x1024",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/crispnes/",
+  "display": "standalone",
+  "theme_color": "#5200B2"
+}
