@@ -1,0 +1,11 @@
+:root {
+  --col-background: #fff;
+  --col-background-tint-1: #eee;
+  --col-background-tint-2: #ccc;
+  --col-accent: #5200b2;
+  --col-foreground: #000;
+  --col-highlight: #2df;
+  --col-selection: #48f;
+
+  --pad-panel: 16px 8px;
+}
