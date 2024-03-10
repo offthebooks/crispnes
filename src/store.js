@@ -1,5 +1,5 @@
 const schemaMockup = {
-  backdrop: 0x30, // 0x00 - 0x3f  // nes color (index 0)
+  backdrop: 0x00, // 0x00 - 0x3f  // nes color (index 0)
 
   sprPalettes: [], // 4 instances of palette
   bkgPalettes: [], // 4 instances of palette
