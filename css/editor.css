@@ -1,0 +1,165 @@
+#editor {
+  display: block;
+  flex: auto;
+}
+
+/* #editor-container {
+  user-select: none;
+  background-color: var(--col-background);
+  padding: 8px;
+
+  #editor-area {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #editor-grid {
+    &.map,
+    &.metasprites {
+      width: 100%;
+      & canvas {
+        width: 100%;
+      }
+    }
+
+    &.metatiles {
+      display: grid;
+      justify-content: center;
+      grid-template-columns: repeat(2, 1fr);
+      box-shadow: 1px 1px 0 var(--col-background-tint-2);
+      width: 100%;
+      aspect-ratio: 1;
+
+      & .edit-tile {
+        --grid-line-width: 1px;
+        position: relative;
+
+        &::before,
+        &::after {
+          display: grid;
+          justify-content: center;
+          align-items: center;
+          content: ' ';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          background-color: var(--col-background-tint-2);
+          opacity: 0.5;
+        }
+
+        &::before {
+          width: var(--grid-line-width);
+          left: calc(var(--grid-line-width) / -2);
+        }
+        &::after {
+          height: var(--grid-line-width);
+          top: calc(var(--grid-line-width) / -2);
+        }
+
+        &:not(.tile-editing) {
+          &.tile-selecting::after,
+          &:hover::after {
+            top: 0;
+            left: 0;
+            width: calc(100% + 1px);
+            height: calc(100% + 1px);
+          }
+
+          &.tile-selecting:not(:hover)::after {
+            background-color: unset;
+            opacity: 1;
+            box-shadow:
+              inset 2px 2px 0px var(--col-highlight),
+              inset -2px -2px 0px var(--col-highlight);
+          }
+
+          &.tile-selecting:hover::after {
+            content: 'Cancel';
+          }
+          &:hover::after {
+            content: 'Select Tile';
+          }
+        }
+      }
+
+      & canvas {
+        width: 100%;
+        aspect-ratio: 1;
+      }
+    }
+  }
+
+  #editor-object-list {
+    display: flex;
+    justify-content: left;
+    width: 100%;
+    padding: 8px;
+    gap: 4px;
+
+    & div {
+      position: relative;
+      margin: 4px;
+      width: 48px;
+      cursor: pointer;
+
+      &.active {
+        cursor: unset;
+
+        &::before {
+          position: absolute;
+          content: ' ';
+          width: 100%;
+          height: 100%;
+          border: solid 4px var(--col-selection);
+          top: -4px;
+          left: -4px;
+        }
+      }
+
+      canvas {
+        width: 100%;
+      }
+    }
+  }
+}
+
+ #tools {
+  button {
+    &.active {
+      background-color: var(--col-selection);
+    }
+
+    i {
+      display: block;
+      pointer-events: none;
+      background-size: contain;
+      image-rendering: pixelated;
+      margin: 2px auto;
+      width: 24px;
+      aspect-ratio: 1;
+    }
+  }
+
+  #draw-btn i {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAgMAAAC5YVYYAAAADFBMVEVHcEz/xsOrq6v6ngC6EpvlAAAAAXRSTlMAQObYZgAAACBJREFUeNpjYBBhYFjKwPySgfcHk9YPxv8HGeIZmGwZAEVZBi67QDI5AAAAAElFTkSuQmCC');
+  }
+  #fill-btn i {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOUlEQVR42mNABklJSf8Z0ACGAqyK9nBc+w/EYMnVq1eDaVySMIxQhCaJoQisAGo/fgVQRditwOcTAD2+YfQFRY0uAAAAAElFTkSuQmCC');
+  }
+  #unlink-tile-btn i {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAPUlEQVR42m3KgQkAIAhE0ZuoUVzUQRrLKPhwmB8uMJ56EVFMtJfekZnlGxEBxAH6wH0AjvhrwBABfCPyyTqNxk6OCu4dwQAAAABJRU5ErkJggg==');
+  }
+  #clear-tile-btn i {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAgMAAAC5YVYYAAAADFBMVEVHcEyrq6tiYmJOTk5tt6dpAAAAAXRSTlMAQObYZgAAABtJREFUeNpjqP/LsMWPoWotg6EMCKl4gJDUEgBVFAXWn1K44wAAAABJRU5ErkJggg==');
+  }
+  #load-chr-btn i {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOUlEQVR42mOYG8LwH4qxA5AkAsP4+BX9/zUPwYYrwqMA04Tq5yBFYIwwASIAksShACaBMAWMCSsAAGQGYidUGOWbAAAAAElFTkSuQmCC');
+  }
+  #save-chr-btn i {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAO0lEQVR42mNAB3NDGP4jY5AYXkVwTvVzEIawcSjANBpMw3T+mgeTBPMRdiMUQDCUj1AAkUDohvBJUAAAJptkuJgTuN8AAAAASUVORK5CYII=');
+  }
+} */

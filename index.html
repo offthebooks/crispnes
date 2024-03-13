@@ -11,22 +11,53 @@
     <link rel="manifest" href="./app.webmanifest" />
     <link href="css/main.css" rel="stylesheet" />
   </head>
+
   <body>
-    <h1>CrispNES</h1>
+    <header>
+      <h1><i class="icon drawIcon"></i>CrispNES</h1>
+      <div id="menu">
+        <details>
+          <summary>Menu</summary>
+          <ol>
+            <li><i class="icon loadChrIcon"></i>Open CHR<span class="tip">Load CHR tiles from file</span></li>
+            <li><i class="icon saveChrIcon"></i>Save CHR<span class="tip">Save CHR tiles to file</span></li>
+          </ol>
+        </details>
+      </div>
+    </header>
 
-    <p>
-      This app is in the process of migrating/refactoring from its old home. Not
-      much to see yet.
-    </p>
+    <div id="editor"></div>
 
-    <p>
-      <a href="https://offthebooks.games">Follow along</a> to find out more.
-    </p>
-
-    <div id="toolBar">
-      <div id="statusBar"></div>
+    <div id="tools" class="widget" onclick="this.classList.toggle('open')">
+      <button type="button" class="active"><i class="icon drawIcon"></i><span class="tip">Draw tool</span></button>
+      <button type="button"><i class="icon fillIcon"></i><span class="tip">Fill tool</span></button>
+      <button type="button"><i class="icon clearIcon"></i><span class="tip">Clear tool</span></button>
     </div>
 
-    <script type="module" src="./src/main.js"></script>
+    <div id="tilesets">
+      <div id="selectedTiles"></div>
+      <div id="tileset"></div>
+      <template id="tileTemplate">
+        <div class="tile"><canvas></canvas></div>
+      </template>
+    </div>
+
+    <div id="palettes" class="widget" onclick="this.classList.toggle('open')">
+      <!-- Four palettes to dynamically map to current background or sprite set -->
+      <div class="palette active"><i></i><i></i><i></i><i></i></div>
+      <div class="palette"><i></i><i></i><i></i><i></i></div>
+      <div class="palette"><i></i><i></i><i></i><i></i></div>
+      <div class="palette"><i></i><i></i><i></i><i></i></div>
+      <div id="colorTable">
+        <!-- 64 elements to map to all possible ppu color values -->
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+        ><i></i>
+      </div>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
   </body>
 </html>

@@ -1,11 +1,17 @@
 :root {
   --col-background: #fff;
-  --col-background-tint-1: #eee;
-  --col-background-tint-2: #ccc;
+  --col-background-tint-1: #ddd;
+  --col-background-tint-2: #bbb;
   --col-accent: #5200b2;
   --col-foreground: #000;
-  --col-highlight: #2df;
-  --col-selection: #48f;
+  --col-foreground-tint-1: #222;
+  --col-foreground-tint-2: #444;
+  --col-highlight: #e9c3ff;
+  --col-selection: #8a13ff;
 
   --pad-panel: 16px 8px;
+
+  --body-default-margin: 1rem;
+  --button-radius: 0.25rem;
+  --interface-radius: 1rem;
 }

@@ -4,14 +4,75 @@ html,
 body {
   width: 100%;
   height: 100%;
-  margin: 0;
   padding: 0;
+  margin: 0;
   font-family: system-ui, Helvetica, sans-serif;
-  background-color: var(--col-accent);
+  background-color: var(--col-background-tint-1);
+  image-rendering: pixelated;
 }
 
-body {
-  text-align: center;
+/* Status bar tips */
+li,
+button {
+  span.tip {
+    position: fixed;
+    text-align: center;
+    display: none;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem 1rem;
+    border-radius: var(--interface-radius) var(--interface-radius) 0 0;
+    background-color: var(--col-background-tint-2);
+    color: var(--col-foreground-tint-2);
+  }
+
+  &:hover span.tip {
+    display: block;
+    z-index: 1;
+    font-size: 1rem;
+  }
+}
+
+/* Widgets, expandable tool/palette/tileset selectors */
+.widget {
+  position: fixed;
   background-color: var(--col-background-tint-2);
-  image-rendering: pixelated;
+  border-radius: var(--interface-radius);
+  padding: 1rem;
+}
+
+.tab-container {
+  display: flex;
+
+  button {
+    font-size: 1rem;
+    background-color: var(--col-background-tint-1);
+    border: solid 1px var(--col-background-tint-2);
+    border-radius: 8px 8px 0 0;
+    border-bottom: none;
+    margin-right: -1px;
+    padding: 8px 16px;
+    cursor: pointer;
+
+    &.active {
+      background-color: var(--col-background);
+    }
+  }
+
+  &::after {
+    content: ' ';
+    flex: 1;
+    border-bottom: solid 1px var(--col-background-tint-1);
+  }
+}
+
+details > summary {
+  box-sizing: border-box;
+  list-style: none;
+
+  &::marker,
+  &::-webkit-details-marker {
+    display: none;
+  }
 }
