@@ -1,5 +1,8 @@
 import { Bank } from '../enums.js'
-import { dataFromStorageWithKeys, dataStoreObjectValuesForKeys } from '../utils.js'
+import {
+  dataFromStorageWithKeys,
+  dataStoreObjectValuesForKeys
+} from '../utils.js'
 import { Store } from './store.js'
 
 const defaultData = Object.seal({
@@ -39,7 +42,9 @@ export class PaletteStore {
 
   get palettes() {
     const { bank } = Store.context.editStore
-    return bank === Bank.Sprite ? spritePalettes : backgroundPalettes
+    return this.#data[
+      bank === Bank.Sprite ? 'spritePalettes' : 'backgroundPalettes'
+    ]
   }
 
   get palette() {
@@ -52,7 +57,10 @@ export class PaletteStore {
 
   // Mutations
   selectPaletteColor(selectedPalette, selectedColor) {
-    const changed = diffObjectValues({ selectedPalette, selectedColor }, this.#data)
+    const changed = diffObjectValues(
+      { selectedPalette, selectedColor },
+      this.#data
+    )
     this.serialize(changed.next)
   }
 
@@ -71,7 +79,8 @@ export class PaletteStore {
     const { spritePalettes, backgroundPalettes } = data
 
     if (spritePalettes) data.spritePalettes = new Uint8Array(spritePalettes)
-    if (backgroundPalettes) data.backgroundPalettes = new Uint8Array(backgroundPalettes)
+    if (backgroundPalettes)
+      data.backgroundPalettes = new Uint8Array(backgroundPalettes)
 
     return data
   }

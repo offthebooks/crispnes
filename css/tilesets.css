@@ -1,3 +1,109 @@
+#tilesets {
+  position: fixed;
+  background-color: var(--col-background-tint-2);
+  border-radius: var(--interface-radius) 0 0 var(--interface-radius);
+  padding: var(--body-default-margin);
+
+  inset: 4rem 0 auto auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  &.open {
+    #tileset {
+      display: grid;
+    }
+  }
+
+  #tileset {
+    display: none;
+    grid-template-columns: repeat(16, 1fr);
+
+    .tile {
+      display: block;
+      width: 1rem;
+      aspect-ratio: 1;
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
+
+#colorTable {
+  display: none;
+  grid-template-columns: repeat(16, 1fr);
+
+  i {
+    display: block;
+    min-width: 1em;
+    background-color: #f0f;
+
+    &:nth-of-type(16n + 1) {
+      aspect-ratio: 1; /* nth-of-type prevents uneven heights */
+    }
+
+    &:hover {
+      background-color: #000;
+    }
+  }
+}
+
+/* #palette-container {
+  background-color: var(--col-background-tint-1);
+  counter-set: palette -1;
+}
+
+#palettes {
+  display: grid;
+  padding: 8px;
+  grid-template-columns: 1fr 1fr;
+  gap: 1vmax;
+
+  & .palette {
+    position: relative;
+    display: grid;
+    align-content: center;
+    margin-left: 4vmax;
+    counter-increment: palette;
+    cursor: pointer;
+
+    &:before {
+      position: absolute;
+      display: grid;
+      align-content: center;
+      content: counter(palette) ':';
+      font-size: 1.25vmax;
+      height: 100%;
+      aspect-ratio: 3/4;
+      right: 100%;
+    }
+
+    & .palette-colors {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      aspect-ratio: 4;
+
+      & .active {
+        z-index: 1;
+        pointer-events: none;
+        cursor: auto;
+        position: relative;
+        &::before {
+          position: absolute;
+          content: ' ';
+          width: 100%;
+          height: 100%;
+          border: solid 2px var(--col-selection);
+          top: -2px;
+          left: -2px;
+        }
+      }
+    }
+  }
+} */
+
 /* #tileset-container {
   .tileset:not(.active) {
     display: none;

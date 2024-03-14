@@ -1,5 +1,10 @@
 #palettes {
-  inset: auto auto var(--body-default-margin) var(--body-default-margin);
+  position: fixed;
+  background-color: var(--col-background-tint-2);
+  border-radius: 0 var(--interface-radius) 0 0;
+  padding: var(--body-default-margin);
+
+  inset: auto auto 0 0;
   display: flex;
   flex-direction: column;
   gap: 1rem;

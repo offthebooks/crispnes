@@ -3,7 +3,9 @@ export const byteString = (byte) => {
 }
 
 export const stringToArray = (stringOrArrayOfStrings) => {
-  return typeof stringOrArrayOfStrings === 'string' ? [stringOrArrayOfStrings] : stringOrArrayOfStrings
+  return typeof stringOrArrayOfStrings === 'string'
+    ? [stringOrArrayOfStrings]
+    : stringOrArrayOfStrings
 }
 
 export const elementIndex = (el) => {
@@ -12,7 +14,8 @@ export const elementIndex = (el) => {
 
 export const elementFromTemplate = (templateEl, rootClass) => {
   const clone = templateEl.content.cloneNode(true)
-  if (clone.children.length > 1) console.error('elementFromTemplate expects template with single child')
+  if (clone.children.length > 1)
+    console.error('elementFromTemplate expects template with single child')
   const el = clone.children[0]
   rootClass && el.classList.add(rootClass)
   return el
@@ -23,7 +26,7 @@ export const dataFromStorageWithKeys = (keys) => {
   for (const key of keys) {
     try {
       const value = JSON.parse(window.localStorage.getItem(key))
-      data[key] = value
+      if (value != null) data[key] = value
     } catch (e) {
       console.error(`Error loading '${key}' from localStorage: ${e}`)
     }
@@ -33,7 +36,8 @@ export const dataFromStorageWithKeys = (keys) => {
 }
 
 export const dataStoreObjectValuesForKeys = (obj) => {
-  for (const [key, value] of Object.entries(obj)) window.localStorage.setItem(key, JSON.stringify(value))
+  for (const [key, value] of Object.entries(obj))
+    window.localStorage.setItem(key, JSON.stringify(value))
 }
 
 export const diffObjectValues = (nextObj, prevObj) => {

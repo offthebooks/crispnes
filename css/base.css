@@ -34,14 +34,6 @@ button {
   }
 }
 
-/* Widgets, expandable tool/palette/tileset selectors */
-.widget {
-  position: fixed;
-  background-color: var(--col-background-tint-2);
-  border-radius: var(--interface-radius);
-  padding: 1rem;
-}
-
 .tab-container {
   display: flex;
 

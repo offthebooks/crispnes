@@ -28,21 +28,20 @@
 
     <div id="editor"></div>
 
-    <div id="tools" class="widget" onclick="this.classList.toggle('open')">
-      <button type="button" class="active"><i class="icon drawIcon"></i><span class="tip">Draw tool</span></button>
-      <button type="button"><i class="icon fillIcon"></i><span class="tip">Fill tool</span></button>
-      <button type="button"><i class="icon clearIcon"></i><span class="tip">Clear tool</span></button>
-    </div>
-
-    <div id="tilesets">
-      <div id="selectedTiles"></div>
+    <div id="tilesets" onclick="this.classList.toggle('open')">
       <div id="tileset"></div>
       <template id="tileTemplate">
         <div class="tile"><canvas></canvas></div>
       </template>
     </div>
 
-    <div id="palettes" class="widget" onclick="this.classList.toggle('open')">
+    <div id="tools" onclick="this.classList.toggle('open')">
+      <button type="button" class="active"><i class="icon drawIcon"></i><span class="tip">Draw tool</span></button>
+      <button type="button"><i class="icon fillIcon"></i><span class="tip">Fill tool</span></button>
+      <button type="button"><i class="icon clearIcon"></i><span class="tip">Clear tool</span></button>
+    </div>
+
+    <div id="palettes" onclick="this.classList.toggle('open')">
       <!-- Four palettes to dynamically map to current background or sprite set -->
       <div class="palette active"><i></i><i></i><i></i><i></i></div>
       <div class="palette"><i></i><i></i><i></i><i></i></div>

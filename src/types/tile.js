@@ -1,5 +1,7 @@
-const tileSideLengthPixels = 8
-const tileBytesPerPlane = 8
+import { palToRGBA } from '../nesColors.js'
+
+export const tileSideLengthPixels = 8
+export const tileBytesPerPlane = 8
 const tilePlanes = 2
 export const tileSizeBytes = tileBytesPerPlane * tilePlanes
 
@@ -54,8 +56,8 @@ export class Tile {
     this.#plane0[y] &= mask
     this.#plane1[y] &= mask
     // Set bit x from high/low bit in val
-    this.#plane0[y] |= val & loBit ? x : 0
-    this.#plane1[y] |= val & hiBit ? x : 0
+    if (val & loBit) this.#plane0[y] |= x
+    if (val & hiBit) this.#plane1[y] |= x
   }
 
   #flood(x, y, val, match) {
@@ -70,7 +72,7 @@ export class Tile {
     this.#flood(x, y - 1, val, match)
   }
 
-  writeImageDataWithPalette(palette, flipX = false, flipY = false) {
+  generateImageDataWithPalette(palette, flipX = false, flipY = false) {
     const imageData = new ImageData(tileSideLengthPixels, tileSideLengthPixels)
     const data = imageData.data
     let bufferIndex = 0
@@ -78,7 +80,8 @@ export class Tile {
       for (let x = 0; x < tileSideLengthPixels; ++x) {
         const curX = flipX ? tileSideLengthPixels - x : x
         const curY = flipY ? tileSideLengthPixels - y : y
-        const rgba = palette.rgbaColorAt(this.#read(curX, curY))
+        const colIdx = this.#read(curX, curY)
+        const rgba = palToRGBA[palette[colIdx]]
         data[bufferIndex++] = (rgba & 0xff000000) >>> 24
         data[bufferIndex++] = (rgba & 0x00ff0000) >>> 16
         data[bufferIndex++] = (rgba & 0x0000ff00) >>> 8
