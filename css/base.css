@@ -6,6 +6,7 @@ body {
   height: 100%;
   padding: 0;
   margin: 0;
+  overflow: hidden;
   font-family: system-ui, Helvetica, sans-serif;
   background-color: var(--col-background-tint-1);
   image-rendering: pixelated;

@@ -1,8 +1,14 @@
 import { Bank, EditMode } from '../enums.js'
-import { dataFromStorageWithKeys, dataStoreObjectValuesForKeys } from '../utils.js'
+import {
+  dataFromStorageWithKeys,
+  dataStoreObjectValuesForKeys
+} from '../utils.js'
 
 const defaultData = Object.seal({
-  selectedMode: EditMode.SpriteTiles
+  selectedMode: EditMode.BackgroundTiles,
+
+  spriteEditTiles: [],
+  backgroundEditTiles: []
 })
 
 export class EditStore {
@@ -25,6 +31,10 @@ export class EditStore {
       default:
         return Bank.Background
     }
+  }
+
+  get editTiles() {
+    return this.bank === Bank.Background ? backgroundEditTiles : spriteEditTiles
   }
 
   // Mutations

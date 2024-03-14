@@ -19,8 +19,16 @@
         <details>
           <summary>Menu</summary>
           <ol>
-            <li><i class="icon loadChrIcon"></i>Open CHR<span class="tip">Load CHR tiles from file</span></li>
-            <li><i class="icon saveChrIcon"></i>Save CHR<span class="tip">Save CHR tiles to file</span></li>
+            <li data-menu-item="loadChr">
+              <i class="icon loadChrIcon"></i>Open CHR<span class="tip"
+                >Load CHR tiles from file</span
+              >
+            </li>
+            <li data-menu-item="saveChr">
+              <i class="icon saveChrIcon"></i>Save CHR<span class="tip"
+                >Save CHR tiles to file</span
+              >
+            </li>
           </ol>
         </details>
       </div>
@@ -36,9 +44,15 @@
     </div>
 
     <div id="tools" onclick="this.classList.toggle('open')">
-      <button type="button" class="active"><i class="icon drawIcon"></i><span class="tip">Draw tool</span></button>
-      <button type="button"><i class="icon fillIcon"></i><span class="tip">Fill tool</span></button>
-      <button type="button"><i class="icon clearIcon"></i><span class="tip">Clear tool</span></button>
+      <button type="button" class="active">
+        <i class="icon drawIcon"></i><span class="tip">Draw tool</span>
+      </button>
+      <button type="button">
+        <i class="icon fillIcon"></i><span class="tip">Fill tool</span>
+      </button>
+      <button type="button">
+        <i class="icon clearIcon"></i><span class="tip">Clear tool</span>
+      </button>
     </div>
 
     <div id="palettes" onclick="this.classList.toggle('open')">
@@ -49,14 +63,17 @@
       <div class="palette"><i></i><i></i><i></i><i></i></div>
       <div id="colorTable">
         <!-- 64 elements to map to all possible ppu color values -->
-        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+        ><i></i><i></i><i></i><i></i>
       </div>
     </div>
 
+    <input type="file" style="display: none" />
     <script type="module" src="src/main.js"></script>
   </body>
 </html>

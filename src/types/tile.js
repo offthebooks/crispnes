@@ -1,4 +1,4 @@
-import { palToRGBA } from '../nesColors.js'
+import { palToRGBA } from '../colors.js'
 
 export const tileSideLengthPixels = 8
 export const tileBytesPerPlane = 8

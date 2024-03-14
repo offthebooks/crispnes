@@ -6,17 +6,15 @@ const tilesetSideLengthTiles = 16
 
 // This makes a view on tileset data that is easier to operate edits on
 export class Tileset {
-  #bytes
   #tiles
 
   constructor(bytes) {
-    this.#bytes = bytes
     this.#tiles = new Array(tilesPerTileset)
 
     for (let i = 0; i < tilesPerTileset; ++i) {
       const offset = i * tileSizeBytes
-      const plane0 = this.#bytes.subarray(offset, offset + tileBytesPerPlane)
-      const plane1 = this.#bytes.subarray(
+      const plane0 = bytes.subarray(offset, offset + tileBytesPerPlane)
+      const plane1 = bytes.subarray(
         offset + tileBytesPerPlane,
         offset + tilesetSizeBytes
       )

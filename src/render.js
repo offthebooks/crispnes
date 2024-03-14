@@ -1,4 +1,4 @@
-import { palToHex } from './nesColors.js'
+import { palToHex } from './colors.js'
 import { Store } from './stores/store.js'
 import { tileSideLengthPixels } from './types/tile.js'
 import { tilesPerTileset } from './types/tileset.js'
@@ -35,6 +35,10 @@ export class Render {
     }
 
     tick()
+  }
+
+  static setDirty() {
+    this.#dirty = true
   }
 
   static #render() {
