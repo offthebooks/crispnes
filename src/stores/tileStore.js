@@ -24,16 +24,18 @@ export class TileStore {
   }
 
   // Accessors
+  get #tilesKey() {
+    const { bank } = Store.context.editStore
+    return bank === Bank.Sprite ? 'spriteTileData' : 'backgroundTileData'
+  }
+
   get tileset() {
     const { bank } = Store.context.editStore
     return bank === Bank.Sprite ? this.#sprTileset : this.#bgdTileset
   }
 
   get #tileData() {
-    const { bank } = Store.context.editStore
-    return bank === Bank.Sprite
-      ? this.#data.spriteTileData
-      : this.#data.backgroundTileData
+    return this.#data[this.#tilesKey]
   }
 
   // Mutations
@@ -46,6 +48,7 @@ export class TileStore {
     }
 
     Object.assign(this.#tileData, bytes)
+    this.serialize({ [this.#tilesKey]: bytes })
     Render.setDirty()
   }
 
@@ -56,13 +59,18 @@ export class TileStore {
 
   #deserialize() {
     const data = dataFromStorageWithKeys(Object.keys(defaultData))
-    const { selectedTiles, spriteTileData, backgroundTileData } = data
+    const { spriteTileData, backgroundTileData } = data
 
-    if (selectedTiles) data.selectedTiles = new Set(spritePalettes)
-    if (spriteTileData && spriteTileData.length === tilesPerTileset)
-      spriteTileData = new Uint8Array(spriteTileData)
-    if (backgroundTileData && backgroundTileData.length === tilesPerTileset)
-      backgroundTileData = new Uint8Array(backgroundTileData)
+    if (spriteTileData)
+      data.spriteTileData = Object.assign(
+        new Uint8Array(tilesetSizeBytes),
+        spriteTileData
+      )
+    if (backgroundTileData)
+      data.backgroundTileData = Object.assign(
+        new Uint8Array(tilesetSizeBytes),
+        backgroundTileData
+      )
 
     return data
   }

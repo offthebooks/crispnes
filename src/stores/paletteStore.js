@@ -1,7 +1,9 @@
 import { Bank } from '../enums.js'
+import { Render } from '../render.js'
 import {
   dataFromStorageWithKeys,
-  dataStoreObjectValuesForKeys
+  dataStoreObjectValuesForKeys,
+  diffObjectValues
 } from '../utils.js'
 import { Store } from './store.js'
 
@@ -40,11 +42,13 @@ export class PaletteStore {
     return this.#data.selectedColor
   }
 
-  get palettes() {
+  get #palettesKey() {
     const { bank } = Store.context.editStore
-    return this.#data[
-      bank === Bank.Sprite ? 'spritePalettes' : 'backgroundPalettes'
-    ]
+    return bank === Bank.Sprite ? 'spritePalettes' : 'backgroundPalettes'
+  }
+
+  get palettes() {
+    return this.#data[this.#palettesKey]
   }
 
   get palette() {
@@ -61,12 +65,15 @@ export class PaletteStore {
       { selectedPalette, selectedColor },
       this.#data
     )
+    Object.assign(this.#data, changed.next)
     this.serialize(changed.next)
+    Render.setDirty()
   }
 
   assignColor(ppuColor) {
-    // Needs to know from the editorStore whether we're currently concerned with
-    // Sprite or Background character data
+    this.palette[this.colorIndex] = ppuColor
+    this.serialize({ [this.#palettesKey]: this.palettes })
+    Render.setDirty()
   }
 
   // State persistence
@@ -78,9 +85,14 @@ export class PaletteStore {
     const data = dataFromStorageWithKeys(Object.keys(defaultData))
     const { spritePalettes, backgroundPalettes } = data
 
-    if (spritePalettes) data.spritePalettes = new Uint8Array(spritePalettes)
+    if (spritePalettes)
+      data.spritePalettes = spritePalettes.map((pal) =>
+        Object.assign(new Uint8Array(4), pal)
+      )
     if (backgroundPalettes)
-      data.backgroundPalettes = new Uint8Array(backgroundPalettes)
+      data.backgroundPalettes = backgroundPalettes.map((pal) =>
+        Object.assign(new Uint8Array(4), pal)
+      )
 
     return data
   }
