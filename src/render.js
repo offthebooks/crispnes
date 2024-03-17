@@ -1,11 +1,14 @@
 import { palToHex } from './colors.js'
 import { Store } from './stores/store.js'
+import { EditTile } from './types/editTile.js'
 import { tileSideLengthPixels } from './types/tile.js'
 import { tilesPerTileset } from './types/tileset.js'
 import { elementFromTemplate } from './utils.js'
 
-const tilesetEl = document.querySelector('#tileset')
-const tileTemplateEl = document.querySelector('#tileTemplate')
+const editorEl = document.getElementById('editor')
+const editTileTemplateEl = document.getElementById('editTileTemplate')
+const tilesetEl = document.getElementById('tileset')
+const tileTemplateEl = document.getElementById('tileTemplate')
 const paletteEls = document.querySelectorAll('#palettes .palette')
 const colorTableEls = document.querySelectorAll('#colorTable i')
 
@@ -42,8 +45,14 @@ export class Render {
   }
 
   static #render() {
+    const {
+      paletteStore: { palette },
+      tileStore: { tileset }
+    } = Store.context
+
     this.#renderPalettes()
-    this.#renderTiles()
+    this.#renderTiles({ palette, tileset })
+    this.#renderEditTiles({ palette, tileset })
     this.#dirty = false
   }
 
@@ -58,10 +67,8 @@ export class Render {
     })
   }
 
-  static #renderTiles() {
+  static #renderTiles({ palette, tileset }) {
     const tileEls = tilesetEl.querySelectorAll('.tile')
-    const { palette } = Store.context.paletteStore
-    const { tileset } = Store.context.tileStore
 
     tileEls.forEach((el, index) => {
       const tile = tileset.tile(index)
@@ -69,5 +76,28 @@ export class Render {
       const imgData = tile.generateImageDataWithPalette(palette)
       canvas.getContext('2d').putImageData(imgData, 0, 0)
     })
+  }
+
+  static #renderEditTiles({ palette, tileset }) {
+    const { editTiles } = Store.context.editStore
+
+    const editTileEls = editTiles.map(({ tileIndex, x, y }) => {
+      const el = elementFromTemplate(editTileTemplateEl)
+      el.style.left = `calc(50% + ${x * tileSideLengthPixels}px)`
+      el.style.top = `calc(50% + ${y * tileSideLengthPixels}px)`
+
+      const canvas = el.querySelector('canvas')
+      canvas.width = tileSideLengthPixels
+      canvas.height = tileSideLengthPixels
+
+      const imgData = tileset
+        .tile(tileIndex)
+        .generateImageDataWithPalette(palette)
+      canvas.getContext('2d').putImageData(imgData, 0, 0)
+
+      return el
+    })
+
+    editorEl.replaceChildren(...editTileEls)
   }
 }

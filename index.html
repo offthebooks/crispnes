@@ -36,14 +36,12 @@
 
     <div id="editor"></div>
 
-    <div id="tilesets" onclick="this.classList.toggle('open')">
+    <!-- Tool widgets -->
+    <div id="tilesets" class="open">
       <div id="tileset"></div>
-      <template id="tileTemplate">
-        <div class="tile"><canvas></canvas></div>
-      </template>
     </div>
 
-    <div id="tools" onclick="this.classList.toggle('open')">
+    <div id="tools" class="open">
       <button type="button" class="active">
         <i class="icon drawIcon"></i><span class="tip">Draw tool</span>
       </button>
@@ -72,6 +70,17 @@
         ><i></i><i></i><i></i><i></i>
       </div>
     </div>
+
+
+    <!-- Templates -->
+    <template id="tileTemplate">
+      <div class="tile"><canvas></canvas></div>
+    </template>
+
+    <template id="editTileTemplate">
+      <div class="editTile"><canvas></canvas></div>
+    </template>
+
 
     <input type="file" style="display: none" />
     <script type="module" src="src/main.js"></script>

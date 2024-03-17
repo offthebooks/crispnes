@@ -12,12 +12,10 @@ export class Tileset {
     this.#tiles = new Array(tilesPerTileset)
 
     for (let i = 0; i < tilesPerTileset; ++i) {
-      const offset = i * tileSizeBytes
-      const plane0 = bytes.subarray(offset, offset + tileBytesPerPlane)
-      const plane1 = bytes.subarray(
-        offset + tileBytesPerPlane,
-        offset + tilesetSizeBytes
-      )
+      const offset0 = i * tileSizeBytes
+      const offset1 = offset0 + tileBytesPerPlane
+      const plane0 = bytes.subarray(offset0, offset1)
+      const plane1 = bytes.subarray(offset1, offset1 + tilesetSizeBytes)
       this.#tiles[i] = new Tile(plane0, plane1)
     }
   }
@@ -26,7 +24,11 @@ export class Tileset {
     return this.#tiles[index]
   }
 
+  tileIndexAt(x, y) {
+    return x + y * tilesetSideLengthTiles
+  }
+
   tileAt(x, y) {
-    return this.tile(x + y * tilesetSideLengthTiles)
+    return this.tile(this.tileIndexAt(x, y))
   }
 }

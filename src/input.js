@@ -3,9 +3,10 @@ import { elementIndex } from './utils.js'
 
 export class Input {
   static init() {
-    const { fileStore, tileStore, paletteStore } = Store.context
+    const { fileStore, tileStore, paletteStore, editStore } = Store.context
     const menu = document.getElementById('menu')
     const palettes = document.getElementById('palettes')
+    const tileset = document.getElementById('tileset')
 
     menu.addEventListener('click', async ({ target }) => {
       const menuItem = target.closest('[data-menu-item]')
@@ -32,6 +33,13 @@ export class Input {
         paletteStore.selectPaletteColor(paletteIndex, colorIndex)
       } else {
         palettes.classList.toggle('open')
+      }
+    })
+
+    tileset.addEventListener('click', async ({ target, offsetX, offsetY }) => {
+      const tileEl = target.closest('.tile')
+      if (tileEl) {
+        editStore.addTile(elementIndex(tileEl))
       }
     })
   }

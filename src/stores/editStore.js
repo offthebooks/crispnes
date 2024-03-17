@@ -1,4 +1,5 @@
 import { Bank, EditMode } from '../enums.js'
+import { Render } from '../render.js'
 import { EditTile } from '../types/editTile.js'
 import {
   dataFromStorageWithKeys,
@@ -55,8 +56,14 @@ export class EditStore {
     return this.editTiles.find((et) => et.x === x && et.y === y)
   }
 
+  tileWithIndex(tileIndex) {
+    return this.editTiles.find((et) => et.tileIndex === tileIndex)
+  }
+
   addTile(tileIndex) {
-    if (this.editTiles.length >= maxEditTiles) return
+    const { editTiles } = this
+    if (editTiles.length >= maxEditTiles || this.tileWithIndex(tileIndex))
+      return
 
     let x, y
     for (let cy = 0; x === undefined; ++cy) {
@@ -69,8 +76,9 @@ export class EditStore {
       }
     }
 
-    this.editTiles.push(new EditTile(tileIndex, x, y))
+    editTiles.push(new EditTile(tileIndex, x, y))
     this.serialize()
+    Render.setDirty()
   }
 
   // State persistence
@@ -80,6 +88,18 @@ export class EditStore {
 
   #deserialize() {
     const data = dataFromStorageWithKeys(Object.keys(defaultData))
+
+    const { spriteEditTiles, backgroundEditTiles } = data
+
+    if (spriteEditTiles)
+      data.spriteEditTiles = spriteEditTiles.map((et) =>
+        Object.assign(new EditTile(0, 0, 0), et)
+      )
+    if (backgroundEditTiles)
+      data.backgroundEditTiles = backgroundEditTiles.map((et) =>
+        Object.assign(new EditTile(0, 0, 0), et)
+      )
+
     return data
   }
 }
