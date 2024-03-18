@@ -1,12 +1,12 @@
 import { palToHex } from './colors.js'
+import { tileEditorGridSize } from './stores/editStore.js'
 import { Store } from './stores/store.js'
-import { EditTile } from './types/editTile.js'
 import { tileSideLengthPixels } from './types/tile.js'
 import { tilesPerTileset } from './types/tileset.js'
 import { elementFromTemplate } from './utils.js'
 
 const editorEl = document.getElementById('editor')
-const editTileTemplateEl = document.getElementById('editTileTemplate')
+const editTileGridEl = document.getElementById('editTileGrid')
 const tilesetEl = document.getElementById('tileset')
 const tileTemplateEl = document.getElementById('tileTemplate')
 const paletteEls = document.querySelectorAll('#palettes .palette')
@@ -20,11 +20,19 @@ export class Render {
 
     // Populate tileset canvases
     for (let i = 0; i < tilesPerTileset; ++i) {
-      const el = elementFromTemplate(tileTemplateEl)
+      const el = elementFromTemplate(tileTemplateEl, 'tile')
       const canvas = el.querySelector('canvas')
       canvas.width = tileSideLengthPixels
       canvas.height = tileSideLengthPixels
       tilesetEl.append(el)
+    }
+
+    for (let i = 0; i < tileEditorGridSize; ++i) {
+      const el = elementFromTemplate(tileTemplateEl, 'editTile')
+      const canvas = el.querySelector('canvas')
+      canvas.width = tileSideLengthPixels
+      canvas.height = tileSideLengthPixels
+      editTileGridEl.append(el)
     }
 
     // Set colors
@@ -81,23 +89,20 @@ export class Render {
   static #renderEditTiles({ palette, tileset }) {
     const { editTiles } = Store.context.editStore
 
-    const editTileEls = editTiles.map(({ tileIndex, x, y }) => {
-      const el = elementFromTemplate(editTileTemplateEl)
-      el.style.left = `calc(50% + ${x * tileSideLengthPixels}px)`
-      el.style.top = `calc(50% + ${y * tileSideLengthPixels}px)`
-
+    const editTileEls = [...editTileGridEl.children]
+    editTileEls.forEach((el, index) => {
+      const tileIndex = editTiles[index]
       const canvas = el.querySelector('canvas')
-      canvas.width = tileSideLengthPixels
-      canvas.height = tileSideLengthPixels
+      const context = canvas.getContext('2d')
 
-      const imgData = tileset
-        .tile(tileIndex)
-        .generateImageDataWithPalette(palette)
-      canvas.getContext('2d').putImageData(imgData, 0, 0)
-
-      return el
+      if (tileIndex === -1) {
+        context.clearRect(0, 0, tileSideLengthPixels, tileSideLengthPixels)
+      } else {
+        const imgData = tileset
+          .tile(tileIndex)
+          .generateImageDataWithPalette(palette)
+        context.putImageData(imgData, 0, 0)
+      }
     })
-
-    editorEl.replaceChildren(...editTileEls)
   }
 }

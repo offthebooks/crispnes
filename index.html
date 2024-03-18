@@ -34,7 +34,9 @@
       </div>
     </header>
 
-    <div id="editor"></div>
+    <div id="editor">
+      <div id="editTileGrid"></div>
+    </div>
 
     <!-- Tool widgets -->
     <div id="tilesets" class="open">
@@ -43,6 +45,9 @@
 
     <div id="tools" class="open">
       <button type="button" class="active">
+        <i class="icon moveIcon"></i><span class="tip">Move tool</span>
+      </button>
+      <button type="button">
         <i class="icon drawIcon"></i><span class="tip">Draw tool</span>
       </button>
       <button type="button">
@@ -74,13 +79,8 @@
 
     <!-- Templates -->
     <template id="tileTemplate">
-      <div class="tile"><canvas></canvas></div>
+      <div><canvas></canvas></div>
     </template>
-
-    <template id="editTileTemplate">
-      <div class="editTile"><canvas></canvas></div>
-    </template>
-
 
     <input type="file" style="display: none" />
     <script type="module" src="src/main.js"></script>

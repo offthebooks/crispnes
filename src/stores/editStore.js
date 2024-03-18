@@ -1,21 +1,19 @@
 import { Bank, EditMode } from '../enums.js'
 import { Render } from '../render.js'
-import { EditTile } from '../types/editTile.js'
 import {
   dataFromStorageWithKeys,
   dataStoreObjectValuesForKeys,
   diffObjectValues
 } from '../utils.js'
 
-const maxEditTiles = 36
-const sqrtMaxTiles = Math.ceil(Math.sqrt(maxEditTiles))
-const snapTilePixels = 8
+const tileEditorSide = 4
+export const tileEditorGridSize = tileEditorSide * tileEditorSide
 
 const defaultData = Object.seal({
   selectedMode: EditMode.BackgroundTiles,
 
-  spriteEditTiles: [],
-  backgroundEditTiles: []
+  spriteEditTiles: new Array(tileEditorGridSize).fill(-1),
+  backgroundEditTiles: new Array(tileEditorGridSize).fill(-1)
 })
 
 export class EditStore {
@@ -52,31 +50,13 @@ export class EditStore {
     this.serialize(changed.next)
   }
 
-  tileAt(x, y) {
-    return this.editTiles.find((et) => et.x === x && et.y === y)
-  }
-
-  tileWithIndex(tileIndex) {
-    return this.editTiles.find((et) => et.tileIndex === tileIndex)
-  }
-
   addTile(tileIndex) {
     const { editTiles } = this
-    if (editTiles.length >= maxEditTiles || this.tileWithIndex(tileIndex))
-      return
+    const nextAvailable = editTiles.indexOf(-1)
 
-    let x, y
-    for (let cy = 0; x === undefined; ++cy) {
-      for (let cx = 0; cx < sqrtMaxTiles; ++cx) {
-        if (!this.tileAt(cx, cy)) {
-          x = cx
-          y = cy
-          break
-        }
-      }
-    }
+    if (nextAvailable === -1) return
 
-    editTiles.push(new EditTile(tileIndex, x, y))
+    editTiles[nextAvailable] = tileIndex
     this.serialize()
     Render.setDirty()
   }
@@ -87,19 +67,6 @@ export class EditStore {
   }
 
   #deserialize() {
-    const data = dataFromStorageWithKeys(Object.keys(defaultData))
-
-    const { spriteEditTiles, backgroundEditTiles } = data
-
-    if (spriteEditTiles)
-      data.spriteEditTiles = spriteEditTiles.map((et) =>
-        Object.assign(new EditTile(0, 0, 0), et)
-      )
-    if (backgroundEditTiles)
-      data.backgroundEditTiles = backgroundEditTiles.map((et) =>
-        Object.assign(new EditTile(0, 0, 0), et)
-      )
-
-    return data
+    return dataFromStorageWithKeys(Object.keys(defaultData))
   }
 }

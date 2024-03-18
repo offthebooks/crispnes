@@ -8,11 +8,15 @@ i.icon {
   background: no-repeat center / contain;
 
   &.menuIcon {
-    background-image: url('../img/menu8x8.png');
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAIUlEQVR42mPoEv7/P4hhE1YMkmN4efj/f3yYgRAYElYAAJ9di8mikt5mAAAAAElFTkSuQmCC');
   }
 
   &.clearIcon {
-    background-image: url('../img/clear8x8.png');
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAMUlEQVR42mMAgaSkpP/YMFxy9erVYAwEyDSqIiCGCaJIwhQg6yZPAbobSFSA6VWEJADGW4VRopSe/QAAAABJRU5ErkJggg==');
+  }
+
+  &.moveIcon {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAANUlEQVR42mNYvXr1fxBmQAUIcRARxLAJQwFIDCSHIuDn5wfCWDUwgCSQ2MQrIGgFQUcS9CYAp25DYboZuasAAAAASUVORK5CYII=');
   }
 
   &.drawIcon {

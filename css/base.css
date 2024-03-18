@@ -1,5 +1,10 @@
 @import url('./vars.css');
 
+:root {
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
 html,
 body {
   width: 100%;
@@ -9,11 +14,6 @@ body {
   font-family: system-ui, Helvetica, sans-serif;
   background-color: var(--col-background-tint-1);
   image-rendering: pixelated;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
 }
 
 /* Status bar tips */
