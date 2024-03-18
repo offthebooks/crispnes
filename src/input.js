@@ -6,7 +6,7 @@ export class Input {
     const { fileStore, tileStore, paletteStore, editStore } = Store.context
     const menu = document.getElementById('menu')
     const palettes = document.getElementById('palettes')
-    const tileset = document.getElementById('tileset')
+    const tilesets = document.getElementById('tilesets')
 
     menu.addEventListener('click', async ({ target }) => {
       const menuItem = target.closest('[data-menu-item]')
@@ -36,10 +36,12 @@ export class Input {
       }
     })
 
-    tileset.addEventListener('click', async ({ target, offsetX, offsetY }) => {
+    tilesets.addEventListener('click', async ({ target }) => {
       const tileEl = target.closest('.tile')
       if (tileEl) {
         editStore.addTile(elementIndex(tileEl))
+      } else {
+        tilesets.classList.toggle('open')
       }
     })
   }

@@ -16,7 +16,7 @@
     <header>
       <h1><i class="icon drawIcon"></i>CrispNES</h1>
       <div id="menu">
-        <details>
+        <details class="widget">
           <summary>Menu</summary>
           <ol>
             <li data-menu-item="loadChr">
@@ -39,11 +39,11 @@
     </div>
 
     <!-- Tool widgets -->
-    <div id="tilesets" class="open">
+    <div id="tilesets" class="widget open">
       <div id="tileset"></div>
     </div>
 
-    <div id="tools" class="open">
+    <div id="tools" class="widget open">
       <button type="button" class="active">
         <i class="icon moveIcon"></i><span class="tip">Move tool</span>
       </button>
@@ -58,7 +58,7 @@
       </button>
     </div>
 
-    <div id="palettes" class="open">
+    <div id="palettes" class="widget open">
       <!-- Four palettes to dynamically map to current background or sprite set -->
       <div class="palette active"><i></i><i></i><i></i><i></i></div>
       <div class="palette"><i></i><i></i><i></i><i></i></div>
@@ -75,7 +75,6 @@
         ><i></i><i></i><i></i><i></i>
       </div>
     </div>
-
 
     <!-- Templates -->
     <template id="tileTemplate">

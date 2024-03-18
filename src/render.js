@@ -5,7 +5,6 @@ import { tileSideLengthPixels } from './types/tile.js'
 import { tilesPerTileset } from './types/tileset.js'
 import { elementFromTemplate } from './utils.js'
 
-const editorEl = document.getElementById('editor')
 const editTileGridEl = document.getElementById('editTileGrid')
 const tilesetEl = document.getElementById('tileset')
 const tileTemplateEl = document.getElementById('tileTemplate')
@@ -69,10 +68,19 @@ export class Render {
 
     paletteEls.forEach((palEl, palIndex) => {
       const palData = palettes[palIndex]
+      const curPalette = palIndex === paletteIndex
       palEl.querySelectorAll('i').forEach((colEl, colIndex) => {
+        const curColor = curPalette && colIndex === colorIndex
         colEl.style.backgroundColor = palToHex[palData[colIndex]]
+        colEl.classList[curColor ? 'add' : 'remove']('active')
       })
+      palEl.classList[curPalette ? 'add' : 'remove']('active')
     })
+
+    const activeColor = palettes[paletteIndex][colorIndex]
+    colorTableEls.forEach((colEl, index) =>
+      colEl.classList[index === activeColor ? 'add' : 'remove']('active')
+    )
   }
 
   static #renderTiles({ palette, tileset }) {

@@ -1,27 +1,49 @@
 #editor {
+  --editor-area-width: 100dvw;
+  --editor-area-height: calc(100dvh - var(--header-height));
+  --editor-grid-side: calc(
+    min(var(--editor-area-width), var(--editor-area-height)) - 8dvmin
+  );
+
   display: flex;
   overflow: hidden;
-  height: calc(100% - var(--header-height));
-  width: 100%;
+  height: var(--editor-area-height);
+  width: var(--editor-area-width);
   justify-content: center;
   align-items: center;
 
   #editTileGrid {
-    background-color: var(--col-background-tint-2);
+    overflow: hidden;
     display: grid;
-    padding: 1px;
-    gap: 1px;
     grid-template-columns: repeat(4, 1fr);
-    height: calc(min(100%, 100vw) - 4rem);
-    aspect-ratio: 1;
-    border-top: none;
-    border-left: none;
+    width: var(--editor-grid-side);
+    height: var(--editor-grid-side);
+    box-shadow:
+      0 0 0 1px var(--col-selection),
+      /* 1px 1px 0 1px var(--col-highlight), */ 2dvmin 2dvmin 0
+        var(--col-accent);
 
     .editTile {
-      border-bottom: none;
-      border-right: none;
+      position: relative;
+
+      &::after {
+        content: ' ';
+        transform: translateZ(0);
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow:
+          inset 0 0 0 0.5px var(--col-selection),
+          0 0 0 0.5px var(--col-selection);
+        opacity: 0.75;
+        z-index: 1;
+      }
 
       canvas {
+        display: block;
         width: 100%;
         aspect-ratio: 1;
       }

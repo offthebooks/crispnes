@@ -3,10 +3,11 @@
   --col-background-tint-1: #ddd;
   --col-background-tint-2: #bbb;
   --col-accent: #5200b2;
+  --col-accent-translucent: rgba(82, 0, 178, 0.5);
   --col-foreground: #000;
   --col-foreground-tint-1: #222;
   --col-foreground-tint-2: #444;
-  --col-highlight: #e9c3ff;
+  --col-highlight: #d365ffff;
   --col-selection: #8a13ff;
 
   --pad-panel: 16px 8px;

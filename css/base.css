@@ -39,6 +39,10 @@ button {
   }
 }
 
+.widget {
+  z-index: 1;
+}
+
 .tab-container {
   display: flex;
 
