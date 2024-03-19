@@ -20,13 +20,13 @@ export class Tile {
 
   toggle(x, y, val) {
     // If we're setting a matching color, toggle to background color
-    const outColor = val === this.#read(x, y) ? 0 : val
+    const outColor = val === this.read(x, y) ? 0 : val
     this.#write(x, y, outColor)
     return outColor
   }
 
   fill(x, y, val) {
-    const match = this.#read(x, y)
+    const match = this.read(x, y)
     if (val === match) return false
 
     this.#flood(x, y, val, match)
@@ -44,7 +44,7 @@ export class Tile {
     }
   }
 
-  #read(x, y) {
+  read(x, y) {
     x = bit7 >>> x
     return (this.#plane0[y] & x ? loBit : 0) | (this.#plane1[y] & x ? hiBit : 0)
   }
@@ -63,7 +63,7 @@ export class Tile {
   #flood(x, y, val, match) {
     if (x < 0 || x > 7 || y < 0 || y > 7) return
 
-    if (this.#read(x, y) !== match) return
+    if (this.read(x, y) !== match) return
 
     this.#write(x, y, val)
     this.#flood(x + 1, y, val, match)
@@ -80,7 +80,7 @@ export class Tile {
       for (let x = 0; x < tileSideLengthPixels; ++x) {
         const curX = flipX ? tileSideLengthPixels - x : x
         const curY = flipY ? tileSideLengthPixels - y : y
-        const colIdx = this.#read(curX, curY)
+        const colIdx = this.read(curX, curY)
         const rgba = palToRGBA[palette[colIdx]]
         data[bufferIndex++] = (rgba & 0xff000000) >>> 24
         data[bufferIndex++] = (rgba & 0x00ff0000) >>> 16

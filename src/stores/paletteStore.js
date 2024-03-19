@@ -71,7 +71,11 @@ export class PaletteStore {
   }
 
   assignColor(ppuColor) {
-    this.palette[this.colorIndex] = ppuColor
+    if (this.colorIndex === 0) {
+      this.#data.spritePalettes.forEach((pal) => (pal[0] = ppuColor))
+      this.#data.backgroundPalettes.forEach((pal) => (pal[0] = ppuColor))
+    } else this.palette[this.colorIndex] = ppuColor
+
     this.serialize({ [this.#palettesKey]: this.palettes })
     Render.setDirty()
   }

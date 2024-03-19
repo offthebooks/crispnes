@@ -95,11 +95,11 @@ export class Render {
   }
 
   static #renderEditTiles({ palette, tileset }) {
-    const { editTiles } = Store.context.editStore
+    const { editStore } = Store.context
 
     const editTileEls = [...editTileGridEl.children]
-    editTileEls.forEach((el, index) => {
-      const tileIndex = editTiles[index]
+    editTileEls.forEach((el, editTileIndex) => {
+      const tileIndex = editStore.tileIndexForEditTile(editTileIndex)
       const canvas = el.querySelector('canvas')
       const context = canvas.getContext('2d')
 

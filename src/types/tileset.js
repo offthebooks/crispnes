@@ -23,12 +23,4 @@ export class Tileset {
   tile(index) {
     return this.#tiles[index]
   }
-
-  tileIndexAt(x, y) {
-    return x + y * tilesetSideLengthTiles
-  }
-
-  tileAt(x, y) {
-    return this.tile(this.tileIndexAt(x, y))
-  }
 }

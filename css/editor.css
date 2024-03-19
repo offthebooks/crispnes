@@ -20,8 +20,7 @@
     height: var(--editor-grid-side);
     box-shadow:
       0 0 0 1px var(--col-selection),
-      /* 1px 1px 0 1px var(--col-highlight), */ 2dvmin 2dvmin 0
-        var(--col-accent);
+      2dvmin 2dvmin 0 var(--col-accent);
 
     .editTile {
       position: relative;
