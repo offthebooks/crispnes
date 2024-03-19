@@ -64,7 +64,7 @@ export class EditStore {
   }
 
   addTile(tileIndex) {
-    const { editTiles } = this
+    const editTiles = this.#editTiles
     const nextAvailable = editTiles.indexOf(-1)
 
     if (nextAvailable === -1) return
