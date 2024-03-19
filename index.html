@@ -44,17 +44,11 @@
     </div>
 
     <div id="tools" class="widget open">
-      <button type="button" class="active">
-        <i class="icon moveIcon"></i><span class="tip">Move tool</span>
-      </button>
       <button type="button">
         <i class="icon drawIcon"></i><span class="tip">Draw tool</span>
       </button>
       <button type="button">
         <i class="icon fillIcon"></i><span class="tip">Fill tool</span>
-      </button>
-      <button type="button">
-        <i class="icon clearIcon"></i><span class="tip">Clear tool</span>
       </button>
     </div>
 
@@ -81,6 +75,7 @@
       <div><canvas></canvas></div>
     </template>
 
+    <a id="saveLink" style="display: none"></a>
     <input type="file" style="display: none" />
     <script type="module" src="src/main.js"></script>
   </body>

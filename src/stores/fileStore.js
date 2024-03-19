@@ -1,4 +1,5 @@
 const fileInput = document.querySelector('input[type=file]')
+const saveLink = document.getElementById('saveLink')
 
 export class FileStore {
   #fileHandler
@@ -12,6 +13,16 @@ export class FileStore {
 
     this.#fileHandler = handler
     fileInput.click()
+  }
+
+  saveFile(filename, bytes) {
+    saveLink.setAttribute('download', filename)
+    const blob = new Blob([bytes], {
+      type: 'application/octet-stream'
+    })
+
+    saveLink.href = URL.createObjectURL(blob)
+    saveLink.click()
   }
 
   #loadFile() {

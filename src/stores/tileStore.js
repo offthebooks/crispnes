@@ -38,6 +38,14 @@ export class TileStore {
     return this.#data[this.#tilesKey]
   }
 
+  get tilesetBytes() {
+    return new Uint8Array(this.#tileData)
+  }
+
+  get tilesetSlice() {
+    return { [this.#tilesKey]: this.tilesetBytes }
+  }
+
   // Mutations
   assignTileset(bytes) {
     if (bytes.length !== tilesetSizeBytes) {
@@ -48,7 +56,7 @@ export class TileStore {
     }
 
     Object.assign(this.#tileData, bytes)
-    this.serialize({ [this.#tilesKey]: bytes })
+    this.serialize(this.tilesetSlice)
     Render.setDirty()
   }
 

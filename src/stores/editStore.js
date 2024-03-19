@@ -77,6 +77,7 @@ export class EditStore {
   editAt({ editTileIndex, x, y }) {
     const tile = this.tileForEditTile(editTileIndex)
     const { colorIndex: paletteColor } = Store.context.paletteStore
+    const { tileStore } = Store.context
     switch (this.#currentTool) {
       case Tools.Draw:
         const color = tile.toggle(x, y, paletteColor)
@@ -88,6 +89,7 @@ export class EditStore {
       default:
         return
     }
+    tileStore.serialize(tileStore.tilesetSlice)
     Render.setDirty()
   }
 
@@ -99,9 +101,17 @@ export class EditStore {
 
     Object.assign(this.#drawOperation, { x, y })
 
+    const { tileStore } = Store.context
     const tile = this.tileForEditTile(editTileIndex)
     if (color === tile.read(x, y)) return
     tile.draw(x, y, color)
+    tileStore.serialize(tileStore.tilesetSlice)
+    Render.setDirty()
+  }
+
+  setTool(tool) {
+    if (tool === this.#currentTool) return
+    this.#currentTool = tool
     Render.setDirty()
   }
 

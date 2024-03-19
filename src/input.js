@@ -1,3 +1,4 @@
+import { Tools } from './enums.js'
 import { Store } from './stores/store.js'
 import { elementIndex } from './utils.js'
 
@@ -8,6 +9,7 @@ export class Input {
     const editTileGrid = document.getElementById('editTileGrid')
     const palettes = document.getElementById('palettes')
     const tilesets = document.getElementById('tilesets')
+    const tools = document.getElementById('tools')
 
     menu.addEventListener('click', ({ target }) => {
       const menuItem = target.closest('[data-menu-item]')
@@ -19,6 +21,7 @@ export class Input {
           })
           break
         case 'saveChr':
+          fileStore.saveFile('patterns.chr', tileStore.tilesetBytes)
         default:
           break
       }
@@ -66,5 +69,16 @@ export class Input {
     editTileGrid.addEventListener('mouseup', () => editStore.finishEdit())
     editTileGrid.addEventListener('mouseleave', () => editStore.suspendEdit())
     editTileGrid.addEventListener('mouseenter', () => editStore.resumeEdit())
+
+    tools.addEventListener('click', ({ target }) => {
+      const toolEl = target.closest('button')?.querySelector('i')
+      if (toolEl?.classList.contains('drawIcon')) {
+        editStore.setTool(Tools.Draw)
+      } else if (toolEl?.classList.contains('fillIcon')) {
+        editStore.setTool(Tools.Fill)
+      } else {
+        tools.classList.toggle('open')
+      }
+    })
   }
 }
