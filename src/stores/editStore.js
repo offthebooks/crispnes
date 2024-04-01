@@ -74,6 +74,20 @@ export class EditStore {
     Render.setDirty()
   }
 
+  removeTile(editTileIndex) {
+    this.#editTiles[editTileIndex] = -1
+    this.serialize()
+    Render.setDirty()
+  }
+
+  clearTile(editTileIndex) {
+    const tile = this.tileForEditTile(editTileIndex)
+    const { tileStore } = Store.context
+    tile.clear()
+    tileStore.serialize(tileStore.tilesetSlice)
+    Render.setDirty()
+  }
+
   editAt({ editTileIndex, x, y }) {
     const tile = this.tileForEditTile(editTileIndex)
     const { colorIndex: paletteColor } = Store.context.paletteStore
@@ -94,7 +108,7 @@ export class EditStore {
   }
 
   continueEdit({ editTileIndex, x, y }) {
-    if (!this.#drawOperation || this.#drawOperation.suspended) return
+    if (!this.#drawOperation) return
 
     const { x: prevX, y: prevY, color } = this.#drawOperation
     if (x === prevX && y === prevY) return
@@ -109,7 +123,11 @@ export class EditStore {
     Render.setDirty()
   }
 
-  setTool(tool) {
+  get tool() {
+    return this.#currentTool
+  }
+
+  set tool(tool) {
     if (tool === this.#currentTool) return
     this.#currentTool = tool
     Render.setDirty()
@@ -121,12 +139,6 @@ export class EditStore {
     // in the eventual "undo" operation stack, probably
     // saving that in #drawOperation as well
     this.#drawOperation = null
-  }
-  suspendEdit() {
-    if (this.#drawOperation) this.#drawOperation.suspend = true
-  }
-  resumeEdit() {
-    if (this.#drawOperation) this.#drawOperation.suspend = false
   }
 
   // State persistence

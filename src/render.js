@@ -6,6 +6,7 @@ import { tilesPerTileset } from './types/tileset.js'
 import { elementFromTemplate } from './utils.js'
 
 const editTileGridEl = document.getElementById('editTileGrid')
+const editTileTemplateEl = document.getElementById('editTileTemplate')
 const tilesetEl = document.getElementById('tileset')
 const tileTemplateEl = document.getElementById('tileTemplate')
 const paletteEls = document.querySelectorAll('#palettes .palette')
@@ -19,7 +20,7 @@ export class Render {
 
     // Populate tileset canvases
     for (let i = 0; i < tilesPerTileset; ++i) {
-      const el = elementFromTemplate(tileTemplateEl, 'tile')
+      const el = elementFromTemplate(tileTemplateEl)
       const canvas = el.querySelector('canvas')
       canvas.width = tileSideLengthPixels
       canvas.height = tileSideLengthPixels
@@ -27,7 +28,7 @@ export class Render {
     }
 
     for (let i = 0; i < tileEditorGridSize; ++i) {
-      const el = elementFromTemplate(tileTemplateEl, 'editTile')
+      const el = elementFromTemplate(editTileTemplateEl)
       const canvas = el.querySelector('canvas')
       canvas.width = tileSideLengthPixels
       canvas.height = tileSideLengthPixels
@@ -98,6 +99,7 @@ export class Render {
     const { editStore } = Store.context
 
     const editTileEls = [...editTileGridEl.children]
+    editTileGridEl.setAttribute('data-tool', editStore.tool)
     editTileEls.forEach((el, editTileIndex) => {
       const tileIndex = editStore.tileIndexForEditTile(editTileIndex)
       const canvas = el.querySelector('canvas')

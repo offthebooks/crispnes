@@ -25,7 +25,7 @@
     .editTile {
       position: relative;
 
-      &::after {
+      &::before {
         content: ' ';
         transform: translateZ(0);
         position: absolute;
@@ -45,6 +45,31 @@
         display: block;
         width: 100%;
         aspect-ratio: 1;
+      }
+    }
+
+    &[data-tool='move'] {
+      position: static;
+      pointer-events: none;
+      .tileTools {
+        display: flex;
+      }
+    }
+
+    .tileTools {
+      display: none;
+      position: absolute;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: var(--interface-radius);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      button {
+        pointer-events: auto;
       }
     }
   }

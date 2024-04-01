@@ -58,24 +58,37 @@ export class Input {
       const y = ~~((offsetY * 8) / height)
       return { editTileIndex, x, y }
     }
-    editTileGrid.addEventListener('mousedown', (evt) => {
+    editTileGrid.addEventListener('click', ({ target }) => {
+      if (editStore.tool !== Tools.Move) return
+      const btn = target.closest('button')
+      if (!btn) return
+      const editTileEl = target.closest('.editTile')
+      const editTileIndex = editTileEl && elementIndex(editTileEl)
+      if (btn.querySelector('.unlinkIcon')) {
+        editStore.removeTile(editTileIndex)
+      } else if (btn.querySelector('.clearIcon')) {
+        editStore.clearTile(editTileIndex)
+      }
+    })
+    editTileGrid.addEventListener('pointerdown', (evt) => {
+      if (editStore.tool === Tools.Move) return
       const info = editDetails(evt)
       if (editDetails) editStore.editAt(info)
     })
-    editTileGrid.addEventListener('mousemove', (evt) => {
+    editTileGrid.addEventListener('pointermove', (evt) => {
       const info = editDetails(evt)
       if (editDetails) editStore.continueEdit(info)
     })
-    editTileGrid.addEventListener('mouseup', () => editStore.finishEdit())
-    editTileGrid.addEventListener('mouseleave', () => editStore.suspendEdit())
-    editTileGrid.addEventListener('mouseenter', () => editStore.resumeEdit())
+    document.addEventListener('pointerup', () => editStore.finishEdit())
 
     tools.addEventListener('click', ({ target }) => {
       const toolEl = target.closest('button')?.querySelector('i')
       if (toolEl?.classList.contains('drawIcon')) {
-        editStore.setTool(Tools.Draw)
+        editStore.tool = Tools.Draw
       } else if (toolEl?.classList.contains('fillIcon')) {
-        editStore.setTool(Tools.Fill)
+        editStore.tool = Tools.Fill
+      } else if (toolEl?.classList.contains('moveIcon')) {
+        editStore.tool = Tools.Move
       } else {
         tools.classList.toggle('open')
       }

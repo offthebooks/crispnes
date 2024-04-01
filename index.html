@@ -14,7 +14,7 @@
 
   <body>
     <header>
-      <h1><i class="icon drawIcon"></i>CrispNES</h1>
+      <h1 title="Alpha software, backup your creations as CHR data"><i class="icon drawIcon"></i>CrispNES &alpha;</h1>
       <div id="menu">
         <details class="widget">
           <summary>Menu</summary>
@@ -28,6 +28,9 @@
               <i class="icon saveChrIcon"></i>Save CHR<span class="tip"
                 >Save CHR tiles to file</span
               >
+            </li>
+            <li>
+              Alpha software. Internal formats may change. Export and backup CHR data for forward compatibility.
             </li>
           </ol>
         </details>
@@ -44,6 +47,9 @@
     </div>
 
     <div id="tools" class="widget open">
+      <button type="button">
+        <i class="icon moveIcon"></i><span class="tip">Move tool</span>
+      </button>
       <button type="button">
         <i class="icon drawIcon"></i><span class="tip">Draw tool</span>
       </button>
@@ -72,7 +78,20 @@
 
     <!-- Templates -->
     <template id="tileTemplate">
-      <div><canvas></canvas></div>
+      <div class="tile"><canvas></canvas></div>
+    </template>
+
+    <template id="editTileTemplate">
+      <div class="editTile"><canvas></canvas>
+        <div class="tileTools">
+          <button type="button">
+            <i class="icon unlinkIcon"></i><span class="tip">Unlink tile</span>
+          </button>
+          <button type="button">
+            <i class="icon clearIcon"></i><span class="tip">Clear tile</span>
+          </button>
+        </div>
+      </div>
     </template>
 
     <a id="saveLink" style="display: none"></a>

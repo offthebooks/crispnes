@@ -11,6 +11,7 @@ export const Bank = Object.freeze({
 })
 
 export const Tools = Object.freeze({
-  Draw: 0,
-  Fill: 1
+  Draw: 'draw',
+  Fill: 'fill',
+  Move: 'move'
 })

@@ -6,6 +6,7 @@
   user-select: none;
   -webkit-user-select: none;
   cursor: default;
+  touch-action: pinch-zoom;
 }
 
 html,
@@ -17,6 +18,24 @@ body {
   font-family: system-ui, Helvetica, sans-serif;
   background-color: var(--col-background-tint-1);
   image-rendering: pixelated;
+}
+
+button {
+  padding: 0.5rem;
+  background-color: var(--col-background);
+  border-radius: var(--button-radius);
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--col-highlight);
+  }
+
+  i.icon {
+    margin: 0;
+    height: 1rem;
+    aspect-ratio: 1;
+  }
 }
 
 /* Status bar tips */

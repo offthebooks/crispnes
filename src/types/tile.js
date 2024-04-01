@@ -38,9 +38,9 @@ export class Tile {
   }
 
   clear() {
-    for (let i = 0; i < 8; ++i) {
-      this.plane0[i] = 0
-      this.plane1[i] = 0
+    for (let i = 0; i < tileBytesPerPlane; ++i) {
+      this.#plane0[i] = 0
+      this.#plane1[i] = 0
     }
   }
 

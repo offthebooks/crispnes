@@ -16,7 +16,7 @@ i.icon {
   }
 
   &.moveIcon {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAANUlEQVR42mNYvXr1fxBmQAUIcRARxLAJQwFIDCSHIuDn5wfCWDUwgCSQ2MQrIGgFQUcS9CYAp25DYboZuasAAAAASUVORK5CYII=');
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAMElEQVR42mMAgZeH/4MBAxYAVxDEsAmsCJ8CuCK8ChCKMBVgKMKqAMiGY5IciVMSADjaXlpw+7mfAAAAAElFTkSuQmCC');
   }
 
   &.drawIcon {
@@ -24,7 +24,7 @@ i.icon {
   }
 
   &.fillIcon {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOUlEQVR42mNABklJSf8Z0ACGAqyK9nBc+w/EYMnVq1eDaVySMIxQhCaJoQisAGo/fgVQRditwOcTAD2+YfQFRY0uAAAAAElFTkSuQmCC');
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOUlEQVR42mNABklJSf8Z0ACGAqyKLqf+/w/EYMnVq1eDaVySMIxQhCaJoQisAGo/fgVQRditwOcTALFMZtxVC6r7AAAAAElFTkSuQmCC');
   }
 
   &.loadChrIcon {
