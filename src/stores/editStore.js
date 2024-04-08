@@ -18,18 +18,20 @@ const defaultData = Object.seal({
 })
 
 export class EditStore {
-  #data
+  // #data
   #drawOperation
   #currentTool
 
-  constructor() {
-    this.#data = { ...defaultData, ...this.#deserialize() }
+  constructor(editData) {
+    Object.assign(editData, { ...defaultData, ...this.#deserialize() })
+    // this.#data = { ...defaultData, ...this.#deserialize() }
     this.#currentTool = Tools.Draw
   }
 
   // Accessors
   get mode() {
-    return this.#data.selectedMode
+    return Store.context.getDataForKeyPath('edit.selectedMode')
+    // return this.#data.selectedMode
   }
 
   get bank() {
@@ -43,9 +45,17 @@ export class EditStore {
   }
 
   get #editTiles() {
+    const { getDataForKeyPath } = Store.context
+    // return this.bank === Bank.Background
+    //   ? this.#data.backgroundEditTiles
+    //   : this.#data.spriteEditTiles
+    return Store.context.getDataForKeyPath(this.#editTilesKeyPath)
+  }
+
+  get #editTilesKeyPath() {
     return this.bank === Bank.Background
-      ? this.#data.backgroundEditTiles
-      : this.#data.spriteEditTiles
+      ? 'edit.backgroundEditTiles'
+      : 'edit.spriteEditTiles'
   }
 
   tileIndexForEditTile(editTile) {
@@ -58,9 +68,8 @@ export class EditStore {
   }
 
   // Mutations
-  selectMode(selectedMode) {
-    const changed = diffObjectValues({ selectedMode }, this.#data)
-    this.serialize(changed.next)
+  editTileMutation(editTile, tileIndex) {
+    return { [`${this.#editTilesKeyPath}.${editTile}`]: tileIndex }
   }
 
   addTile(tileIndex) {
@@ -69,15 +78,20 @@ export class EditStore {
 
     if (nextAvailable === -1) return
 
-    editTiles[nextAvailable] = tileIndex
-    this.serialize()
-    Render.setDirty()
+    const mutation = this.editTileMutation(nextAvailable, tileIndex)
+    Store.context.perform('Set Edit Tile', mutation)
+
+    // editTiles[nextAvailable] = tileIndex
+    // this.serialize()
+    // Render.setDirty()
   }
 
-  removeTile(editTileIndex) {
-    this.#editTiles[editTileIndex] = -1
-    this.serialize()
-    Render.setDirty()
+  removeTile(editTile) {
+    const mutation = this.editTileMutation(editTile, -1)
+    Store.context.perform('Unlink Edit Tile', mutation)
+    // this.#editTiles[editTile] = -1
+    // this.serialize()
+    // Render.setDirty()
   }
 
   clearTile(editTileIndex) {
@@ -142,11 +156,11 @@ export class EditStore {
   }
 
   // State persistence
-  serialize(object = this.#data) {
-    dataStoreObjectValuesForKeys(object)
-  }
+  // serialize(object = this.#data) {
+  //   dataStoreObjectValuesForKeys(object)
+  // }
 
   #deserialize() {
-    return dataFromStorageWithKeys(Object.keys(defaultData))
+    // return dataFromStorageWithKeys(Object.keys(defaultData))
   }
 }
