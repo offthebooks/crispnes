@@ -23,15 +23,13 @@ export class EditStore {
   #currentTool
 
   constructor(editData) {
-    Object.assign(editData, { ...defaultData, ...this.#deserialize() })
-    // this.#data = { ...defaultData, ...this.#deserialize() }
+    Object.assign(editData, defaultData)
     this.#currentTool = Tools.Draw
   }
 
   // Accessors
   get mode() {
     return Store.context.getDataForKeyPath('edit.selectedMode')
-    // return this.#data.selectedMode
   }
 
   get bank() {
@@ -46,9 +44,6 @@ export class EditStore {
 
   get #editTiles() {
     const { getDataForKeyPath } = Store.context
-    // return this.bank === Bank.Background
-    //   ? this.#data.backgroundEditTiles
-    //   : this.#data.spriteEditTiles
     return Store.context.getDataForKeyPath(this.#editTilesKeyPath)
   }
 
@@ -80,18 +75,11 @@ export class EditStore {
 
     const mutation = this.editTileMutation(nextAvailable, tileIndex)
     Store.context.perform('Set Edit Tile', mutation)
-
-    // editTiles[nextAvailable] = tileIndex
-    // this.serialize()
-    // Render.setDirty()
   }
 
   removeTile(editTile) {
     const mutation = this.editTileMutation(editTile, -1)
     Store.context.perform('Unlink Edit Tile', mutation)
-    // this.#editTiles[editTile] = -1
-    // this.serialize()
-    // Render.setDirty()
   }
 
   clearTile(editTileIndex) {
@@ -153,14 +141,5 @@ export class EditStore {
     // in the eventual "undo" operation stack, probably
     // saving that in #drawOperation as well
     this.#drawOperation = null
-  }
-
-  // State persistence
-  // serialize(object = this.#data) {
-  //   dataStoreObjectValuesForKeys(object)
-  // }
-
-  #deserialize() {
-    // return dataFromStorageWithKeys(Object.keys(defaultData))
   }
 }

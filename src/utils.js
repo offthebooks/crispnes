@@ -35,6 +35,19 @@ export const dataFromStorageWithKeys = (keys) => {
   return data
 }
 
+export const restoreDataFromStorage = (data) => {
+  const keys = Object.keys(data)
+  for (const key of keys) {
+    try {
+      const value = JSON.parse(window.localStorage.getItem(key))
+      if (typeof value === 'object') Object.assign(data[key], value)
+      else if (value != null) data[key] = value
+    } catch (e) {
+      console.error(`Error loading '${key}' from localStorage: ${e}`)
+    }
+  }
+}
+
 export const dataStoreObjectValuesForKeys = (obj) => {
   for (const [key, value] of Object.entries(obj))
     window.localStorage.setItem(key, JSON.stringify(value))

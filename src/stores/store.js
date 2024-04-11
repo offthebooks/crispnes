@@ -1,4 +1,9 @@
-import { dataStoreObjectValuesForKeys } from '../utils.js'
+import { Render } from '../render.js'
+import {
+  dataFromStorageWithKeys,
+  dataStoreObjectValuesForKeys,
+  restoreDataFromStorage
+} from '../utils.js'
 import { EditStore } from './editStore.js'
 import { FileStore } from './fileStore.js'
 import { PaletteStore } from './paletteStore.js'
@@ -42,12 +47,18 @@ export class Store {
             prev: data[index],
             next: value
           }
-          data[index] = value
+
+          if (typeof value === 'object') Object.assign(data[index], value)
+          else data[index] = value
+
+          this.#serializeForKeyPath(keyPath)
           return mutation
         })
 
         this.#undoStack.push(op)
         this.#redoStack = []
+
+        Render.setDirty()
       },
 
       undo: () => {
@@ -68,6 +79,8 @@ export class Store {
         this.#undoStack.push(op)
       }
     })
+
+    this.#deserializeAllData()
   }
 
   static #resolveKeyPath(keyPath) {
@@ -90,8 +103,11 @@ export class Store {
     if (!subStore || !objectKey) return
 
     const object = this.#data[subStore][objectKey]
-
     window.localStorage.setItem(objectKey, JSON.stringify(object))
+  }
+
+  static #deserializeAllData() {
+    Object.values(this.#data).forEach(restoreDataFromStorage)
   }
 
   static get context() {
