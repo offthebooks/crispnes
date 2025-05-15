@@ -1,17 +1,29 @@
-import { MetaSprite } from './metaSprite.js'
+import { Sprite, maxSideLength } from './sprite.js'
+import { clamp } from '../utils.js'
 
 export class Animation {
-  name
-  frameHoldCount
+  #name
   #frames
+  #width
+  #height
 
-  constructor() {
-    this.name = 'Untitled'
+  constructor(name, width, height) {
+    this.#name = name || 'Untitled'
+    this.#width = Math.floor(clamp(width, maxSideLength))
+    this.#height = Math.floor(clamp(height, maxSideLength))
     this.#frames = []
   }
 
+  get name() {
+    return this.#name
+  }
+
+  set name(val) {
+    this.#name = val
+  }
+
   add() {
-    this.#frames.push(new MetaSprite())
+    this.#frames.push(new Sprite(this.#width, this.#height))
   }
 
   remove(index) {

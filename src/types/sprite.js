@@ -1,76 +1,79 @@
-const xIndex = 3
-const yIndex = 0
-const tileIndex = 1
-const attrIndex = 2
-const paletteMask = 0b00000011
-const hFlipMask = 0b01000000
-const vFlipMask = 0b10000000
-const priorityMask = 0b00100000
+import { clamp } from '../utils.js'
+export const maxSideLength = 256
 
 export class Sprite {
   #bytes
+  #width
+  #height
 
-  constructor() {
-    this.#bytes = new Int8Array[4]()
+  constructor(width, height) {
+    this.#width = Math.floor(clamp(width, maxSideLength))
+    this.#height = Math.floor(clamp(height, maxSideLength))
+    this.clear()
   }
 
-  get x() {
-    return this.#bytes[xIndex]
+  toggle(x, y, val) {
+    // If we're setting a matching color, toggle to background color
+    const outColor = val === this.read(x, y) ? 0 : val
+    this.#write(x, y, outColor)
+    return outColor
   }
 
-  set x(value) {
-    this.#bytes[xIndex] = value
+  fill(x, y, val) {
+    const match = this.read(x, y)
+    if (val === match) return false
+
+    this.#flood(x, y, val, match)
+    return true
   }
 
-  get y() {
-    return this.#bytes[yIndex]
+  draw(x, y, val) {
+    this.#write(x, y, val)
   }
 
-  set y(value) {
-    this.#bytes[yIndex] = value
+  clear() {
+    this.#bytes = new Uint8Array[this.#width * this.#height]()
   }
 
-  get tile() {
-    return this.#bytes[tileIndex]
+  read(x, y) {
+    return this.#bytes[this.#index(x, y)]
   }
 
-  set tile(value) {
-    this.#bytes[tileIndex] = value
+  #index(x, y) {
+    return y * this.#width + x
   }
 
-  get palette() {
-    return this.#bytes[attrIndex] & paletteMask
+  #write(x, y, val) {
+    this.#bytes[this.#index(x, y)] = val
   }
 
-  set palette(value) {
-    this.#bytes[attrIndex] &= ~paletteMask
-    this.#bytes[attrIndex] |= value & paletteMask
+  #flood(x, y, val, match) {
+    if (x < 0 || x >= this.#width || y < 0 || y >= this.#height) return
+
+    if (this.read(x, y) !== match) return
+
+    this.#write(x, y, val)
+    this.#flood(x + 1, y, val, match)
+    this.#flood(x - 1, y, val, match)
+    this.#flood(x, y + 1, val, match)
+    this.#flood(x, y - 1, val, match)
   }
 
-  get horizontalFlip() {
-    return !!(this.#bytes[attrIndex] & hFlipMask)
-  }
-
-  set horizontalFlip(value) {
-    this.#bytes[attrIndex] &= ~hFlipMask
-    this.#bytes[attrIndex] |= value ? hFlipMask : 0
-  }
-
-  get verticalFlip() {
-    return !!(this.#bytes[attrIndex] & vFlipMask)
-  }
-
-  set verticalFlip(value) {
-    this.#bytes[attrIndex] &= ~vFlipMask
-    this.#bytes[attrIndex] |= value ? vFlipMask : 0
-  }
-
-  get priority() {
-    return !!(this.#bytes[attrIndex] & priorityMask)
-  }
-
-  set priority(value) {
-    this.#bytes[attrIndex] &= ~priorityMask
-    this.#bytes[attrIndex] |= value ? priorityMask : 0
+  generateImageDataWithPalette(palette) {
+    const imageData = new ImageData(this.#width, this.#height)
+    const data = imageData.data
+    let spriteIndex = 0
+    let bufferIndex = 0
+    for (let y = 0; y < this.#height; ++y) {
+      for (let x = 0; x < this.#width; ++x) {
+        const colIdx = this.#bytes[spriteIndex++]
+        const rgba = palToRGBA[palette[colIdx]]
+        data[bufferIndex++] = (rgba & 0xff000000) >>> 24
+        data[bufferIndex++] = (rgba & 0x00ff0000) >>> 16
+        data[bufferIndex++] = (rgba & 0x0000ff00) >>> 8
+        data[bufferIndex++] = rgba & 0x000000ff
+      }
+    }
+    return imageData
   }
 }

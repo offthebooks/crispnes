@@ -12,6 +12,10 @@ export const elementIndex = (el) => {
   return Array.from(el.parentNode.children).indexOf(el)
 }
 
+export const clamp = (val, max, min = 0) => {
+  return Math.max(Math.min(val, max), min)
+}
+
 export const elementFromTemplate = (templateEl, rootClass) => {
   const clone = templateEl.content.cloneNode(true)
   if (clone.children.length > 1)
