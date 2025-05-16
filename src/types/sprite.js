@@ -12,11 +12,16 @@ export class Sprite {
     this.clear()
   }
 
-  toggle(x, y, val) {
-    // If we're setting a matching color, toggle to background color
-    const outColor = val === this.read(x, y) ? 0 : val
-    this.#write(x, y, outColor)
-    return outColor
+  clear() {
+    this.#bytes = new Uint8Array(this.#width * this.#height)
+  }
+
+  read(x, y) {
+    return this.#bytes[this.#index(x, y)]
+  }
+
+  draw(x, y, val) {
+    this.#write(x, y, val)
   }
 
   fill(x, y, val) {
@@ -27,16 +32,29 @@ export class Sprite {
     return true
   }
 
-  draw(x, y, val) {
-    this.#write(x, y, val)
+  toggle(x, y, val) {
+    // If we're setting a matching color, toggle to background color
+    const outColor = val === this.read(x, y) ? 0 : val
+    this.#write(x, y, outColor)
+    return outColor
   }
 
-  clear() {
-    this.#bytes = new Uint8Array[this.#width * this.#height]()
-  }
-
-  read(x, y) {
-    return this.#bytes[this.#index(x, y)]
+  generateImageDataWithPalette(palette) {
+    const imageData = new ImageData(this.#width, this.#height)
+    const data = imageData.data
+    let spriteIndex = 0
+    let bufferIndex = 0
+    for (let y = 0; y < this.#height; ++y) {
+      for (let x = 0; x < this.#width; ++x) {
+        const colIdx = this.#bytes[spriteIndex++]
+        const rgba = palToRGBA[palette[colIdx]]
+        data[bufferIndex++] = (rgba & 0xff000000) >>> 24
+        data[bufferIndex++] = (rgba & 0x00ff0000) >>> 16
+        data[bufferIndex++] = (rgba & 0x0000ff00) >>> 8
+        data[bufferIndex++] = rgba & 0x000000ff
+      }
+    }
+    return imageData
   }
 
   #index(x, y) {
@@ -57,23 +75,5 @@ export class Sprite {
     this.#flood(x - 1, y, val, match)
     this.#flood(x, y + 1, val, match)
     this.#flood(x, y - 1, val, match)
-  }
-
-  generateImageDataWithPalette(palette) {
-    const imageData = new ImageData(this.#width, this.#height)
-    const data = imageData.data
-    let spriteIndex = 0
-    let bufferIndex = 0
-    for (let y = 0; y < this.#height; ++y) {
-      for (let x = 0; x < this.#width; ++x) {
-        const colIdx = this.#bytes[spriteIndex++]
-        const rgba = palToRGBA[palette[colIdx]]
-        data[bufferIndex++] = (rgba & 0xff000000) >>> 24
-        data[bufferIndex++] = (rgba & 0x00ff0000) >>> 16
-        data[bufferIndex++] = (rgba & 0x0000ff00) >>> 8
-        data[bufferIndex++] = rgba & 0x000000ff
-      }
-    }
-    return imageData
   }
 }

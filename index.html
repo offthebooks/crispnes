@@ -1,7 +1,9 @@
 <html>
   <head>
     <title>CrispNES</title>
-    <meta name="description" content="NES Sprite and Background Editor" />
+    <meta
+      name="description"
+      content="Palette-Based Pixel Art and Animation Editor" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta property="og:title" content="CrispNES" />
     <meta property="og:url" content="https://offthebooks.games/crispnes" />
@@ -14,27 +16,30 @@
 
   <body>
     <header>
-      <h1 title="Alpha software, backup your creations as CHR data"><i class="icon drawIcon"></i>CrispNES &alpha;</h1>
-      <div id="menu">
-        <details class="widget">
-          <summary>Menu</summary>
-          <ol>
-            <li data-menu-item="loadChr">
-              <i class="icon loadChrIcon"></i>Open CHR<span class="tip"
-                >Load CHR tiles from file</span
-              >
-            </li>
-            <li data-menu-item="saveChr">
-              <i class="icon saveChrIcon"></i>Save CHR<span class="tip"
-                >Save CHR tiles to file</span
-              >
-            </li>
-            <li>
-              Alpha software. Internal formats may change. Export and backup CHR data for forward compatibility.
-            </li>
-          </ol>
-        </details>
-      </div>
+      <details id="menu" class="menu">
+        <summary>Menu</summary>
+        <ol>
+          <li data-menu-item="loadChr">
+            <i class="icon loadChrIcon"></i>Open<span class="tip"
+              >Load .cns project</span
+            >
+          </li>
+          <li data-menu-item="saveChr">
+            <i class="icon saveChrIcon"></i>Save<span class="tip"
+              >Save .cns project</span
+            >
+          </li>
+        </ol>
+      </details>
+
+      <details id="animations" class="menu">
+        <summary>Animations</summary>
+        <ol>
+          <li>Untitled</li>
+          <li>Idle</li>
+          <li>Run</li>
+        </ol>
+      </details>
     </header>
 
     <div id="editor">
@@ -42,7 +47,7 @@
     </div>
 
     <!-- Tool widgets -->
-    <div id="tilesets" class="widget open">
+    <div id="animations">
       <div id="tileset"></div>
     </div>
 
@@ -82,7 +87,8 @@
     </template>
 
     <template id="editTileTemplate">
-      <div class="editTile"><canvas></canvas>
+      <div class="editTile">
+        <canvas></canvas>
         <div class="tileTools">
           <button type="button">
             <i class="icon unlinkIcon"></i><span class="tip">Unlink tile</span>
