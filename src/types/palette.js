@@ -3,8 +3,11 @@ import { Color } from './color.js'
 export const maxPaletteSize = 256
 
 export class Palette {
+  static itemTemplate = document.getElementById('paletteItemTemplate')
+
   #name
   #colors
+  #item
 
   constructor(name) {
     this.#name = name || 'Untitled'
@@ -17,6 +20,12 @@ export class Palette {
 
   set name(val) {
     this.#name = val
+  }
+
+  get item() {
+    if (!this.#el) {
+      const tileTemplateEl = 
+    }
   }
 
   color(index) {

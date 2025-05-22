@@ -16,41 +16,41 @@
 
   <body>
     <header>
+      <h1 ><i class="icon drawIcon"></i>CrispNES &alpha;</h1>
+
       <details id="menu" class="menu">
         <summary>Menu</summary>
+        
         <ol>
           <li data-menu-item="loadChr">
-            <i class="icon loadChrIcon"></i>Open<span class="tip"
-              >Load .cns project</span
-            >
+            <i class="icon loadChrIcon"></i>Open
           </li>
           <li data-menu-item="saveChr">
-            <i class="icon saveChrIcon"></i>Save<span class="tip"
-              >Save .cns project</span
-            >
+            <i class="icon saveChrIcon"></i>Save
           </li>
         </ol>
       </details>
 
       <details id="animations" class="menu">
         <summary>Animations</summary>
-        <ol>
-          <li>Untitled</li>
-          <li>Idle</li>
-          <li>Run</li>
-        </ol>
+        <ol></ol>
       </details>
     </header>
+    
+    <ol id="menu">
+      <li data-menu-item="loadChr">Open</li>
+      <li data-menu-item="saveChr">Save</li>
+    </ol>
+
+    <ol id="animations"></ol>
+
+    <ol id="palettes"></ol>
 
     <div id="editor">
       <div id="editTileGrid"></div>
     </div>
 
     <!-- Tool widgets -->
-    <div id="animations">
-      <div id="tileset"></div>
-    </div>
-
     <div id="tools" class="widget open">
       <button type="button">
         <i class="icon moveIcon"></i><span class="tip">Move tool</span>
@@ -82,8 +82,19 @@
     </div>
 
     <!-- Templates -->
-    <template id="tileTemplate">
-      <div class="tile"><canvas></canvas></div>
+    <template id="animationItemTemplate">
+      <li class="animationItem">
+        <div class="name"></div>
+        <div class="frameCount"></div>
+        <div class="size"></div>
+      </li>
+    </template>
+
+    <template id="paletteItemTemplate">
+      <li class="paletteItem">
+        <div class="name"></div>
+        <div class="size"></div>
+      </li>
     </template>
 
     <template id="editTileTemplate">
@@ -104,4 +115,5 @@
     <input type="file" style="display: none" />
     <script type="module" src="src/main.js"></script>
   </body>
+
 </html>

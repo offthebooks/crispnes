@@ -1,6 +1,6 @@
 import { palToHex } from './colors.js'
 import { tileEditorGridSize } from './stores/editStore.js'
-import { Store } from './stores/store.js'
+import { Store } from './stores/rootStore.js'
 import { tileSideLengthPixels } from './types/tile.js'
 import { tilesPerTileset } from './types/tileset.js'
 import { elementFromTemplate } from './utils.js'

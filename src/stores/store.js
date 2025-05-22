@@ -1,7 +1,7 @@
 import { EditStore } from './editStore.js'
 import { FileStore } from './fileStore.js'
 import { PaletteStore } from './paletteStore.js'
-import { TileStore } from './tileStore.js'
+import { AnimationStore } from './animationStore.js'
 
 export class Store {
   static #context = {}
@@ -16,7 +16,7 @@ export class Store {
       editStore: new EditStore(),
       fileStore: new FileStore(),
       paletteStore: new PaletteStore(),
-      tileStore: new TileStore()
+      animationStore: new AnimationStore()
     })
   }
 

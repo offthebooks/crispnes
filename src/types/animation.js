@@ -12,6 +12,7 @@ export class Animation {
     this.#width = Math.floor(clamp(width, maxSideLength))
     this.#height = Math.floor(clamp(height, maxSideLength))
     this.#frames = []
+    this.add()
   }
 
   get name() {
