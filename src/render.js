@@ -1,8 +1,6 @@
 import { palToHex } from './colors.js'
 import { tileEditorGridSize } from './stores/editStore.js'
-import { Store } from './stores/rootStore.js'
-import { tileSideLengthPixels } from './types/tile.js'
-import { tilesPerTileset } from './types/tileset.js'
+import { Store } from './stores/store.js'
 import { elementFromTemplate } from './utils.js'
 
 const editTileGridEl = document.getElementById('editTileGrid')
@@ -18,22 +16,16 @@ export class Render {
   static init() {
     this.#dirty = true
 
-    // Populate tileset canvases
-    for (let i = 0; i < tilesPerTileset; ++i) {
-      const el = elementFromTemplate(tileTemplateEl)
-      const canvas = el.querySelector('canvas')
-      canvas.width = tileSideLengthPixels
-      canvas.height = tileSideLengthPixels
-      tilesetEl.append(el)
-    }
+    const {
+      animationStore: { animationItems },
+      paletteStore: { paletteItems }
+    } = Store.context
 
-    for (let i = 0; i < tileEditorGridSize; ++i) {
-      const el = elementFromTemplate(editTileTemplateEl)
-      const canvas = el.querySelector('canvas')
-      canvas.width = tileSideLengthPixels
-      canvas.height = tileSideLengthPixels
-      editTileGridEl.append(el)
-    }
+    // Populate items lists
+    const paletteItemsList = document.getElementById('paletteItems')
+    paletteItems.forEach((li) => paletteItemsList?.appendChild(li))
+    const animationItemsList = document.getElementById('animationItems')
+    animationItems.forEach((li) => animationItemsList?.appendChild(li))
 
     // Set colors
     colorTableEls.forEach((colEl, colIndex) => {
@@ -54,13 +46,12 @@ export class Render {
 
   static #render() {
     const {
-      paletteStore: { palette },
-      tileStore: { tileset }
+      paletteStore: { palette }
     } = Store.context
 
-    this.#renderPalettes()
-    this.#renderTiles({ palette, tileset })
-    this.#renderEditTiles({ palette, tileset })
+    // this.#renderPalettes()
+    // this.#renderTiles({ palette, tileset })
+    // this.#renderEditTiles({ palette, tileset })
     this.#dirty = false
   }
 

@@ -40,14 +40,14 @@ export class Input {
       }
     })
 
-    tilesets.addEventListener('click', ({ target }) => {
-      const tileEl = target.closest('.tile')
-      if (tileEl) {
-        editStore.addTile(elementIndex(tileEl))
-      } else {
-        tilesets.classList.toggle('open')
-      }
-    })
+    // tilesets.addEventListener('click', ({ target }) => {
+    //   const tileEl = target.closest('.tile')
+    //   if (tileEl) {
+    //     editStore.addTile(elementIndex(tileEl))
+    //   } else {
+    //     tilesets.classList.toggle('open')
+    //   }
+    // })
 
     const editDetails = ({ target, offsetX, offsetY }) => {
       const editTile = target.closest('.editTile')

@@ -20,7 +20,7 @@
 
       <details id="menu" class="menu">
         <summary>Menu</summary>
-        
+
         <ol>
           <li data-menu-item="loadChr">
             <i class="icon loadChrIcon"></i>Open
@@ -36,19 +36,35 @@
         <ol></ol>
       </details>
     </header>
-    
+
+    <div id="editor">
+      <div id="editTileGrid"></div>
+    </div>
+
     <ol id="menu">
       <li data-menu-item="loadChr">Open</li>
       <li data-menu-item="saveChr">Save</li>
     </ol>
 
-    <ol id="animations"></ol>
+    <ol id="animationItems">
+      <template>
+        <li>
+          <div class="name"></div>
+          <div class="frameCount"></div>
+          <div class="size"></div>
+        </li>
+      </template>
+    </ol>
 
-    <ol id="palettes"></ol>
+    <ol id="paletteItems">
+      <template>
+        <li>
+          <div class="name"></div>
+          <div class="size"></div>
+        </li>
+      </template>
+    </ol>
 
-    <div id="editor">
-      <div id="editTileGrid"></div>
-    </div>
 
     <!-- Tool widgets -->
     <div id="tools" class="widget open">
@@ -82,20 +98,9 @@
     </div>
 
     <!-- Templates -->
-    <template id="animationItemTemplate">
-      <li class="animationItem">
-        <div class="name"></div>
-        <div class="frameCount"></div>
-        <div class="size"></div>
-      </li>
-    </template>
 
-    <template id="paletteItemTemplate">
-      <li class="paletteItem">
-        <div class="name"></div>
-        <div class="size"></div>
-      </li>
-    </template>
+
+
 
     <template id="editTileTemplate">
       <div class="editTile">

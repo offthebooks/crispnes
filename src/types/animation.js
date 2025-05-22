@@ -1,11 +1,14 @@
 import { Sprite, maxSideLength } from './sprite.js'
-import { clamp } from '../utils.js'
+import { clamp, elementFromTemplate } from '../utils.js'
 
 export class Animation {
+  static itemTemplate = document.querySelector('#animationItems template')
+
   #name
   #frames
   #width
   #height
+  #item
 
   constructor(name, width, height) {
     this.#name = name || 'Untitled'
@@ -21,6 +24,11 @@ export class Animation {
 
   set name(val) {
     this.#name = val
+    this.#render()
+  }
+
+  get item() {
+    return this.#item ?? this.#render()
   }
 
   add() {
@@ -33,5 +41,15 @@ export class Animation {
 
   sprite(index) {
     return this.#frames[index]
+  }
+
+  #render() {
+    this.#item ??= elementFromTemplate(Animation.itemTemplate)
+    this.#item.querySelector('.name').innerText = this.#name
+    this.#item.querySelector('.frameCount').innerText =
+      `${this.#frames.length} frames`
+    this.#item.querySelector('.size').innerText =
+      `${this.#width} x ${this.#height} pixels`
+    return this.#item
   }
 }
