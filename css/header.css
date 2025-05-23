@@ -13,24 +13,6 @@ header {
     color: var(--col-background);
   }
 
-  #menu {
-    &[open] summary {
-      background-color: var(--col-highlight);
-    }
-
-    summary {
-      width: 2rem;
-      height: 2rem;
-      margin: calc((var(--header-height) - 2rem) / 2);
-      font-size: 0;
-      background: var(--col-background-tint-1) no-repeat center / 1rem
-        url('../img/menu8x8.png');
-      border-radius: var(--button-radius);
-      image-rendering: pixelated;
-      cursor: pointer;
-    }
-  }
-
   #animations summary {
     line-height: 100%;
     text-align: center;

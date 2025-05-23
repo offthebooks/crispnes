@@ -27,6 +27,22 @@ export class Input {
       }
     })
 
+    const exclusiveMenuToggle = ({ target }) => {
+      const alreadyActive = target.parentNode.classList.contains('active')
+
+      document.querySelector('#menu').classList.remove('active')
+      document.querySelector('#animations').classList.remove('active')
+
+      if (!alreadyActive) target.parentNode.classList.add('active')
+    }
+
+    document
+      .querySelector('#menu button')
+      .addEventListener('click', exclusiveMenuToggle)
+    document
+      .querySelector('#animationSelect')
+      .addEventListener('click', exclusiveMenuToggle)
+
     palettes.addEventListener('click', ({ target }) => {
       if (target.closest('#colorTable i')) {
         const ppuColor = elementIndex(target)

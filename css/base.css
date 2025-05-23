@@ -7,6 +7,7 @@
   -webkit-user-select: none;
   cursor: default;
   touch-action: pinch-zoom;
+  image-rendering: pixelated;
 }
 
 html,
@@ -17,7 +18,6 @@ body {
   margin: 0;
   font-family: system-ui, Helvetica, sans-serif;
   background-color: var(--col-background-tint-1);
-  image-rendering: pixelated;
 }
 
 button {

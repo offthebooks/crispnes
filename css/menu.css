@@ -1,19 +1,41 @@
 @import url('./vars.css');
 
-details.menu {
-  position: absolute;
-  overflow: visible;
-  top: var(--header-height);
-  width: 100%;
-  z-index: 2;
+#menu {
+  position: fixed;
+  top: 0;
+  left: 0;
 
-  ol {
-    overflow: hidden;
+  button {
+    width: 2rem;
+    height: 2rem;
+    margin: calc((var(--header-height) - 2rem) / 2);
+    font-size: 0;
+    background: var(--col-background-tint-1) no-repeat center / 1rem
+      url('../img/menu8x8.png');
+    border-radius: var(--button-radius);
+    cursor: pointer;
+  }
+
+  &.active {
+    button {
+      background-color: var(--col-highlight);
+    }
+
+    #menuItems {
+      display: block;
+    }
+  }
+
+  #menuItems {
+    display: none;
+    overflow: scroll;
     list-style: none;
     margin: 0;
     padding: 0;
-    background-color: var(--col-background-tint-1);
+    background-color: var(--col-background);
     box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+    border-radius: var(--button-radius);
+    border: none;
 
     li {
       padding: 0.5rem;
@@ -26,51 +48,56 @@ details.menu {
       }
     }
   }
-
-  summary {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: var(--header-height);
-    cursor: pointer;
-  }
 }
-/*
-.menu {
+
+#animations {
   position: fixed;
-  background-color: var(--col-background-tint-2);
-  padding: var(--body-default-margin);
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
 
-  inset: auto 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+  &.active {
+    #animationSelect {
+      display: none;
+    }
 
-  &.open button {
-    display: block;
-  }
-
-  button {
-    display: none;
-    padding: 0.5rem;
-    background-color: var(--col-background);
-    border-radius: var(--button-radius);
-    border: none;
-    cursor: pointer;
-
-    &.active {
+    #animationItems,
+    #addAnimation {
       display: block;
     }
+  }
 
-    &:hover {
-      background-color: var(--col-highlight);
-    }
+  #animationSelect {
+    position: absolute;
+    height: 2rem;
+    min-width: 50vh;
+    transform: translateX(calc(-50% + 1rem)) rotate(-90deg);
+  }
 
-    i.icon {
-      margin: 0;
-      height: 1rem;
-      aspect-ratio: 1;
+  #addAnimation {
+    display: none;
+  }
+
+  #animationItems {
+    display: none;
+    overflow: scroll;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: var(--col-background);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+    border-radius: var(--button-radius);
+    border: none;
+
+    li {
+      padding: 0.5rem;
+      i.icon {
+        margin-right: 1em;
+      }
+      &:hover {
+        background-color: var(--col-highlight);
+        cursor: pointer;
+      }
     }
   }
-} */
+}

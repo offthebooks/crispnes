@@ -27,11 +27,11 @@ i.icon {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOUlEQVR42mNABklJSf8Z0ACGAqyKLqf+/w/EYMnVq1eDaVySMIxQhCaJoQisAGo/fgVQRditwOcTALFMZtxVC6r7AAAAAElFTkSuQmCC');
   }
 
-  &.loadChrIcon {
+  &.loadIcon {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOUlEQVR42mOYG8LwH4qxA5AkAsP4+BX9/zUPwYYrwqMA04Tq5yBFYIwwASIAksShACaBMAWMCSsAAGQGYidUGOWbAAAAAElFTkSuQmCC');
   }
 
-  &.saveChrIcon {
+  &.saveIcon {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAO0lEQVR42mNAB3NDGP4jY5AYXkVwTvVzEIawcSjANBpMw3T+mgeTBPMRdiMUQDCUj1AAkUDohvBJUAAAJptkuJgTuN8AAAAASUVORK5CYII=');
   }
 

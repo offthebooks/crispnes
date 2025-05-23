@@ -16,45 +16,38 @@
 
   <body>
     <header>
-      <h1 ><i class="icon drawIcon"></i>CrispNES &alpha;</h1>
-
-      <details id="menu" class="menu">
-        <summary>Menu</summary>
-
-        <ol>
-          <li data-menu-item="loadChr">
-            <i class="icon loadChrIcon"></i>Open
-          </li>
-          <li data-menu-item="saveChr">
-            <i class="icon saveChrIcon"></i>Save
-          </li>
-        </ol>
-      </details>
-
-      <details id="animations" class="menu">
-        <summary>Animations</summary>
-        <ol></ol>
-      </details>
+      <h1><i class="icon drawIcon"></i>CrispNES &alpha;</h1>
     </header>
 
     <div id="editor">
       <div id="editTileGrid"></div>
     </div>
 
-    <ol id="menu">
-      <li data-menu-item="loadChr">Open</li>
-      <li data-menu-item="saveChr">Save</li>
-    </ol>
-
-    <ol id="animationItems">
-      <template>
-        <li>
-          <div class="name"></div>
-          <div class="frameCount"></div>
-          <div class="size"></div>
+    <div id="menu">
+      <button>Menu</button>
+      <ol id="menuItems">
+        <li data-menu-item="loadChr">
+          <i class="icon loadIcon"></i>Open Project
         </li>
-      </template>
-    </ol>
+        <li data-menu-item="saveChr">
+          <i class="icon saveIcon"></i>Save Project
+        </li>
+      </ol>
+    </div>
+
+    <div id="animations">
+      <button id="animationSelect">Animation</button>
+      <ol id="animationItems">
+        <template>
+          <li>
+            <div class="name"></div>
+            <div class="frameCount"></div>
+            <div class="size"></div>
+          </li>
+        </template>
+      </ol>
+      <button id="addAnimation">Add Animation</button>
+    </div>
 
     <ol id="paletteItems">
       <template>
@@ -64,7 +57,6 @@
         </li>
       </template>
     </ol>
-
 
     <!-- Tool widgets -->
     <div id="tools" class="widget open">
@@ -99,9 +91,6 @@
 
     <!-- Templates -->
 
-
-
-
     <template id="editTileTemplate">
       <div class="editTile">
         <canvas></canvas>
@@ -120,5 +109,4 @@
     <input type="file" style="display: none" />
     <script type="module" src="src/main.js"></script>
   </body>
-
 </html>
