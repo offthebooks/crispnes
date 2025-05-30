@@ -5,7 +5,6 @@ import { elementIndex } from './utils.js'
 export class Input {
   static init() {
     const { fileStore, tileStore, paletteStore, editStore } = Store.context
-    const menu = document.getElementById('menu')
     const editTileGrid = document.getElementById('editTileGrid')
     const palettes = document.getElementById('palettes')
     const tilesets = document.getElementById('tilesets')
@@ -27,34 +26,18 @@ export class Input {
       }
     })
 
-    const exclusiveMenuToggle = ({ target }) => {
-      const alreadyActive = target.parentNode.classList.contains('active')
-
-      document.querySelector('#menu').classList.remove('active')
-      document.querySelector('#animations').classList.remove('active')
-
-      if (!alreadyActive) target.parentNode.classList.add('active')
-    }
-
-    document
-      .querySelector('#menu button')
-      .addEventListener('click', exclusiveMenuToggle)
-    document
-      .querySelector('#animationSelect')
-      .addEventListener('click', exclusiveMenuToggle)
-
-    palettes.addEventListener('click', ({ target }) => {
-      if (target.closest('#colorTable i')) {
-        const ppuColor = elementIndex(target)
-        paletteStore.assignColor(ppuColor)
-      } else if (target.closest('.palette i')) {
-        const colorIndex = elementIndex(target)
-        const paletteIndex = elementIndex(target.parentNode)
-        paletteStore.selectPaletteColor(paletteIndex, colorIndex)
-      } else {
-        palettes.classList.toggle('open')
-      }
-    })
+    // palettes.addEventListener('click', ({ target }) => {
+    //   if (target.closest('#colorTable i')) {
+    //     const ppuColor = elementIndex(target)
+    //     paletteStore.assignColor(ppuColor)
+    //   } else if (target.closest('.palette i')) {
+    //     const colorIndex = elementIndex(target)
+    //     const paletteIndex = elementIndex(target.parentNode)
+    //     paletteStore.selectPaletteColor(paletteIndex, colorIndex)
+    //   } else {
+    //     palettes.classList.toggle('open')
+    //   }
+    // })
 
     // tilesets.addEventListener('click', ({ target }) => {
     //   const tileEl = target.closest('.tile')
@@ -98,15 +81,19 @@ export class Input {
     document.addEventListener('pointerup', () => editStore.finishEdit())
 
     tools.addEventListener('click', ({ target }) => {
-      const toolEl = target.closest('button')?.querySelector('i')
-      if (toolEl?.classList.contains('drawIcon')) {
-        editStore.tool = Tools.Draw
-      } else if (toolEl?.classList.contains('fillIcon')) {
-        editStore.tool = Tools.Fill
-      } else if (toolEl?.classList.contains('moveIcon')) {
-        editStore.tool = Tools.Move
+      if (tools.classList.contains('open')) {
+        const toolEl = target.closest('button')?.querySelector('i')
+        if (toolEl?.classList.contains('drawIcon')) {
+          editStore.tool = Tools.Draw
+        } else if (toolEl?.classList.contains('fillIcon')) {
+          editStore.tool = Tools.Fill
+        } else if (toolEl?.classList.contains('moveIcon')) {
+          editStore.tool = Tools.Move
+        } else {
+          tools.classList.toggle('open')
+        }
       } else {
-        tools.classList.toggle('open')
+        tools.classList.add('open')
       }
     })
   }

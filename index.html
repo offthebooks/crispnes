@@ -14,40 +14,34 @@
     <link href="css/main.css" rel="stylesheet" />
   </head>
 
-  <body>
+  <body class="editor">
     <header>
-      <h1><i class="icon drawIcon"></i>CrispNES &alpha;</h1>
+      <h1 class="editor"><i class="draw icon"></i>CrispNES &alpha;</h1>
+      <h1 class="animation">Animations</h1>
+      <h1 class="palette">Palettes</h1>
     </header>
+
+    <details id="menu">
+      <summary><i class="menu icon"></i>Menu</summary>
+      <ol id="menuItems">
+        <li data-menu-item="load"><i class="icon loadIcon"></i>Open Project</li>
+        <li data-menu-item="save"><i class="icon saveIcon"></i>Save Project</li>
+      </ol>
+    </details>
 
     <div id="editor">
       <div id="editTileGrid"></div>
     </div>
 
-    <div id="menu">
-      <button>Menu</button>
-      <ol id="menuItems">
-        <li data-menu-item="loadChr">
-          <i class="icon loadIcon"></i>Open Project
+    <ol id="animationItems">
+      <template>
+        <li>
+          <div class="name"></div>
+          <div class="frameCount"></div>
+          <div class="size"></div>
         </li>
-        <li data-menu-item="saveChr">
-          <i class="icon saveIcon"></i>Save Project
-        </li>
-      </ol>
-    </div>
-
-    <div id="animations">
-      <button id="animationSelect">Animation</button>
-      <ol id="animationItems">
-        <template>
-          <li>
-            <div class="name"></div>
-            <div class="frameCount"></div>
-            <div class="size"></div>
-          </li>
-        </template>
-      </ol>
-      <button id="addAnimation">Add Animation</button>
-    </div>
+      </template>
+    </ol>
 
     <ol id="paletteItems">
       <template>
@@ -58,52 +52,36 @@
       </template>
     </ol>
 
-    <!-- Tool widgets -->
-    <div id="tools" class="widget open">
-      <button type="button">
-        <i class="icon moveIcon"></i><span class="tip">Move tool</span>
-      </button>
-      <button type="button">
-        <i class="icon drawIcon"></i><span class="tip">Draw tool</span>
-      </button>
-      <button type="button">
-        <i class="icon fillIcon"></i><span class="tip">Fill tool</span>
-      </button>
+    <div id="palette">
+      <ol id="paletteColors"></ol>
     </div>
 
-    <div id="palettes" class="widget open">
-      <!-- Four palettes to dynamically map to current background or sprite set -->
-      <div class="palette active"><i></i><i></i><i></i><i></i></div>
-      <div class="palette"><i></i><i></i><i></i><i></i></div>
-      <div class="palette"><i></i><i></i><i></i><i></i></div>
-      <div class="palette"><i></i><i></i><i></i><i></i></div>
-      <div id="colorTable">
-        <!-- 64 elements to map to all possible ppu color values -->
-        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i>
-      </div>
+    <div id="tools">
+      <button data-tool="animation">
+        <i class="animate icon"></i><span class="tip">Animations</span>
+      </button>
+      <button data-tool="palette">
+        <i class="palette icon"></i><span class="tip">Palettes</span>
+      </button>
+      <button data-tool="zoomIn">
+        <i class="zoomIn icon"></i><span class="tip">Zoom in</span>
+      </button>
+      <button data-tool="zoomOut">
+        <i class="zoomOut icon"></i><span class="tip">Zoom in</span>
+      </button>
+      <button data-tool="move">
+        <i class="move icon"></i><span class="tip">Move tool</span>
+      </button>
+      <button data-tool="draw" class="active">
+        <i class="draw icon"></i><span class="tip">Draw tool</span>
+      </button>
+      <button data-tool="fill">
+        <i class="fill icon"></i><span class="tip">Fill tool</span>
+      </button>
+      <button data-tool="collapse">
+        <i class="collapse icon"></i><span class="tip">Collapse tools</span>
+      </button>
     </div>
-
-    <!-- Templates -->
-
-    <template id="editTileTemplate">
-      <div class="editTile">
-        <canvas></canvas>
-        <div class="tileTools">
-          <button type="button">
-            <i class="icon unlinkIcon"></i><span class="tip">Unlink tile</span>
-          </button>
-          <button type="button">
-            <i class="icon clearIcon"></i><span class="tip">Clear tile</span>
-          </button>
-        </div>
-      </div>
-    </template>
 
     <a id="saveLink" style="display: none"></a>
     <input type="file" style="display: none" />
