@@ -1,4 +1,4 @@
-import { Tools } from './enums.js'
+import { Tools } from './consts.js'
 import { Store } from './stores/store.js'
 import { elementIndex } from './utils.js'
 

@@ -1,4 +1,4 @@
-import { Bank, EditMode, Tools } from '../enums.js'
+import { Tools } from '../consts.js'
 import { Render } from '../render.js'
 import {
   dataFromStorageWithKeys,
@@ -11,10 +11,10 @@ const tileEditorSide = 4
 export const tileEditorGridSize = tileEditorSide * tileEditorSide
 
 const defaultData = Object.seal({
-  selectedMode: EditMode.BackgroundTiles,
+  currentTool: Tools.Draw
 
-  spriteEditTiles: new Array(tileEditorGridSize).fill(-1),
-  backgroundEditTiles: new Array(tileEditorGridSize).fill(-1)
+  // spriteEditTiles: new Array(tileEditorGridSize).fill(-1),
+  // backgroundEditTiles: new Array(tileEditorGridSize).fill(-1)
 })
 
 export class EditStore {
@@ -43,9 +43,9 @@ export class EditStore {
   }
 
   get #editTiles() {
-    return this.bank === Bank.Background
-      ? this.#data.backgroundEditTiles
-      : this.#data.spriteEditTiles
+    // return this.bank === Bank.Background
+    //   ? this.#data.backgroundEditTiles
+    //   : this.#data.spriteEditTiles
   }
 
   tileIndexForEditTile(editTile) {

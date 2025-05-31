@@ -14,6 +14,9 @@
 
   --header-height: 3.75rem;
   --body-default-margin: 1rem;
-  --button-radius: 0.25rem;
+  --button-radius: 0.35rem;
   --interface-radius: 1rem;
+  --tool-margin: 0.75rem;
+  --tool-gap: 0.5rem;
+  --tool-duration: 100ms;
 }
