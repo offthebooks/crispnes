@@ -45,10 +45,10 @@ export class Animation {
 
   #render() {
     this.#item ??= elementFromTemplate(Animation.itemTemplate)
-    this.#item.querySelector('.name').innerText = this.#name
-    this.#item.querySelector('.frameCount').innerText =
+    this.#item.querySelector('.name').textContent = this.#name
+    this.#item.querySelector('.frameCount').textContent =
       `${this.#frames.length} frames`
-    this.#item.querySelector('.size').innerText =
+    this.#item.querySelector('.size').textContent =
       `${this.#width} x ${this.#height} pixels`
     return this.#item
   }

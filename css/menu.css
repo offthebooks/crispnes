@@ -29,9 +29,6 @@
   #menuItems {
     display: none;
     overflow: scroll;
-    list-style: none;
-    margin: 0;
-    padding: 0;
     background-color: var(--col-background);
     box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
     border-radius: var(--button-radius);

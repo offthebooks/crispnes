@@ -12,7 +12,18 @@ export class Palette {
 
   constructor(name) {
     this.#name = name || 'Untitled'
-    this.#colors = [Color.Transparent, Color.Black, Color.White]
+    this.#colors = [
+      Color.Transparent,
+      Color.Black,
+      Color.White,
+      Color.Red,
+      Color.Orange,
+      Color.Yellow,
+      Color.Green,
+      Color.Cyan,
+      Color.Blue,
+      Color.Purple
+    ]
   }
 
   get name() {
@@ -32,6 +43,15 @@ export class Palette {
     return this.#colors[index]
   }
 
+  colorListItems() {
+    return this.#colors.slice(1).map((color, index) => {
+      const li = document.createElement('li')
+      li.style.backgroundColor = color.hex
+      li.setAttribute('data-color-index', index + 1)
+      return li
+    })
+  }
+
   add(color) {
     if (this.#colors.length < maxPaletteSize) {
       this.#colors.push(color)
@@ -45,8 +65,8 @@ export class Palette {
 
   #render() {
     this.#item ??= elementFromTemplate(Palette.itemTemplate)
-    this.#item.querySelector('.name').innerText = this.#name
-    this.#item.querySelector('.size').innerText =
+    this.#item.querySelector('.name').textContent = this.#name
+    this.#item.querySelector('.size').textContent =
       `${this.#colors.length} colors`
     return this.#item
   }

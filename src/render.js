@@ -22,10 +22,10 @@ export class Render {
     } = Store.context
 
     // Populate items lists
-    const paletteItemsList = document.getElementById('paletteItems')
-    paletteItems.forEach((li) => paletteItemsList?.appendChild(li))
     const animationItemsList = document.getElementById('animationItems')
-    animationItems.forEach((li) => animationItemsList?.appendChild(li))
+    animationItemsList.replaceChildren(...animationItems)
+
+    // Populate current palette
 
     // Set colors
     colorTableEls.forEach((colEl, colIndex) => {

@@ -1,54 +1,55 @@
+import { hexStringForByte } from '../utils.js'
+
 export class Color {
-  #components
   #rgba
 
   constructor(red = 0, green, blue, alpha) {
-    this.#components = new Uint8Array(4)
-    this.#rgba = new Uint32Array(this.#components.buffer)
+    this.#rgba = new Uint8Array(4)
     this.r = red
     this.g = green ?? red
     this.b = blue ?? red
     this.a = alpha ?? 255
   }
 
-  get rgba() {
-    return this.#rgba[0]
+  get array() {
+    return Object.freeze(Array.from(this.#rgba))
   }
 
-  set rgba(value) {
-    this.#rgba = value
+  get hex() {
+    const hexBytes = this.array.map(hexStringForByte)
+    return ['#', ...hexBytes].join('')
   }
 
   get r() {
-    return this.#components[0]
+    return this.#rgba[0]
   }
 
   get g() {
-    return this.#components[1]
+    return this.#rgba[1]
   }
 
   get b() {
-    return this.#components[2]
+    return this.#rgba[2]
   }
 
   get a() {
-    return this.#components[3]
+    return this.#rgba[3]
   }
 
   set r(val) {
-    this.#components[0] = val
+    this.#rgba[0] = val
   }
 
   set g(val) {
-    this.#components[1] = val
+    this.#rgba[1] = val
   }
 
   set b(val) {
-    this.#components[2] = val
+    this.#rgba[2] = val
   }
 
   set a(val) {
-    this.#components[3] = val
+    this.#rgba[3] = val
   }
 
   // Named Colors

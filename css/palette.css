@@ -1,0 +1,31 @@
+#palette {
+  position: fixed;
+  background-color: var(--col-background-tint-2);
+  border-radius: var(--interface-radius) var(--interface-radius) 0 0;
+  border: none;
+  padding-block: var(--tool-margin) 0;
+  padding-inline: var(--body-default-margin);
+
+  inset: auto 0 0 0;
+
+  #paletteColors {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    margin-right: 3rem;
+    padding-bottom: var(--tool-margin);
+    overflow-x: auto;
+    scrollbar-width: thin;
+
+    li {
+      padding: 0.5rem;
+      margin: 0;
+      height: 1.5rem;
+      aspect-ratio: 1;
+      background-color: var(--col-background);
+      border-radius: var(--button-radius);
+      border: none;
+      cursor: pointer;
+    }
+  }
+}

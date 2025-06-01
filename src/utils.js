@@ -2,6 +2,10 @@ export const byteString = (byte) => {
   return (256 + byte).toString(2).substring(1)
 }
 
+export const hexStringForByte = (byte) => {
+  return (256 + byte).toString(16).substring(1)
+}
+
 export const stringToArray = (stringOrArrayOfStrings) => {
   return typeof stringOrArrayOfStrings === 'string'
     ? [stringOrArrayOfStrings]

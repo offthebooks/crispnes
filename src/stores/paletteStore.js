@@ -4,6 +4,9 @@ import {
   dataStoreObjectValuesForKeys
 } from '../utils.js'
 
+const paletteItemsEl = document.getElementById('paletteItems')
+const paletteColorsEl = document.getElementById('paletteColors')
+
 const defaultData = Object.seal({
   selectedColor: 1,
   selectedPalette: 0,
@@ -16,6 +19,8 @@ export class PaletteStore {
 
   constructor() {
     this.#data = { ...defaultData, ...this.#deserialize() }
+    paletteItemsEl.replaceChildren(...this.paletteListItems)
+    paletteColorsEl.replaceChildren(...this.paletteColorItems)
   }
 
   // Accessors
@@ -39,8 +44,12 @@ export class PaletteStore {
     return this.palette[this.colorIndex]
   }
 
-  get paletteItems() {
+  get paletteListItems() {
     return this.palettes.map((p) => p.item)
+  }
+
+  get paletteColorItems() {
+    return this.palette.colorListItems()
   }
 
   // State persistence
