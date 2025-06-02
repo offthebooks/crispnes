@@ -38,6 +38,23 @@ button {
   }
 }
 
+/* Selected items */
+#tools button,
+#paletteColors li {
+  position: relative;
+
+  &.active::before {
+    border-radius: calc(var(--button-radius) + 2px);
+    position: absolute;
+    content: ' ';
+    width: 100%;
+    height: 100%;
+    border: solid 2px var(--col-selection);
+    top: -2px;
+    left: -2px;
+  }
+}
+
 ol {
   list-style: none;
   margin: 0;

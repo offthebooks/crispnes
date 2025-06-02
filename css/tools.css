@@ -14,6 +14,7 @@
   }
 
   button {
+    position: relative;
     padding: 0.5rem;
     background-color: var(--col-background);
     border-radius: var(--button-radius);

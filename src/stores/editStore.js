@@ -1,9 +1,12 @@
-import { Tools } from '../consts.js'
+import { DrawTools, Tools } from '../consts.js'
 import { Render } from '../render.js'
 import {
   dataFromStorageWithKeys,
   dataStoreObjectValuesForKeys,
-  diffObjectValues
+  diffObjectValues,
+  domQueryOne,
+  forElements,
+  removeClass
 } from '../utils.js'
 import { Store } from './store.js'
 
@@ -20,11 +23,9 @@ const defaultData = Object.seal({
 export class EditStore {
   #data
   #drawOperation
-  #currentTool
 
   constructor() {
     this.#data = { ...defaultData, ...this.#deserialize() }
-    this.#currentTool = Tools.Draw
   }
 
   // Accessors
@@ -92,7 +93,7 @@ export class EditStore {
     const tile = this.tileForEditTile(editTileIndex)
     const { colorIndex: paletteColor } = Store.context.paletteStore
     const { tileStore } = Store.context
-    switch (this.#currentTool) {
+    switch (this.tool) {
       case Tools.Draw:
         const color = tile.toggle(x, y, paletteColor)
         this.#drawOperation = { x, y, color }
@@ -124,12 +125,16 @@ export class EditStore {
   }
 
   get tool() {
-    return this.#currentTool
+    return this.#data.currentTool
   }
 
   set tool(tool) {
-    if (tool === this.#currentTool) return
-    this.#currentTool = tool
+    if (tool === this.tool || !DrawTools.has(tool)) return
+
+    this.#data.currentTool = tool
+    forElements('#tools .active', removeClass('active'))
+    domQueryOne(`[data-tool="${tool}"]`).classList.add('active')
+
     Render.setDirty()
   }
 

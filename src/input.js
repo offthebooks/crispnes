@@ -1,4 +1,4 @@
-import { Tools } from './consts.js'
+import { DrawTools, Tools } from './consts.js'
 import { Store } from './stores/store.js'
 import { elementIndex } from './utils.js'
 
@@ -10,19 +10,54 @@ export class Input {
     const tilesets = document.getElementById('tilesets')
     const tools = document.getElementById('tools')
 
-    menu.addEventListener('click', ({ target }) => {
-      const menuItem = target.closest('[data-menu-item]')
+    // menu.addEventListener('click', ({ target }) => {
+    //   const menuItem = target.closest('[data-menu-item]')
 
-      switch (menuItem?.getAttribute('data-menu-item')) {
-        case 'loadChr':
-          fileStore.openFile((chrBytes) => {
-            tileStore.assignTileset(chrBytes)
-          })
-          break
-        case 'saveChr':
-          fileStore.saveFile('patterns.chr', tileStore.tilesetBytes)
-        default:
-          break
+    //   switch (menuItem?.getAttribute('data-menu-item')) {
+    //     case 'loadChr':
+    //       fileStore.openFile((chrBytes) => {
+    //         tileStore.assignTileset(chrBytes)
+    //       })
+    //       break
+    //     case 'saveChr':
+    //       fileStore.saveFile('patterns.chr', tileStore.tilesetBytes)
+    //     default:
+    //       break
+    //   }
+    // })
+
+    tools.addEventListener('click', ({ target }) => {
+      if (!tools.classList.contains('open')) {
+        tools.classList.add('open')
+        return
+      }
+
+      const toolEl = target.closest('[data-tool]')
+      const tool = toolEl.getAttribute('data-tool')
+
+      if (DrawTools.has(tool)) {
+        editStore.tool = tool
+        tools.classList.remove('open')
+      } else {
+        switch (tool) {
+          case Tools.Animations:
+            // Show Animations list modal
+            break
+          case Tools.Palettes:
+            // Show Palettes list modal
+            break
+          case Tools.ZoomIn:
+            // Zoom editor view
+            break
+          case Tools.ZoomOut:
+            // Zoom editor view
+            break
+          case Tools.Collapse:
+            tools.classList.remove('open')
+            break
+          default:
+            break
+        }
       }
     })
 
@@ -79,22 +114,5 @@ export class Input {
       if (editDetails) editStore.continueEdit(info)
     })
     document.addEventListener('pointerup', () => editStore.finishEdit())
-
-    tools.addEventListener('click', ({ target }) => {
-      if (tools.classList.contains('open')) {
-        const toolEl = target.closest('button')?.querySelector('i')
-        if (toolEl?.classList.contains('drawIcon')) {
-          editStore.tool = Tools.Draw
-        } else if (toolEl?.classList.contains('fillIcon')) {
-          editStore.tool = Tools.Fill
-        } else if (toolEl?.classList.contains('moveIcon')) {
-          editStore.tool = Tools.Move
-        } else {
-          tools.classList.toggle('open')
-        }
-      } else {
-        tools.classList.add('open')
-      }
-    })
   }
 }

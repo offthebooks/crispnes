@@ -49,7 +49,7 @@ export class PaletteStore {
   }
 
   get paletteColorItems() {
-    return this.palette.colorListItems()
+    return this.palette.colorListItems(this.colorIndex)
   }
 
   // State persistence

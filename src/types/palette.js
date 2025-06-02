@@ -43,11 +43,15 @@ export class Palette {
     return this.#colors[index]
   }
 
-  colorListItems() {
+  colorListItems(selected) {
     return this.#colors.slice(1).map((color, index) => {
       const li = document.createElement('li')
       li.style.backgroundColor = color.hex
-      li.setAttribute('data-color-index', index + 1)
+      const key = index + 1
+      if (selected === key) {
+        li.classList.add('active')
+      }
+      li.setAttribute('data-color-index', key)
       return li
     })
   }
