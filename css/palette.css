@@ -3,7 +3,8 @@
   background-color: var(--col-background-tint-2);
   border-radius: var(--interface-radius) var(--interface-radius) 0 0;
   border: none;
-  padding-inline: var(--body-default-margin);
+  padding-inline: var(--body-default-margin)
+    calc(var(--body-default-margin) + 3rem);
 
   inset: auto 0 0 0;
 
@@ -11,10 +12,11 @@
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
-    padding-inline: 2px 3rem;
+    padding-inline: 2px;
     padding-block: var(--tool-margin);
     overflow-x: auto;
     scrollbar-width: thin;
+    scrollbar-gutter: stable;
 
     li {
       padding: 0.5rem;

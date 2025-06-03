@@ -23,7 +23,7 @@ export class AnimationStore {
   }
 
   get animationItems() {
-    return this.animations.map((a) => a.item)
+    return this.#data.animations.map((a) => a.item)
   }
 
   // Mutations

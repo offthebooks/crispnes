@@ -23,6 +23,7 @@
 
     /* Animation */
     transition: margin var(--tool-duration);
+    transition-timing-function: var(--anim-bounce);
     pointer-events: none;
     margin-bottom: -3rem;
     visibility: hidden;
