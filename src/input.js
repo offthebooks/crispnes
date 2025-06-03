@@ -6,7 +6,7 @@ export class Input {
   static init() {
     const { fileStore, tileStore, paletteStore, editStore } = Store.context
     const editTileGrid = document.getElementById('editTileGrid')
-    const palettes = document.getElementById('palettes')
+    const palette = document.getElementById('palette')
     const tilesets = document.getElementById('tilesets')
     const tools = document.getElementById('tools')
 
@@ -61,18 +61,14 @@ export class Input {
       }
     })
 
-    // palettes.addEventListener('click', ({ target }) => {
-    //   if (target.closest('#colorTable i')) {
-    //     const ppuColor = elementIndex(target)
-    //     paletteStore.assignColor(ppuColor)
-    //   } else if (target.closest('.palette i')) {
-    //     const colorIndex = elementIndex(target)
-    //     const paletteIndex = elementIndex(target.parentNode)
-    //     paletteStore.selectPaletteColor(paletteIndex, colorIndex)
-    //   } else {
-    //     palettes.classList.toggle('open')
-    //   }
-    // })
+    palette.addEventListener('click', ({ target }) => {
+      const { paletteStore } = Store.context
+      const color = target.closest('#paletteColors li')
+      if (color) {
+        const index = Number(color.getAttribute('data-color-index'))
+        paletteStore.palette.selected = index
+      }
+    })
 
     // tilesets.addEventListener('click', ({ target }) => {
     //   const tileEl = target.closest('.tile')

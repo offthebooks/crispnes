@@ -3,7 +3,6 @@
   background-color: var(--col-background-tint-2);
   border-radius: var(--interface-radius) var(--interface-radius) 0 0;
   border: none;
-  padding-block: var(--tool-margin) 0;
   padding-inline: var(--body-default-margin);
 
   inset: auto 0 0 0;
@@ -12,8 +11,8 @@
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
-    margin-right: 3rem;
-    padding-bottom: var(--tool-margin);
+    padding-inline: 2px 3rem;
+    padding-block: var(--tool-margin);
     overflow-x: auto;
     scrollbar-width: thin;
 

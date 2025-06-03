@@ -3,75 +3,95 @@ import { Color } from './color.js'
 
 export const maxPaletteSize = 256
 
+const defaultData = Object.seal({
+  name: 'Untitled',
+  selected: 1,
+  colors: [
+    Color.Transparent,
+    Color.Black,
+    Color.White,
+    Color.Red,
+    Color.Orange,
+    Color.Yellow,
+    Color.Green,
+    Color.Cyan,
+    Color.Blue,
+    Color.Purple
+  ]
+})
+
 export class Palette {
   static itemTemplate = document.querySelector('#paletteItems template')
 
-  #name
-  #colors
+  #data
   #item
+  #colorItems
 
   constructor(name) {
-    this.#name = name || 'Untitled'
-    this.#colors = [
-      Color.Transparent,
-      Color.Black,
-      Color.White,
-      Color.Red,
-      Color.Orange,
-      Color.Yellow,
-      Color.Green,
-      Color.Cyan,
-      Color.Blue,
-      Color.Purple
-    ]
+    this.#data = { ...defaultData }
   }
 
   get name() {
-    return this.#name
+    return this.#data.name
   }
 
   set name(val) {
-    this.#name = val
+    this.#data.name = val
     this.#render()
   }
 
+  get selected() {
+    return this.#data.selected
+  }
+
+  set selected(index) {
+    this.colorItems[this.selected].classList.remove('active')
+    this.colorItems[index].classList.add('active')
+    this.#data.selected = index
+  }
+
   get item() {
-    return this.#item ?? this.#render()
+    return this.#item ?? this.#render().item
+  }
+
+  get colorItems() {
+    return this.#colorItems ?? this.#render().colorItems
+  }
+
+  get length() {
+    return this.#data.colors.length
   }
 
   color(index) {
-    return this.#colors[index]
-  }
-
-  colorListItems(selected) {
-    return this.#colors.slice(1).map((color, index) => {
-      const li = document.createElement('li')
-      li.style.backgroundColor = color.hex
-      const key = index + 1
-      if (selected === key) {
-        li.classList.add('active')
-      }
-      li.setAttribute('data-color-index', key)
-      return li
-    })
+    return this.#data.colors[index]
   }
 
   add(color) {
-    if (this.#colors.length < maxPaletteSize) {
-      this.#colors.push(color)
+    if (this.#data.colors.length < maxPaletteSize) {
+      this.#data.colors.push(color)
       this.#render()
     }
   }
 
   remove(index) {
-    this.#colors.splice(index, 1)
+    this.#data.colors.splice(index, 1)
   }
 
   #render() {
     this.#item ??= elementFromTemplate(Palette.itemTemplate)
-    this.#item.querySelector('.name').textContent = this.#name
-    this.#item.querySelector('.size').textContent =
-      `${this.#colors.length} colors`
-    return this.#item
+    this.#item.querySelector('.name').textContent = this.name
+    this.#item.querySelector('.size').textContent = `${this.length} colors`
+
+    this.#colorItems = this.#data.colors.map((color, index) => {
+      const li = document.createElement('li')
+      li.style.backgroundColor = color.hex
+      li.setAttribute('data-color-index', index)
+      if (this.selected === index) {
+        li.classList.add('active')
+      }
+      return li
+    })
+
+    return { item: this.#item, colorItems: this.#colorItems }
   }
 }

@@ -32,6 +32,10 @@ export class PaletteStore {
     return this.#data.selectedColor
   }
 
+  set colorIndex(index) {
+    this.palette.selected = index
+  }
+
   get palettes() {
     return this.#data.palettes
   }
@@ -49,7 +53,7 @@ export class PaletteStore {
   }
 
   get paletteColorItems() {
-    return this.palette.colorListItems(this.colorIndex)
+    return this.palette.colorItems.slice(1)
   }
 
   // State persistence
