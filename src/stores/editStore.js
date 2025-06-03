@@ -15,9 +15,6 @@ export const tileEditorGridSize = tileEditorSide * tileEditorSide
 
 const defaultData = Object.seal({
   currentTool: Tools.Draw
-
-  // spriteEditTiles: new Array(tileEditorGridSize).fill(-1),
-  // backgroundEditTiles: new Array(tileEditorGridSize).fill(-1)
 })
 
 export class EditStore {

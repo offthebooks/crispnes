@@ -14,8 +14,12 @@ export class AnimationStore {
     this.#data = { ...defaultData, ...this.#deserialize() }
   }
 
-  get animations() {
-    return Object.freeze([...this.#data.animations])
+  get animation() {
+    return this.#data.animations[this.#data.selectedAnimation]
+  }
+
+  get frame() {
+    return this.animation.sprite(this.#data.selectedFrame)
   }
 
   get animationItems() {
