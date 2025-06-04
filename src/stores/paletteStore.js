@@ -29,7 +29,7 @@ export class PaletteStore {
   }
 
   get colorIndex() {
-    return this.#data.selectedColor
+    return this.palette.selected
   }
 
   set colorIndex(index) {

@@ -13,6 +13,8 @@ import { Store } from './store.js'
 const tileEditorSide = 4
 export const tileEditorGridSize = tileEditorSide * tileEditorSide
 
+const editCanvas = domQueryOne('#editor canvas')
+
 const defaultData = Object.seal({
   currentTool: Tools.Draw
 })
@@ -24,6 +26,8 @@ export class EditStore {
   constructor() {
     this.#data = { ...defaultData, ...this.#deserialize() }
   }
+
+  init() {}
 
   // Accessors
   get mode() {
@@ -86,22 +90,20 @@ export class EditStore {
     Render.setDirty()
   }
 
-  editAt({ editTileIndex, x, y }) {
-    const tile = this.tileForEditTile(editTileIndex)
+  editAt({ x, y }) {
+    const { frame } = Store.context.animationStore
     const { colorIndex: paletteColor } = Store.context.paletteStore
-    const { tileStore } = Store.context
     switch (this.tool) {
       case Tools.Draw:
-        const color = tile.toggle(x, y, paletteColor)
+        const color = frame.toggle(x, y, paletteColor)
         this.#drawOperation = { x, y, color }
         break
       case Tools.Fill:
-        if (!tile.fill(x, y, paletteColor)) return
+        if (!frame.fill(x, y, paletteColor)) return
         break
       default:
         return
     }
-    tileStore.serialize(tileStore.tilesetSlice)
     Render.setDirty()
   }
 
