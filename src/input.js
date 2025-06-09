@@ -48,9 +48,11 @@ export class Input {
             break
           case Tools.ZoomIn:
             // Zoom editor view
+            editStore.zoomIn()
             break
           case Tools.ZoomOut:
             // Zoom editor view
+            editStore.zoomOut()
             break
           case Tools.Collapse:
             tools.classList.remove('open')
@@ -79,36 +81,36 @@ export class Input {
     //   }
     // })
 
-    const editDetails = ({ target, offsetX, offsetY }) => {
-      const editTile = target.closest('.editTile')
-      if (!editTile) return
-      const editTileIndex = elementIndex(editTile)
-      const { width, height } = editTile.getBoundingClientRect()
-      const x = ~~((offsetX * 8) / width)
-      const y = ~~((offsetY * 8) / height)
-      return { editTileIndex, x, y }
-    }
-    editTileGrid.addEventListener('click', ({ target }) => {
-      if (editStore.tool !== Tools.Move) return
-      const btn = target.closest('button')
-      if (!btn) return
-      const editTileEl = target.closest('.editTile')
-      const editTileIndex = editTileEl && elementIndex(editTileEl)
-      if (btn.querySelector('.unlinkIcon')) {
-        editStore.removeTile(editTileIndex)
-      } else if (btn.querySelector('.clearIcon')) {
-        editStore.clearTile(editTileIndex)
-      }
-    })
-    editTileGrid.addEventListener('pointerdown', (evt) => {
-      if (editStore.tool === Tools.Move) return
-      const info = editDetails(evt)
-      if (editDetails) editStore.editAt(info)
-    })
-    editTileGrid.addEventListener('pointermove', (evt) => {
-      const info = editDetails(evt)
-      if (editDetails) editStore.continueEdit(info)
-    })
+    // const editDetails = ({ target, offsetX, offsetY }) => {
+    //   const editTile = target.closest('.editTile')
+    //   if (!editTile) return
+    //   const editTileIndex = elementIndex(editTile)
+    //   const { width, height } = editTile.getBoundingClientRect()
+    //   const x = ~~((offsetX * 8) / width)
+    //   const y = ~~((offsetY * 8) / height)
+    //   return { editTileIndex, x, y }
+    // }
+    // editTileGrid.addEventListener('click', ({ target }) => {
+    //   if (editStore.tool !== Tools.Move) return
+    //   const btn = target.closest('button')
+    //   if (!btn) return
+    //   const editTileEl = target.closest('.editTile')
+    //   const editTileIndex = editTileEl && elementIndex(editTileEl)
+    //   if (btn.querySelector('.unlinkIcon')) {
+    //     editStore.removeTile(editTileIndex)
+    //   } else if (btn.querySelector('.clearIcon')) {
+    //     editStore.clearTile(editTileIndex)
+    //   }
+    // })
+    // editTileGrid.addEventListener('pointerdown', (evt) => {
+    //   if (editStore.tool === Tools.Move) return
+    //   const info = editDetails(evt)
+    //   if (editDetails) editStore.editAt(info)
+    // })
+    // editTileGrid.addEventListener('pointermove', (evt) => {
+    //   const info = editDetails(evt)
+    //   if (editDetails) editStore.continueEdit(info)
+    // })
     document.addEventListener('pointerup', () => editStore.finishEdit())
   }
 }

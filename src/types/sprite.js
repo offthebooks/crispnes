@@ -10,6 +10,17 @@ export class Sprite {
     this.#width = Math.floor(clamp(width, maxSideLength))
     this.#height = Math.floor(clamp(height, maxSideLength))
     this.clear()
+    for (var i = 0; i < this.#bytes.length; ++i) {
+      this.#bytes[i] = Math.floor(Math.random() * 10)
+    }
+  }
+
+  get width() {
+    return this.#width
+  }
+
+  get height() {
+    return this.#height
   }
 
   clear() {
@@ -47,11 +58,11 @@ export class Sprite {
     for (let y = 0; y < this.#height; ++y) {
       for (let x = 0; x < this.#width; ++x) {
         const colIdx = this.#bytes[spriteIndex++]
-        const rgba = palToRGBA[palette[colIdx]]
-        data[bufferIndex++] = (rgba & 0xff000000) >>> 24
-        data[bufferIndex++] = (rgba & 0x00ff0000) >>> 16
-        data[bufferIndex++] = (rgba & 0x0000ff00) >>> 8
-        data[bufferIndex++] = rgba & 0x000000ff
+        const { r, g, b, a } = palette.color(colIdx)
+        data[bufferIndex++] = r
+        data[bufferIndex++] = g
+        data[bufferIndex++] = b
+        data[bufferIndex++] = a
       }
     }
     return imageData

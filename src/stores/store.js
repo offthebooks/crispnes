@@ -7,17 +7,19 @@ export class Store {
   static #context = {}
 
   static init() {
-    const ctxt = this.context
-
-    // Constructors should be empty, this hooks up the objects
-    // so that all managers are present in their init functions
-    // and available to other dependencies
-    Object.assign(ctxt, {
+    // Constructors should only set internal state, this hooks up
+    // the objects so that all managers are present in their init
+    // functions and available to other dependencies
+    Object.assign(this.#context, {
       editStore: new EditStore(),
       fileStore: new FileStore(),
       paletteStore: new PaletteStore(),
       animationStore: new AnimationStore()
     })
+
+    Object.freeze(this.#context)
+
+    Object.values(this.#context).forEach((store) => store?.init?.())
   }
 
   static get context() {

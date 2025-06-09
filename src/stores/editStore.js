@@ -1,6 +1,7 @@
 import { DrawTools, Tools } from '../consts.js'
 import { Render } from '../render.js'
 import {
+  clamp,
   dataFromStorageWithKeys,
   dataStoreObjectValuesForKeys,
   diffObjectValues,
@@ -10,12 +11,14 @@ import {
 } from '../utils.js'
 import { Store } from './store.js'
 
+const maxZoomLevel = 256
 const tileEditorSide = 4
 export const tileEditorGridSize = tileEditorSide * tileEditorSide
 
 const editCanvas = domQueryOne('#editor canvas')
 
 const defaultData = Object.seal({
+  zoomLevel: 1,
   currentTool: Tools.Draw
 })
 
@@ -27,7 +30,10 @@ export class EditStore {
     this.#data = { ...defaultData, ...this.#deserialize() }
   }
 
-  init() {}
+  init() {
+    this.renderCanvas()
+    this.zoom = 1
+  }
 
   // Accessors
   get mode() {
@@ -135,6 +141,38 @@ export class EditStore {
     domQueryOne(`[data-tool="${tool}"]`).classList.add('active')
 
     Render.setDirty()
+  }
+
+  get zoom() {
+    return this.#data.zoomLevel
+  }
+
+  set zoom(scalar) {
+    const { width: w, height: h } = Store.context.animationStore.frame
+    const zoom = clamp(this.zoom * scalar, maxZoomLevel, 1)
+    this.#data.zoomLevel = zoom
+    editCanvas.style.transform = `translate(${-w / 2}px, ${-h / 2}px)`
+    editCanvas.style.transform += `scale(${zoom})`
+  }
+
+  zoomIn() {
+    this.zoom = 2
+  }
+
+  zoomOut() {
+    this.zoom = 0.5
+  }
+
+  renderCanvas() {
+    const { palette } = Store.context.paletteStore
+    const { frame } = Store.context.animationStore
+
+    editCanvas.width = frame.width
+    editCanvas.height = frame.height
+
+    const context = editCanvas.getContext('2d')
+    const imageData = frame.generateImageDataWithPalette(palette)
+    context.putImageData(imageData, 0, 0)
   }
 
   // Other input management

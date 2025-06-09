@@ -1,5 +1,18 @@
 #editor {
-  --editor-area-width: 100dvw;
+  position: absolute;
+  inset: 0;
+
+  canvas {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin: auto;
+    transform-origin: 50% 50%;
+    transform: scale(0);
+    border: solid red 1px;
+  }
+
+  /* --editor-area-width: 100dvw;
   --editor-area-height: calc(100dvh - var(--header-height));
   --editor-grid-side: calc(
     min(var(--editor-area-width), var(--editor-area-height)) - 8dvmin
@@ -72,5 +85,5 @@
         pointer-events: auto;
       }
     }
-  }
+  } */
 }

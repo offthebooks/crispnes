@@ -1,4 +1,5 @@
 import { Animation } from '../types/animation.js'
+import { Store } from './store.js'
 
 const defaultData = Object.seal({
   selectedAnimation: 0,
@@ -26,7 +27,16 @@ export class AnimationStore {
     return this.#data.animations.map((a) => a.item)
   }
 
-  // Mutations
+  set animation(index) {
+    this.#data.selectedAnimation = index
+    this.frame = 0
+  }
+
+  set frame(index) {
+    this.#data.selectedFrame = index
+    Store.context.editStore.renderCanvas()
+  }
+
   addAnimation(name, width, height) {
     this.#data.animations.push(new Animation(name, width, height))
   }
