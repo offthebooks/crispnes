@@ -1,11 +1,12 @@
 import { DrawTools, Tools } from './consts.js'
 import { Store } from './stores/store.js'
-import { elementIndex } from './utils.js'
+import { domQueryOne, elementIndex } from './utils.js'
 
 export class Input {
   static init() {
     const { fileStore, tileStore, paletteStore, editStore } = Store.context
     const editTileGrid = document.getElementById('editTileGrid')
+    const editCanvas = domQueryOne('#editor canvas')
     const palette = document.getElementById('palette')
     const tilesets = document.getElementById('tilesets')
     const tools = document.getElementById('tools')
@@ -70,6 +71,10 @@ export class Input {
         const index = Number(color.getAttribute('data-color-index'))
         paletteStore.palette.selected = index
       }
+    })
+
+    editCanvas.addEventListener('pointerdown', ({ offsetX, offsetY }) => {
+      alert(`x: ${offsetX}, y: ${offsetY}`)
     })
 
     // tilesets.addEventListener('click', ({ target }) => {
