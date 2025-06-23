@@ -4,8 +4,10 @@ import { domQueryOne, elementIndex } from './utils.js'
 
 export class Input {
   static init() {
-    const { fileStore, tileStore, paletteStore, editStore } = Store.context
+    const { fileStore, tileStore, paletteStore, editStore, animationStore } =
+      Store.context
     const editTileGrid = document.getElementById('editTileGrid')
+    const editorEl = domQueryOne('#editor')
     const editCanvas = domQueryOne('#editor canvas')
     const palette = document.getElementById('palette')
     const tilesets = document.getElementById('tilesets')
@@ -73,49 +75,32 @@ export class Input {
       }
     })
 
-    editCanvas.addEventListener('pointerdown', ({ offsetX, offsetY }) => {
-      alert(`x: ${offsetX}, y: ${offsetY}`)
+    const editPosition = ({ target, offsetX, offsetY }) => {
+      const { width: clientW, height: clientH } = target.getBoundingClientRect()
+      const { width, height } = animationStore.frame
+      const x = ~~((offsetX * width) / clientW)
+      const y = ~~((offsetY * height) / clientH)
+      return { x, y }
+    }
+
+    editCanvas.addEventListener('pointerdown', (evt) => {
+      if (![Tools.Draw, Tools.Fill].includes(editStore.tool)) return
+      const pos = editPosition(evt)
+      editStore.editAt(pos)
     })
 
-    // tilesets.addEventListener('click', ({ target }) => {
-    //   const tileEl = target.closest('.tile')
-    //   if (tileEl) {
-    //     editStore.addTile(elementIndex(tileEl))
-    //   } else {
-    //     tilesets.classList.toggle('open')
-    //   }
-    // })
+    editCanvas.addEventListener('pointermove', (evt) => {
+      if (editStore.tool !== Tools.Draw) return
+      const pos = editPosition(evt)
+      editStore.continueEdit(pos)
+    })
 
-    // const editDetails = ({ target, offsetX, offsetY }) => {
-    //   const editTile = target.closest('.editTile')
-    //   if (!editTile) return
-    //   const editTileIndex = elementIndex(editTile)
-    //   const { width, height } = editTile.getBoundingClientRect()
-    //   const x = ~~((offsetX * 8) / width)
-    //   const y = ~~((offsetY * 8) / height)
-    //   return { editTileIndex, x, y }
-    // }
-    // editTileGrid.addEventListener('click', ({ target }) => {
-    //   if (editStore.tool !== Tools.Move) return
-    //   const btn = target.closest('button')
-    //   if (!btn) return
-    //   const editTileEl = target.closest('.editTile')
-    //   const editTileIndex = editTileEl && elementIndex(editTileEl)
-    //   if (btn.querySelector('.unlinkIcon')) {
-    //     editStore.removeTile(editTileIndex)
-    //   } else if (btn.querySelector('.clearIcon')) {
-    //     editStore.clearTile(editTileIndex)
-    //   }
-    // })
-    // editTileGrid.addEventListener('pointerdown', (evt) => {
-    //   if (editStore.tool === Tools.Move) return
-    //   const info = editDetails(evt)
-    //   if (editDetails) editStore.editAt(info)
-    // })
-    // editTileGrid.addEventListener('pointermove', (evt) => {
-    //   const info = editDetails(evt)
-    //   if (editDetails) editStore.continueEdit(info)
-    // })
+    editorEl.addEventListener('pointerdown', (evt) => {
+      if (editStore.tool !== Tools.Move) return
+      const pos = editPosition(evt)
+      editStore.editAt(pos)
+    })
+
     document.addEventListener('pointerup', () => editStore.finishEdit())
   }
 }

@@ -32,6 +32,8 @@ export const elementFromTemplate = (templateEl, rootClass) => {
 export const domQueryOne = (selector) => document.querySelector(selector)
 export const domQueryAll = (selector) => document.querySelectorAll(selector)
 
+export const restyle = (el, styles) => Object.assign(el.style, styles)
+
 export const resolveElements = (elementsOrSelector) => {
   if (typeof elementsOrSelector === 'string') {
     return document.querySelectorAll(elementsOrSelector)

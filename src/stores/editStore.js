@@ -1,5 +1,4 @@
 import { DrawTools, Tools } from '../consts.js'
-import { Render } from '../render.js'
 import {
   clamp,
   dataFromStorageWithKeys,
@@ -7,7 +6,8 @@ import {
   diffObjectValues,
   domQueryOne,
   forElements,
-  removeClass
+  removeClass,
+  restyle
 } from '../utils.js'
 import { Store } from './store.js'
 
@@ -15,10 +15,12 @@ const maxZoomLevel = 256
 const tileEditorSide = 4
 export const tileEditorGridSize = tileEditorSide * tileEditorSide
 
+const editContainer = domQueryOne('#editContainer')
 const editCanvas = domQueryOne('#editor canvas')
 
 const defaultData = Object.seal({
-  zoomLevel: 1,
+  pan: { x: 0, y: 0 },
+  zoomLevel: 64,
   currentTool: Tools.Draw
 })
 
@@ -31,8 +33,8 @@ export class EditStore {
   }
 
   init() {
-    this.renderCanvas()
-    this.zoom = 1
+    this.#renderCanvas()
+    this.#positionContainer()
   }
 
   // Accessors
@@ -99,6 +101,7 @@ export class EditStore {
   editAt({ x, y }) {
     const { frame } = Store.context.animationStore
     const { colorIndex: paletteColor } = Store.context.paletteStore
+
     switch (this.tool) {
       case Tools.Draw:
         const color = frame.toggle(x, y, paletteColor)
@@ -110,7 +113,8 @@ export class EditStore {
       default:
         return
     }
-    Render.setDirty()
+
+    this.#renderCanvas()
   }
 
   continueEdit({ editTileIndex, x, y }) {
@@ -121,12 +125,10 @@ export class EditStore {
 
     Object.assign(this.#drawOperation, { x, y })
 
-    const { tileStore } = Store.context
-    const tile = this.tileForEditTile(editTileIndex)
-    if (color === tile.read(x, y)) return
-    tile.draw(x, y, color)
-    tileStore.serialize(tileStore.tilesetSlice)
-    Render.setDirty()
+    const { frame } = Store.context.animationStore
+    if (color === frame.read(x, y)) return
+    frame.draw(x, y, color)
+    this.#renderCanvas()
   }
 
   get tool() {
@@ -139,8 +141,6 @@ export class EditStore {
     this.#data.currentTool = tool
     forElements('#tools .active', removeClass('active'))
     domQueryOne(`[data-tool="${tool}"]`).classList.add('active')
-
-    Render.setDirty()
   }
 
   get zoom() {
@@ -148,11 +148,9 @@ export class EditStore {
   }
 
   set zoom(scalar) {
-    const { width: w, height: h } = Store.context.animationStore.frame
     const zoom = clamp(this.zoom * scalar, maxZoomLevel, 1)
     this.#data.zoomLevel = zoom
-    editCanvas.style.transform = `translate(${-w / 2}px, ${-h / 2}px)`
-    editCanvas.style.transform += `scale(${zoom})`
+    this.#positionContainer()
   }
 
   zoomIn() {
@@ -163,7 +161,31 @@ export class EditStore {
     this.zoom = 0.5
   }
 
-  renderCanvas() {
+  get pan() {
+    return { ...this.#data.pan }
+  }
+
+  set pan({ x = 0, y = 0 }) {
+    this.#data.pan.x += x
+    this.#data.pan.y += y
+    this.#positionContainer()
+  }
+
+  #positionContainer() {
+    const { width, height } = Store.context.animationStore.frame
+    const { x, y } = this.pan
+    const w = Math.floor(width * this.zoom)
+    const h = Math.floor(height * this.zoom)
+
+    restyle(editContainer, {
+      width: `${w}px`,
+      height: `${h}px`,
+      marginLeft: `${x - ~~(w / 2)}px`,
+      marginTop: `${y - ~~(h / 2)}px`
+    })
+  }
+
+  #renderCanvas() {
     const { palette } = Store.context.paletteStore
     const { frame } = Store.context.animationStore
 
