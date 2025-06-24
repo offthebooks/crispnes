@@ -10,9 +10,6 @@ export class Sprite {
     this.#width = Math.floor(clamp(width, maxSideLength))
     this.#height = Math.floor(clamp(height, maxSideLength))
     this.clear()
-    for (var i = 0; i < this.#bytes.length; ++i) {
-      this.#bytes[i] = Math.floor(Math.random() * 10)
-    }
   }
 
   get width() {

@@ -95,12 +95,10 @@ export class Input {
       editStore.continueEdit(pos)
     })
 
-    editorEl.addEventListener('pointerdown', (evt) => {
-      if (editStore.tool !== Tools.Move) return
-      const pos = editPosition(evt)
-      editStore.editAt(pos)
-    })
-
+    const preventCallback = (e) => e.preventDefault()
+    document.addEventListener('gesturestart', preventCallback)
+    document.addEventListener('gesturechange', preventCallback)
+    document.addEventListener('gestureend', preventCallback)
     document.addEventListener('pointerup', () => editStore.finishEdit())
   }
 }

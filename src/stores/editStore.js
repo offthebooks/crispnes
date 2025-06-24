@@ -20,7 +20,7 @@ const editCanvas = domQueryOne('#editor canvas')
 
 const defaultData = Object.seal({
   pan: { x: 0, y: 0 },
-  zoomLevel: 64,
+  zoomLevel: 16,
   currentTool: Tools.Draw
 })
 
