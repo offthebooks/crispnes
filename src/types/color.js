@@ -11,6 +11,9 @@ export class Color {
     this.a = alpha ?? 255
   }
 
+  static fromRGB = (r, g, b, a) => new Color(r, g, b, a)
+  static gray = (value, alpha) => new Color(value, value, value, alpha)
+
   get array() {
     return Object.freeze(Array.from(this.#rgba))
   }

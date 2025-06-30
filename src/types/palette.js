@@ -1,23 +1,12 @@
+import { nesColorPalette } from '../colors.js'
 import { elementFromTemplate } from '../utils.js'
-import { Color } from './color.js'
 
 export const maxPaletteSize = 256
 
 const defaultData = Object.seal({
   name: 'Untitled',
   selected: 1,
-  colors: [
-    Color.Transparent,
-    Color.Black,
-    Color.White,
-    Color.Red,
-    Color.Orange,
-    Color.Yellow,
-    Color.Green,
-    Color.Cyan,
-    Color.Blue,
-    Color.Purple
-  ]
+  colors: nesColorPalette
 })
 
 export class Palette {

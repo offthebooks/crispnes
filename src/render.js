@@ -1,4 +1,3 @@
-import { palToHex } from './colors.js'
 import { tileEditorGridSize } from './stores/editStore.js'
 import { Store } from './stores/store.js'
 import { elementFromTemplate } from './utils.js'
@@ -25,13 +24,6 @@ export class Render {
     const animationItemsList = document.getElementById('animationItems')
     animationItemsList.replaceChildren(...animationItems)
 
-    // Populate current palette
-
-    // Set colors
-    colorTableEls.forEach((colEl, colIndex) => {
-      colEl.style.backgroundColor = palToHex[colIndex]
-    })
-
     const tick = () => {
       if (this.#dirty) this.#render()
       window.requestAnimationFrame(tick)
@@ -53,26 +45,6 @@ export class Render {
     // this.#renderTiles({ palette, tileset })
     // this.#renderEditTiles({ palette, tileset })
     this.#dirty = false
-  }
-
-  static #renderPalettes() {
-    const { palettes, paletteIndex, colorIndex } = Store.context.paletteStore
-
-    paletteEls.forEach((palEl, palIndex) => {
-      const palData = palettes[palIndex]
-      const curPalette = palIndex === paletteIndex
-      palEl.querySelectorAll('i').forEach((colEl, colIndex) => {
-        const curColor = curPalette && colIndex === colorIndex
-        colEl.style.backgroundColor = palToHex[palData[colIndex]]
-        colEl.classList[curColor ? 'add' : 'remove']('active')
-      })
-      palEl.classList[curPalette ? 'add' : 'remove']('active')
-    })
-
-    const activeColor = palettes[paletteIndex][colorIndex]
-    colorTableEls.forEach((colEl, index) =>
-      colEl.classList[index === activeColor ? 'add' : 'remove']('active')
-    )
   }
 
   static #renderTiles({ palette, tileset }) {
