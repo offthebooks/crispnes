@@ -3,7 +3,6 @@ import {
   clamp,
   dataFromStorageWithKeys,
   dataStoreObjectValuesForKeys,
-  diffObjectValues,
   domQueryOne,
   forElements,
   removeClass,
@@ -37,67 +36,7 @@ export class EditStore {
     this.#positionContainer()
   }
 
-  // Accessors
-  get mode() {
-    return this.#data.selectedMode
-  }
-
-  get bank() {
-    switch (this.mode) {
-      case EditMode.SpriteTiles:
-      case EditMode.MetaSprites:
-        return Bank.Sprite
-      default:
-        return Bank.Background
-    }
-  }
-
-  get #editTiles() {
-    // return this.bank === Bank.Background
-    //   ? this.#data.backgroundEditTiles
-    //   : this.#data.spriteEditTiles
-  }
-
-  tileIndexForEditTile(editTile) {
-    return this.#editTiles[editTile]
-  }
-
-  tileForEditTile(editTile) {
-    const { tileset } = Store.context.tileStore
-    return tileset.tile(this.tileIndexForEditTile(editTile))
-  }
-
   // Mutations
-  selectMode(selectedMode) {
-    const changed = diffObjectValues({ selectedMode }, this.#data)
-    this.serialize(changed.next)
-  }
-
-  addTile(tileIndex) {
-    const editTiles = this.#editTiles
-    const nextAvailable = editTiles.indexOf(-1)
-
-    if (nextAvailable === -1) return
-
-    editTiles[nextAvailable] = tileIndex
-    this.serialize()
-    Render.setDirty()
-  }
-
-  removeTile(editTileIndex) {
-    this.#editTiles[editTileIndex] = -1
-    this.serialize()
-    Render.setDirty()
-  }
-
-  clearTile(editTileIndex) {
-    const tile = this.tileForEditTile(editTileIndex)
-    const { tileStore } = Store.context
-    tile.clear()
-    tileStore.serialize(tileStore.tilesetSlice)
-    Render.setDirty()
-  }
-
   editAt({ x, y }) {
     const { frame } = Store.context.animationStore
     const { colorIndex: paletteColor } = Store.context.paletteStore
@@ -117,7 +56,7 @@ export class EditStore {
     this.#renderCanvas()
   }
 
-  continueEdit({ editTileIndex, x, y }) {
+  continueEdit({ x, y }) {
     if (!this.#drawOperation) return
 
     const { x: prevX, y: prevY, color } = this.#drawOperation
