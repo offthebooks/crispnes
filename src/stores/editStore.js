@@ -70,6 +70,12 @@ export class EditStore {
     this.#renderCanvas()
   }
 
+  clear() {
+    const { frame } = Store.context.animationStore
+    frame.clear()
+    this.#renderCanvas()
+  }
+
   get tool() {
     return this.#data.currentTool
   }

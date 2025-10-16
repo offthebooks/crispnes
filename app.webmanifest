@@ -1,6 +1,6 @@
 {
-  "name": "CrispNES",
-  "description": "NES Sprite and Background Editor",
+  "name": "Crispnes",
+  "description": "Web-Based Pixel Editor",
   "id": "crispnes",
   "icons": [
     {

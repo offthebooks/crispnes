@@ -4,8 +4,9 @@
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 2;
 
-  button {
+  summary {
     width: 2rem;
     height: 2rem;
     margin: calc((var(--header-height) - 2rem) / 2);
@@ -27,7 +28,6 @@
   }
 
   #menuItems {
-    display: none;
     overflow: scroll;
     background-color: var(--col-background);
     box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);

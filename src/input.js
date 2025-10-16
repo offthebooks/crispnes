@@ -12,22 +12,28 @@ export class Input {
     const palette = document.getElementById('palette')
     const tilesets = document.getElementById('tilesets')
     const tools = document.getElementById('tools')
+    const menu = document.getElementById('menu')
 
-    // menu.addEventListener('click', ({ target }) => {
-    //   const menuItem = target.closest('[data-menu-item]')
+    menu.addEventListener('click', ({ target }) => {
+      const menuItem = target
+        .closest('[data-menu-item]')
+        ?.getAttribute('data-menu-item')
 
-    //   switch (menuItem?.getAttribute('data-menu-item')) {
-    //     case 'loadChr':
-    //       fileStore.openFile((chrBytes) => {
-    //         tileStore.assignTileset(chrBytes)
-    //       })
-    //       break
-    //     case 'saveChr':
-    //       fileStore.saveFile('patterns.chr', tileStore.tilesetBytes)
-    //     default:
-    //       break
-    //   }
-    // })
+      switch (menuItem) {
+        case 'save':
+          editStore.saveFile('patterns.chr', tileStore.tilesetBytes)
+          fileStore.openFile((chrBytes) => {
+            tileStore.assignTileset(chrBytes)
+          })
+          break
+        case 'clear':
+          editStore.clear()
+        default:
+          break
+      }
+
+      if (menuItem) menu.removeAttribute('open')
+    })
 
     tools.addEventListener('click', ({ target }) => {
       if (!tools.classList.contains('open')) {

@@ -1,5 +1,5 @@
-# CrispNES
+# Crispnes
 
-## NES Sprite and Background Editor
+## Web-Based Pixel Editor
 
-Edit, save, and export pattern data, palettes, nametables, and more for your NES projects.
+Pixel editor built in HTML, CSS, and JavaScript with no external dependencies.
