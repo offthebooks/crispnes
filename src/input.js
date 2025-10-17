@@ -1,97 +1,113 @@
-import { Tools } from './enums.js'
+import { DrawTools, Tools } from './consts.js'
 import { Store } from './stores/store.js'
-import { elementIndex } from './utils.js'
+import { dateString, domQueryOne, elementIndex } from './utils.js'
 
 export class Input {
   static init() {
-    const { fileStore, tileStore, paletteStore, editStore } = Store.context
-    const menu = document.getElementById('menu')
+    const { fileStore, tileStore, paletteStore, editStore, animationStore } =
+      Store.context
     const editTileGrid = document.getElementById('editTileGrid')
-    const palettes = document.getElementById('palettes')
+    const editorEl = domQueryOne('#editor')
+    const editCanvas = domQueryOne('#editor canvas')
+    const palette = document.getElementById('palette')
     const tilesets = document.getElementById('tilesets')
     const tools = document.getElementById('tools')
+    const menu = document.getElementById('menu')
 
-    menu.addEventListener('click', ({ target }) => {
-      const menuItem = target.closest('[data-menu-item]')
+    menu.addEventListener('click', (evt) => {
+      const menuItem = evt.target
+        .closest('[data-menu-item]')
+        ?.getAttribute('data-menu-item')
 
-      switch (menuItem?.getAttribute('data-menu-item')) {
-        case 'loadChr':
-          fileStore.openFile((chrBytes) => {
-            tileStore.assignTileset(chrBytes)
-          })
+      switch (menuItem) {
+        case 'save':
+          fileStore.saveUpscaledCanvasImage(
+            `Crispnes-${dateString()}.png`,
+            editCanvas
+          )
           break
-        case 'saveChr':
-          fileStore.saveFile('patterns.chr', tileStore.tilesetBytes)
+        case 'clear':
+          editStore.clear()
         default:
           break
       }
-    })
 
-    palettes.addEventListener('click', ({ target }) => {
-      if (target.closest('#colorTable i')) {
-        const ppuColor = elementIndex(target)
-        paletteStore.assignColor(ppuColor)
-      } else if (target.closest('.palette i')) {
-        const colorIndex = elementIndex(target)
-        const paletteIndex = elementIndex(target.parentNode)
-        paletteStore.selectPaletteColor(paletteIndex, colorIndex)
-      } else {
-        palettes.classList.toggle('open')
-      }
-    })
+      if (menuItem) menu.removeAttribute('open')
 
-    tilesets.addEventListener('click', ({ target }) => {
-      const tileEl = target.closest('.tile')
-      if (tileEl) {
-        editStore.addTile(elementIndex(tileEl))
-      } else {
-        tilesets.classList.toggle('open')
-      }
+      evt.stopPropagation()
     })
-
-    const editDetails = ({ target, offsetX, offsetY }) => {
-      const editTile = target.closest('.editTile')
-      if (!editTile) return
-      const editTileIndex = elementIndex(editTile)
-      const { width, height } = editTile.getBoundingClientRect()
-      const x = ~~((offsetX * 8) / width)
-      const y = ~~((offsetY * 8) / height)
-      return { editTileIndex, x, y }
-    }
-    editTileGrid.addEventListener('click', ({ target }) => {
-      if (editStore.tool !== Tools.Move) return
-      const btn = target.closest('button')
-      if (!btn) return
-      const editTileEl = target.closest('.editTile')
-      const editTileIndex = editTileEl && elementIndex(editTileEl)
-      if (btn.querySelector('.unlinkIcon')) {
-        editStore.removeTile(editTileIndex)
-      } else if (btn.querySelector('.clearIcon')) {
-        editStore.clearTile(editTileIndex)
-      }
-    })
-    editTileGrid.addEventListener('pointerdown', (evt) => {
-      if (editStore.tool === Tools.Move) return
-      const info = editDetails(evt)
-      if (editDetails) editStore.editAt(info)
-    })
-    editTileGrid.addEventListener('pointermove', (evt) => {
-      const info = editDetails(evt)
-      if (editDetails) editStore.continueEdit(info)
-    })
-    document.addEventListener('pointerup', () => editStore.finishEdit())
 
     tools.addEventListener('click', ({ target }) => {
-      const toolEl = target.closest('button')?.querySelector('i')
-      if (toolEl?.classList.contains('drawIcon')) {
-        editStore.tool = Tools.Draw
-      } else if (toolEl?.classList.contains('fillIcon')) {
-        editStore.tool = Tools.Fill
-      } else if (toolEl?.classList.contains('moveIcon')) {
-        editStore.tool = Tools.Move
+      if (!tools.classList.contains('open')) {
+        tools.classList.add('open')
+        return
+      }
+
+      const toolEl = target.closest('[data-tool]')
+      const tool = toolEl.getAttribute('data-tool')
+
+      if (DrawTools.has(tool)) {
+        editStore.tool = tool
+        tools.classList.remove('open')
       } else {
-        tools.classList.toggle('open')
+        switch (tool) {
+          case Tools.Animations:
+            // Show Animations list modal
+            break
+          case Tools.Palettes:
+            // Show Palettes list modal
+            break
+          case Tools.ZoomIn:
+            // Zoom editor view
+            editStore.zoomIn()
+            break
+          case Tools.ZoomOut:
+            // Zoom editor view
+            editStore.zoomOut()
+            break
+          case Tools.Collapse:
+            tools.classList.remove('open')
+            break
+          default:
+            break
+        }
       }
     })
+
+    palette.addEventListener('click', ({ target }) => {
+      const { paletteStore } = Store.context
+      const color = target.closest('#paletteColors li')
+      if (color) {
+        const index = Number(color.getAttribute('data-color-index'))
+        paletteStore.palette.selected = index
+      }
+    })
+
+    const editPosition = ({ target, offsetX, offsetY }) => {
+      const { width: clientW, height: clientH } = target.getBoundingClientRect()
+      const { width, height } = animationStore.frame
+      const x = ~~((offsetX * width) / clientW)
+      const y = ~~((offsetY * height) / clientH)
+      return { x, y }
+    }
+
+    editCanvas.addEventListener('pointerdown', (evt) => {
+      if (![Tools.Draw, Tools.Fill].includes(editStore.tool)) return
+      const pos = editPosition(evt)
+      editStore.editAt(pos)
+    })
+
+    editCanvas.addEventListener('pointermove', (evt) => {
+      if (editStore.tool !== Tools.Draw) return
+      const pos = editPosition(evt)
+      editStore.continueEdit(pos)
+    })
+
+    const preventCallback = (e) => e.preventDefault()
+    document.addEventListener('gesturestart', preventCallback)
+    document.addEventListener('gesturechange', preventCallback)
+    document.addEventListener('gestureend', preventCallback)
+    document.addEventListener('pointerup', () => editStore.finishEdit())
+    document.addEventListener('click', () => menu.removeAttribute('open'))
   }
 }

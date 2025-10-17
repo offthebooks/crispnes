@@ -1,113 +1,62 @@
-import { Bank, EditMode, Tools } from '../enums.js'
-import { Render } from '../render.js'
+import { DrawTools, Tools } from '../consts.js'
 import {
+  clamp,
   dataFromStorageWithKeys,
   dataStoreObjectValuesForKeys,
-  diffObjectValues
+  domQueryOne,
+  forElements,
+  removeClass,
+  restyle
 } from '../utils.js'
 import { Store } from './store.js'
 
+const maxZoomLevel = 256
 const tileEditorSide = 4
 export const tileEditorGridSize = tileEditorSide * tileEditorSide
 
-const defaultData = Object.seal({
-  selectedMode: EditMode.BackgroundTiles,
+const editContainer = domQueryOne('#editContainer')
+const editCanvas = domQueryOne('#editor canvas')
 
-  spriteEditTiles: new Array(tileEditorGridSize).fill(-1),
-  backgroundEditTiles: new Array(tileEditorGridSize).fill(-1)
+const defaultData = Object.seal({
+  pan: { x: 0, y: 0 },
+  zoomLevel: 16,
+  currentTool: Tools.Draw
 })
 
 export class EditStore {
   #data
   #drawOperation
-  #currentTool
 
   constructor() {
     this.#data = { ...defaultData, ...this.#deserialize() }
-    this.#currentTool = Tools.Draw
   }
 
-  // Accessors
-  get mode() {
-    return this.#data.selectedMode
-  }
-
-  get bank() {
-    switch (this.mode) {
-      case EditMode.SpriteTiles:
-      case EditMode.MetaSprites:
-        return Bank.Sprite
-      default:
-        return Bank.Background
-    }
-  }
-
-  get #editTiles() {
-    return this.bank === Bank.Background
-      ? this.#data.backgroundEditTiles
-      : this.#data.spriteEditTiles
-  }
-
-  tileIndexForEditTile(editTile) {
-    return this.#editTiles[editTile]
-  }
-
-  tileForEditTile(editTile) {
-    const { tileset } = Store.context.tileStore
-    return tileset.tile(this.tileIndexForEditTile(editTile))
+  init() {
+    this.#renderCanvas()
+    this.#positionContainer()
   }
 
   // Mutations
-  selectMode(selectedMode) {
-    const changed = diffObjectValues({ selectedMode }, this.#data)
-    this.serialize(changed.next)
-  }
-
-  addTile(tileIndex) {
-    const editTiles = this.#editTiles
-    const nextAvailable = editTiles.indexOf(-1)
-
-    if (nextAvailable === -1) return
-
-    editTiles[nextAvailable] = tileIndex
-    this.serialize()
-    Render.setDirty()
-  }
-
-  removeTile(editTileIndex) {
-    this.#editTiles[editTileIndex] = -1
-    this.serialize()
-    Render.setDirty()
-  }
-
-  clearTile(editTileIndex) {
-    const tile = this.tileForEditTile(editTileIndex)
-    const { tileStore } = Store.context
-    tile.clear()
-    tileStore.serialize(tileStore.tilesetSlice)
-    Render.setDirty()
-  }
-
-  editAt({ editTileIndex, x, y }) {
-    const tile = this.tileForEditTile(editTileIndex)
+  editAt({ x, y }) {
+    const { frame } = Store.context.animationStore
     const { colorIndex: paletteColor } = Store.context.paletteStore
-    const { tileStore } = Store.context
-    switch (this.#currentTool) {
+
+    switch (this.tool) {
       case Tools.Draw:
-        const color = tile.toggle(x, y, paletteColor)
+        const color = frame.toggle(x, y, paletteColor)
         this.#drawOperation = { x, y, color }
         break
       case Tools.Fill:
-        if (!tile.fill(x, y, paletteColor)) return
+        if (!frame.fill(x, y, paletteColor)) return
         break
       default:
         return
     }
-    tileStore.serialize(tileStore.tilesetSlice)
-    Render.setDirty()
+
+    this.#renderCanvas()
   }
 
-  continueEdit({ editTileIndex, x, y }) {
+  continueEdit({ x, y }) {
     if (!this.#drawOperation) return
 
     const { x: prevX, y: prevY, color } = this.#drawOperation
@@ -115,22 +64,82 @@ export class EditStore {
 
     Object.assign(this.#drawOperation, { x, y })
 
-    const { tileStore } = Store.context
-    const tile = this.tileForEditTile(editTileIndex)
-    if (color === tile.read(x, y)) return
-    tile.draw(x, y, color)
-    tileStore.serialize(tileStore.tilesetSlice)
-    Render.setDirty()
+    const { frame } = Store.context.animationStore
+    if (color === frame.read(x, y)) return
+    frame.draw(x, y, color)
+    this.#renderCanvas()
+  }
+
+  clear() {
+    const { frame } = Store.context.animationStore
+    frame.clear()
+    this.#renderCanvas()
   }
 
   get tool() {
-    return this.#currentTool
+    return this.#data.currentTool
   }
 
   set tool(tool) {
-    if (tool === this.#currentTool) return
-    this.#currentTool = tool
-    Render.setDirty()
+    if (tool === this.tool || !DrawTools.has(tool)) return
+
+    this.#data.currentTool = tool
+    forElements('#tools .active', removeClass('active'))
+    domQueryOne(`[data-tool="${tool}"]`).classList.add('active')
+  }
+
+  get zoom() {
+    return this.#data.zoomLevel
+  }
+
+  set zoom(scalar) {
+    const zoom = clamp(this.zoom * scalar, maxZoomLevel, 1)
+    this.#data.zoomLevel = zoom
+    this.#positionContainer()
+  }
+
+  zoomIn() {
+    this.zoom = 2
+  }
+
+  zoomOut() {
+    this.zoom = 0.5
+  }
+
+  get pan() {
+    return { ...this.#data.pan }
+  }
+
+  set pan({ x = 0, y = 0 }) {
+    this.#data.pan.x += x
+    this.#data.pan.y += y
+    this.#positionContainer()
+  }
+
+  #positionContainer() {
+    const { width, height } = Store.context.animationStore.frame
+    const { x, y } = this.pan
+    const w = Math.floor(width * this.zoom)
+    const h = Math.floor(height * this.zoom)
+
+    restyle(editContainer, {
+      width: `${w}px`,
+      height: `${h}px`,
+      marginLeft: `${x - ~~(w / 2)}px`,
+      marginTop: `${y - ~~(h / 2)}px`
+    })
+  }
+
+  #renderCanvas() {
+    const { palette } = Store.context.paletteStore
+    const { frame } = Store.context.animationStore
+
+    editCanvas.width = frame.width
+    editCanvas.height = frame.height
+
+    const context = editCanvas.getContext('2d')
+    const imageData = frame.generateImageDataWithPalette(palette)
+    context.putImageData(imageData, 0, 0)
   }
 
   // Other input management

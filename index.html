@@ -1,9 +1,11 @@
 <html>
   <head>
-    <title>CrispNES</title>
-    <meta name="description" content="NES Sprite and Background Editor" />
+    <title>Crispnes</title>
+    <meta
+      name="description"
+      content="Palette-Based Pixel Art and Animation Editor" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta property="og:title" content="CrispNES" />
+    <meta property="og:title" content="Crispnes" />
     <meta property="og:url" content="https://offthebooks.games/crispnes" />
     <meta property="og:image" content="img/icon.png" />
     <link rel="icon" href="./favicon.ico" type="image/x-icon" />
@@ -12,87 +14,76 @@
     <link href="css/main.css" rel="stylesheet" />
   </head>
 
-  <body>
+  <body class="editor">
     <header>
-      <h1 title="Alpha software, backup your creations as CHR data"><i class="icon drawIcon"></i>CrispNES &alpha;</h1>
-      <div id="menu">
-        <details class="widget">
-          <summary>Menu</summary>
-          <ol>
-            <li data-menu-item="loadChr">
-              <i class="icon loadChrIcon"></i>Open CHR<span class="tip"
-                >Load CHR tiles from file</span
-              >
-            </li>
-            <li data-menu-item="saveChr">
-              <i class="icon saveChrIcon"></i>Save CHR<span class="tip"
-                >Save CHR tiles to file</span
-              >
-            </li>
-            <li>
-              Alpha software. Internal formats may change. Export and backup CHR data for forward compatibility.
-            </li>
-          </ol>
-        </details>
-      </div>
+      <h1 class="editor"><i class="draw icon"></i>Crispnes &alpha;</h1>
+      <h1 class="animation">Animations</h1>
+      <h1 class="palette">Palettes</h1>
     </header>
 
+    <details id="menu">
+      <summary><i class="menu icon"></i>Menu</summary>
+      <ol id="menuItems">
+        <li data-menu-item="save"><i class="icon save"></i>Save</li>
+        <li data-menu-item="clear"><i class="icon clear"></i>Clear</li>
+      </ol>
+    </details>
+
     <div id="editor">
-      <div id="editTileGrid"></div>
-    </div>
-
-    <!-- Tool widgets -->
-    <div id="tilesets" class="widget open">
-      <div id="tileset"></div>
-    </div>
-
-    <div id="tools" class="widget open">
-      <button type="button">
-        <i class="icon moveIcon"></i><span class="tip">Move tool</span>
-      </button>
-      <button type="button">
-        <i class="icon drawIcon"></i><span class="tip">Draw tool</span>
-      </button>
-      <button type="button">
-        <i class="icon fillIcon"></i><span class="tip">Fill tool</span>
-      </button>
-    </div>
-
-    <div id="palettes" class="widget open">
-      <!-- Four palettes to dynamically map to current background or sprite set -->
-      <div class="palette active"><i></i><i></i><i></i><i></i></div>
-      <div class="palette"><i></i><i></i><i></i><i></i></div>
-      <div class="palette"><i></i><i></i><i></i><i></i></div>
-      <div class="palette"><i></i><i></i><i></i><i></i></div>
-      <div id="colorTable">
-        <!-- 64 elements to map to all possible ppu color values -->
-        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-        ><i></i><i></i><i></i><i></i>
+      <div id="editContainer">
+        <canvas></canvas>
       </div>
     </div>
 
-    <!-- Templates -->
-    <template id="tileTemplate">
-      <div class="tile"><canvas></canvas></div>
-    </template>
+    <ol id="animationItems">
+      <template>
+        <li>
+          <div class="name"></div>
+          <div class="frameCount"></div>
+          <div class="size"></div>
+        </li>
+      </template>
+    </ol>
 
-    <template id="editTileTemplate">
-      <div class="editTile"><canvas></canvas>
-        <div class="tileTools">
-          <button type="button">
-            <i class="icon unlinkIcon"></i><span class="tip">Unlink tile</span>
-          </button>
-          <button type="button">
-            <i class="icon clearIcon"></i><span class="tip">Clear tile</span>
-          </button>
-        </div>
-      </div>
-    </template>
+    <ol id="paletteItems">
+      <template>
+        <li>
+          <div class="name"></div>
+          <div class="size"></div>
+        </li>
+      </template>
+    </ol>
+
+    <div id="palette">
+      <ol id="paletteColors"></ol>
+    </div>
+
+    <div id="tools">
+      <button data-tool="animations">
+        <i class="animate icon"></i><span class="tip">Animations</span>
+      </button>
+      <button data-tool="palettes">
+        <i class="palette icon"></i><span class="tip">Palettes</span>
+      </button>
+      <button data-tool="zoomIn">
+        <i class="zoomIn icon"></i><span class="tip">Zoom in</span>
+      </button>
+      <button data-tool="zoomOut">
+        <i class="zoomOut icon"></i><span class="tip">Zoom out</span>
+      </button>
+      <button data-tool="move">
+        <i class="move icon"></i><span class="tip">Move tool</span>
+      </button>
+      <button data-tool="draw" class="active">
+        <i class="draw icon"></i><span class="tip">Draw tool</span>
+      </button>
+      <button data-tool="fill">
+        <i class="fill icon"></i><span class="tip">Fill tool</span>
+      </button>
+      <button data-tool="collapse" class="transparent">
+        <i class="collapse icon"></i><span class="tip">Collapse tools</span>
+      </button>
+    </div>
 
     <a id="saveLink" style="display: none"></a>
     <input type="file" style="display: none" />

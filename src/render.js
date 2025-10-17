@@ -1,8 +1,5 @@
-import { palToHex } from './colors.js'
 import { tileEditorGridSize } from './stores/editStore.js'
 import { Store } from './stores/store.js'
-import { tileSideLengthPixels } from './types/tile.js'
-import { tilesPerTileset } from './types/tileset.js'
 import { elementFromTemplate } from './utils.js'
 
 const editTileGridEl = document.getElementById('editTileGrid')
@@ -18,27 +15,14 @@ export class Render {
   static init() {
     this.#dirty = true
 
-    // Populate tileset canvases
-    for (let i = 0; i < tilesPerTileset; ++i) {
-      const el = elementFromTemplate(tileTemplateEl)
-      const canvas = el.querySelector('canvas')
-      canvas.width = tileSideLengthPixels
-      canvas.height = tileSideLengthPixels
-      tilesetEl.append(el)
-    }
+    const {
+      animationStore: { animationItems },
+      paletteStore: { paletteItems }
+    } = Store.context
 
-    for (let i = 0; i < tileEditorGridSize; ++i) {
-      const el = elementFromTemplate(editTileTemplateEl)
-      const canvas = el.querySelector('canvas')
-      canvas.width = tileSideLengthPixels
-      canvas.height = tileSideLengthPixels
-      editTileGridEl.append(el)
-    }
-
-    // Set colors
-    colorTableEls.forEach((colEl, colIndex) => {
-      colEl.style.backgroundColor = palToHex[colIndex]
-    })
+    // Populate items lists
+    const animationItemsList = document.getElementById('animationItems')
+    animationItemsList.replaceChildren(...animationItems)
 
     const tick = () => {
       if (this.#dirty) this.#render()
@@ -54,34 +38,13 @@ export class Render {
 
   static #render() {
     const {
-      paletteStore: { palette },
-      tileStore: { tileset }
+      paletteStore: { palette }
     } = Store.context
 
-    this.#renderPalettes()
-    this.#renderTiles({ palette, tileset })
-    this.#renderEditTiles({ palette, tileset })
+    // this.#renderPalettes()
+    // this.#renderTiles({ palette, tileset })
+    // this.#renderEditTiles({ palette, tileset })
     this.#dirty = false
-  }
-
-  static #renderPalettes() {
-    const { palettes, paletteIndex, colorIndex } = Store.context.paletteStore
-
-    paletteEls.forEach((palEl, palIndex) => {
-      const palData = palettes[palIndex]
-      const curPalette = palIndex === paletteIndex
-      palEl.querySelectorAll('i').forEach((colEl, colIndex) => {
-        const curColor = curPalette && colIndex === colorIndex
-        colEl.style.backgroundColor = palToHex[palData[colIndex]]
-        colEl.classList[curColor ? 'add' : 'remove']('active')
-      })
-      palEl.classList[curPalette ? 'add' : 'remove']('active')
-    })
-
-    const activeColor = palettes[paletteIndex][colorIndex]
-    colorTableEls.forEach((colEl, index) =>
-      colEl.classList[index === activeColor ? 'add' : 'remove']('active')
-    )
   }
 
   static #renderTiles({ palette, tileset }) {

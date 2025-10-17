@@ -7,6 +7,7 @@
   -webkit-user-select: none;
   cursor: default;
   touch-action: pinch-zoom;
+  image-rendering: pixelated;
 }
 
 html,
@@ -17,7 +18,6 @@ body {
   margin: 0;
   font-family: system-ui, Helvetica, sans-serif;
   background-color: var(--col-background-tint-1);
-  image-rendering: pixelated;
 }
 
 button {
@@ -38,6 +38,32 @@ button {
   }
 }
 
+/* Selected items */
+#tools button,
+#paletteColors li {
+  position: relative;
+
+  &.active::before {
+    border-radius: calc(var(--button-radius) + 2px);
+    box-shadow:
+      inset 0 0 2px var(--col-highlight),
+      inset 0 0 2px var(--col-highlight);
+    position: absolute;
+    content: ' ';
+    width: 100%;
+    height: 100%;
+    border: solid 2px var(--col-selection);
+    top: -2px;
+    left: -2px;
+  }
+}
+
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 /* Status bar tips */
 li,
 button {
@@ -45,7 +71,7 @@ button {
     position: fixed;
     text-align: center;
     display: none;
-    bottom: 0;
+    bottom: 4rem;
     left: 50%;
     transform: translateX(-50%);
     padding: 0.5rem 1rem;
@@ -98,4 +124,10 @@ details > summary {
   &::-webkit-details-marker {
     display: none;
   }
+}
+
+/*@media (max-width: 500px) or (max-height: 500px)*/
+#animationItems,
+#paletteItems {
+  display: none;
 }

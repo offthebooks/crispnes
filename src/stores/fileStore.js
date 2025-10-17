@@ -25,6 +25,31 @@ export class FileStore {
     saveLink.click()
   }
 
+  saveCanvasImage(filename, canvas) {
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob)
+      saveLink.download = filename
+      saveLink.href = url
+      saveLink.click()
+      URL.revokeObjectURL(url)
+    })
+  }
+
+  saveUpscaledCanvasImage(filename, canvas, scale = 10) {
+    if (Math.max(canvas.width, canvas.height) > 256)
+      return this.saveCanvasImage(filename, canvas)
+
+    const upscaledCanvas = document.createElement('canvas')
+    upscaledCanvas.width = canvas.width * scale
+    upscaledCanvas.height = canvas.height * scale
+
+    const ctx = upscaledCanvas.getContext('2d')
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(canvas, 0, 0, upscaledCanvas.width, upscaledCanvas.height)
+
+    this.saveCanvasImage(filename, upscaledCanvas)
+  }
+
   #loadFile() {
     const [file] = fileInput.files
     if (!file) return
