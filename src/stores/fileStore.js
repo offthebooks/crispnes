@@ -25,6 +25,15 @@ export class FileStore {
     saveLink.click()
   }
 
+  saveCanvasImage(filename, canvas) {
+    saveLink.setAttribute('download', filename)
+    saveLink.setAttribute(
+      'href',
+      canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
+    )
+    saveLink.click()
+  }
+
   #loadFile() {
     const [file] = fileInput.files
     if (!file) return

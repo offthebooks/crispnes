@@ -1,6 +1,6 @@
 import { DrawTools, Tools } from './consts.js'
 import { Store } from './stores/store.js'
-import { domQueryOne, elementIndex } from './utils.js'
+import { dateString, domQueryOne, elementIndex } from './utils.js'
 
 export class Input {
   static init() {
@@ -21,10 +21,7 @@ export class Input {
 
       switch (menuItem) {
         case 'save':
-          editStore.saveFile('patterns.chr', tileStore.tilesetBytes)
-          fileStore.openFile((chrBytes) => {
-            tileStore.assignTileset(chrBytes)
-          })
+          fileStore.saveCanvasImage(`Crispnes-${dateString()}.png`, editCanvas)
           break
         case 'clear':
           editStore.clear()

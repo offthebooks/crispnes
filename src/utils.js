@@ -89,3 +89,8 @@ export const diffObjectValues = (nextObj, prevObj) => {
   }
   return { next, prev }
 }
+
+export const dateString = () => {
+  const iso = new Date().toISOString()
+  return iso.replace(/[-:T]/g, '').split('.')[0]
+}
