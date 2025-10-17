@@ -126,9 +126,8 @@ details > summary {
   }
 }
 
-@media (max-width: 500px) or (max-height: 500px) {
-  #animationItems,
-  #paletteItems {
-    display: none;
-  }
+/*@media (max-width: 500px) or (max-height: 500px)*/
+#animationItems,
+#paletteItems {
+  display: none;
 }

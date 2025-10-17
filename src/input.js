@@ -14,14 +14,17 @@ export class Input {
     const tools = document.getElementById('tools')
     const menu = document.getElementById('menu')
 
-    menu.addEventListener('click', ({ target }) => {
-      const menuItem = target
+    menu.addEventListener('click', (evt) => {
+      const menuItem = evt.target
         .closest('[data-menu-item]')
         ?.getAttribute('data-menu-item')
 
       switch (menuItem) {
         case 'save':
-          fileStore.saveCanvasImage(`Crispnes-${dateString()}.png`, editCanvas)
+          fileStore.saveUpscaledCanvasImage(
+            `Crispnes-${dateString()}.png`,
+            editCanvas
+          )
           break
         case 'clear':
           editStore.clear()
@@ -30,6 +33,8 @@ export class Input {
       }
 
       if (menuItem) menu.removeAttribute('open')
+
+      evt.stopPropagation()
     })
 
     tools.addEventListener('click', ({ target }) => {
@@ -103,5 +108,6 @@ export class Input {
     document.addEventListener('gesturechange', preventCallback)
     document.addEventListener('gestureend', preventCallback)
     document.addEventListener('pointerup', () => editStore.finishEdit())
+    document.addEventListener('click', () => menu.removeAttribute('open'))
   }
 }
