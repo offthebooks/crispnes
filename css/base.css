@@ -27,8 +27,13 @@ button {
   border: none;
   cursor: pointer;
 
-  &:hover {
+  &:not(.inactive):hover {
     background-color: var(--col-highlight);
+  }
+
+  &.inactive {
+    opacity: 0.25;
+    pointer-events: none;
   }
 
   i.icon {
@@ -43,7 +48,7 @@ button {
 #paletteColors li {
   position: relative;
 
-  &.active::before {
+  &.selected::before {
     border-radius: calc(var(--button-radius) + 2px);
     box-shadow:
       inset 0 0 2px var(--col-highlight),
@@ -80,7 +85,7 @@ button {
     color: var(--col-foreground-tint-2);
   }
 
-  &:hover span.tip {
+  &:not(.inactive):hover span.tip {
     display: block;
     z-index: 1;
     font-size: 1rem;
@@ -104,7 +109,7 @@ button {
     padding: 8px 16px;
     cursor: pointer;
 
-    &.active {
+    &.selected {
       background-color: var(--col-background);
     }
   }

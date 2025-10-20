@@ -91,8 +91,8 @@ export class EditStore {
     if (tool === this.tool || !DrawTools.has(tool)) return
 
     this.#data.currentTool = tool
-    forElements('#tools .active', removeClass('active'))
-    domQueryOne(`[data-tool="${tool}"]`).classList.add('active')
+    forElements('#tools .selected', removeClass('selected'))
+    domQueryOne(`[data-tool="${tool}"]`).classList.add('selected')
   }
 
   get zoom() {

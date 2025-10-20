@@ -1,5 +1,4 @@
 import { Store } from './stores/store.js'
-import { Render } from './render.js'
 import { Input } from './input.js'
 
 async function registerServiceWorker() {
@@ -18,6 +17,5 @@ async function registerServiceWorker() {
 
 registerServiceWorker()
 Store.init()
-Render.init()
 Input.init()
 window.store = Store.context

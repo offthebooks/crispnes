@@ -6,6 +6,8 @@ export const Tools = Object.freeze({
   Fill: 'fill',
   Move: 'move',
   Palettes: 'palettes',
+  Redo: 'redo',
+  Undo: 'undo',
   ZoomIn: 'zoomIn',
   ZoomOut: 'zoomOut'
 })

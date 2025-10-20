@@ -34,8 +34,8 @@ export class Palette {
   }
 
   set selected(index) {
-    this.colorItems[this.selected].classList.remove('active')
-    this.colorItems[index].classList.add('active')
+    this.colorItems[this.selected].classList.remove('selected')
+    this.colorItems[index].classList.add('selected')
     this.#data.selected = index
   }
 
@@ -76,7 +76,7 @@ export class Palette {
       li.style.backgroundColor = color.hex
       li.setAttribute('data-color-index', index)
       if (this.selected === index) {
-        li.classList.add('active')
+        li.classList.add('selected')
       }
       return li
     })

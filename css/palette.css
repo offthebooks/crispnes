@@ -27,7 +27,7 @@
       border-radius: var(--button-radius);
       border: none;
       cursor: pointer;
-      &:not(.active) {
+      &:not(.selected) {
         box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.325);
       }
     }

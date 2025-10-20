@@ -17,16 +17,6 @@
     cursor: pointer;
   }
 
-  &.active {
-    button {
-      background-color: var(--col-highlight);
-    }
-
-    #menuItems {
-      display: block;
-    }
-  }
-
   #menuItems {
     overflow: scroll;
     background-color: var(--col-background);
@@ -52,17 +42,6 @@
   top: 50%;
   left: 0;
   transform: translateY(-50%);
-
-  &.active {
-    #animationSelect {
-      display: none;
-    }
-
-    #animationItems,
-    #addAnimation {
-      display: block;
-    }
-  }
 
   #animationSelect {
     position: absolute;

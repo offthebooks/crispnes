@@ -1,16 +1,12 @@
 import { DrawTools, Tools } from './consts.js'
 import { Store } from './stores/store.js'
-import { dateString, domQueryOne, elementIndex } from './utils.js'
+import { dateString, domQueryOne } from './utils.js'
 
 export class Input {
   static init() {
-    const { fileStore, tileStore, paletteStore, editStore, animationStore } =
-      Store.context
-    const editTileGrid = document.getElementById('editTileGrid')
-    const editorEl = domQueryOne('#editor')
+    const { fileStore, editStore, animationStore, undoStore } = Store.context
     const editCanvas = domQueryOne('#editor canvas')
     const palette = document.getElementById('palette')
-    const tilesets = document.getElementById('tilesets')
     const tools = document.getElementById('tools')
     const menu = document.getElementById('menu')
 
@@ -57,12 +53,16 @@ export class Input {
           case Tools.Palettes:
             // Show Palettes list modal
             break
+          case Tools.Redo:
+            undoStore.redo()
+            break
+          case Tools.Undo:
+            undoStore.undo()
+            break
           case Tools.ZoomIn:
-            // Zoom editor view
             editStore.zoomIn()
             break
           case Tools.ZoomOut:
-            // Zoom editor view
             editStore.zoomOut()
             break
           case Tools.Collapse:

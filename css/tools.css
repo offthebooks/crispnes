@@ -21,6 +21,12 @@
     border: none;
     cursor: pointer;
 
+    &[data-tool='animations'],
+    &[data-tool='palettes'],
+    &[data-tool='move'] {
+      display: none;
+    }
+
     /* Animation */
     transition: margin var(--tool-duration);
     transition-timing-function: var(--anim-bounce);
@@ -32,7 +38,7 @@
       background-color: transparent;
     }
 
-    &.active,
+    &.selected,
     .open & {
       pointer-events: all;
       margin-bottom: 0;
@@ -41,6 +47,10 @@
 
     &:hover {
       background-color: var(--col-highlight);
+    }
+
+    &.inactive {
+      pointer-events: none;
     }
 
     i.icon {
