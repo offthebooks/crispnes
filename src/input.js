@@ -107,7 +107,15 @@ export class Input {
     document.addEventListener('gesturestart', preventCallback)
     document.addEventListener('gesturechange', preventCallback)
     document.addEventListener('gestureend', preventCallback)
-    document.addEventListener('pointerup', () => editStore.finishEdit())
+    document.addEventListener('pointerup', () => editStore.recordDraw())
     document.addEventListener('click', () => menu.removeAttribute('open'))
+    document.addEventListener('keydown', (evt) => {
+      const { undoStore } = Store.context
+      if ((evt.ctrlKey || evt.metaKey) && evt.key === 'z') {
+        evt.preventDefault()
+        if (evt.shiftKey) undoStore.redo()
+        else undoStore.undo()
+      }
+    })
   }
 }

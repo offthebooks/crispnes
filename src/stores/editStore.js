@@ -42,13 +42,19 @@ export class EditStore {
     const { colorIndex: paletteColor } = Store.context.paletteStore
 
     switch (this.tool) {
-      case Tools.Draw:
-        const color = frame.toggle(x, y, paletteColor)
-        this.#drawOperation = { x, y, color }
+      case Tools.Draw: {
+        const before = frame.read(x, y)
+        const after = frame.toggle(x, y, paletteColor)
+        if (before === after) return
+        this.#drawOperation = { after, [this.#keyForXY({ x, y })]: before }
         break
-      case Tools.Fill:
-        if (!frame.fill(x, y, paletteColor)) return
+      }
+      case Tools.Fill: {
+        const fillOperation = frame.fill(x, y, paletteColor)
+        if (!fillOperation) return
+        this.#recordFill(fillOperation)
         break
+      }
       default:
         return
     }
@@ -59,14 +65,15 @@ export class EditStore {
   continueEdit({ x, y }) {
     if (!this.#drawOperation) return
 
-    const { x: prevX, y: prevY, color } = this.#drawOperation
-    if (x === prevX && y === prevY) return
-
-    Object.assign(this.#drawOperation, { x, y })
-
     const { frame } = Store.context.animationStore
-    if (color === frame.read(x, y)) return
-    frame.draw(x, y, color)
+    const { after } = this.#drawOperation
+    const key = this.#keyForXY({ x, y })
+    const before = frame.read(x, y)
+
+    if (this.#drawOperation[key] || before === after) return
+
+    this.#drawOperation[key] = before
+    frame.draw(x, y, after)
     this.#renderCanvas()
   }
 
@@ -116,6 +123,12 @@ export class EditStore {
     this.#positionContainer()
   }
 
+  #keyForXY = ({ x, y }) => `${x},${y}`
+  #xyForKey = (key) => {
+    const [x, y] = key.split(',').map((n) => Number(n))
+    return { x, y }
+  }
+
   #positionContainer() {
     const { width, height } = Store.context.animationStore.frame
     const { x, y } = this.pan
@@ -130,6 +143,12 @@ export class EditStore {
     })
   }
 
+  #renderPixelList(pixels) {
+    const { frame } = Store.context.animationStore
+    pixels.forEach(({ x, y, color }) => frame.draw(x, y, color))
+    this.#renderCanvas()
+  }
+
   #renderCanvas() {
     const { palette } = Store.context.paletteStore
     const { frame } = Store.context.animationStore
@@ -142,12 +161,43 @@ export class EditStore {
     context.putImageData(imageData, 0, 0)
   }
 
-  // Other input management
-  finishEdit() {
-    // This needs to store edited tiles data to previous
-    // in the eventual "undo" operation stack, probably
-    // saving that in #drawOperation as well
+  // Commit draw operation, and capture undo action
+  recordDraw() {
+    if (!this.#drawOperation) return
+
+    const { undoStore } = Store.context
+    const { after, ...coords } = this.#drawOperation
+    const beforePixels = Object.entries(coords).map(([key, before]) => ({
+      ...this.#xyForKey(key),
+      color: before
+    }))
+    const afterPixels = beforePixels.map((pixel) => ({
+      ...pixel,
+      color: after
+    }))
+
+    undoStore.record({
+      name: 'Draw',
+      undo: () => this.#renderPixelList(beforePixels),
+      redo: () => this.#renderPixelList(afterPixels)
+    })
+
     this.#drawOperation = null
+  }
+
+  #recordFill(fillOperation) {
+    if (!fillOperation) return
+
+    const { undoStore } = Store.context
+    const { pixels, before, after } = fillOperation
+    const beforePixels = pixels.map((pixel) => ({ ...pixel, color: before }))
+    const afterPixels = pixels.map((pixel) => ({ ...pixel, color: after }))
+
+    undoStore.record({
+      name: 'Fill',
+      undo: () => this.#renderPixelList(beforePixels),
+      redo: () => this.#renderPixelList(afterPixels)
+    })
   }
 
   // State persistence

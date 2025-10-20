@@ -2,6 +2,7 @@ import { EditStore } from './editStore.js'
 import { FileStore } from './fileStore.js'
 import { PaletteStore } from './paletteStore.js'
 import { AnimationStore } from './animationStore.js'
+import { UndoStore } from './undoStore.js'
 
 export class Store {
   static #context = {}
@@ -14,11 +15,11 @@ export class Store {
       editStore: new EditStore(),
       fileStore: new FileStore(),
       paletteStore: new PaletteStore(),
-      animationStore: new AnimationStore()
+      animationStore: new AnimationStore(),
+      undoStore: new UndoStore()
     })
 
     Object.freeze(this.#context)
-
     Object.values(this.#context).forEach((store) => store?.init?.())
   }
 

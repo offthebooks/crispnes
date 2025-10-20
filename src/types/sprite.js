@@ -34,10 +34,16 @@ export class Sprite {
 
   fill(x, y, val) {
     const match = this.read(x, y)
-    if (val === match) return false
+    if (val === match) return null
 
-    this.#flood(x, y, val, match)
-    return true
+    const pixels = this.#flood(x, y, val, match)
+    return pixels.length
+      ? {
+          pixels,
+          before: match,
+          after: val
+        }
+      : null
   }
 
   toggle(x, y, val) {
@@ -74,14 +80,17 @@ export class Sprite {
   }
 
   #flood(x, y, val, match) {
-    if (x < 0 || x >= this.#width || y < 0 || y >= this.#height) return
+    if (x < 0 || x >= this.#width || y < 0 || y >= this.#height) return []
 
-    if (this.read(x, y) !== match) return
+    if (this.read(x, y) !== match) return []
 
     this.#write(x, y, val)
-    this.#flood(x + 1, y, val, match)
-    this.#flood(x - 1, y, val, match)
-    this.#flood(x, y + 1, val, match)
-    this.#flood(x, y - 1, val, match)
+    return [
+      { x, y },
+      ...this.#flood(x + 1, y, val, match),
+      ...this.#flood(x - 1, y, val, match),
+      ...this.#flood(x, y + 1, val, match),
+      ...this.#flood(x, y - 1, val, match)
+    ]
   }
 }
