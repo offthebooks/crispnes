@@ -3,6 +3,7 @@
   border-radius: var(--interface-radius) var(--interface-radius) 0 0;
   background-color: var(--col-background-tint-2);
   padding: var(--tool-margin);
+  padding-bottom: calc(var(--tool-margin) + env(safe-area-inset-bottom));
   inset: auto 0 0 auto;
   display: flex;
   flex-direction: column;
