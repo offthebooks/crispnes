@@ -19,7 +19,8 @@ export class Input {
         case 'save':
           fileStore.saveUpscaledCanvasImage(
             `Crispnes-${dateString()}.png`,
-            editCanvas
+            editCanvas,
+            20
           )
           break
         case 'clear':
