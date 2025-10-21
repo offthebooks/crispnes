@@ -1,6 +1,6 @@
 import { DrawTools, Tools } from './consts.js'
 import { Store } from './stores/store.js'
-import { clamp, dateString, domQueryOne } from './utils.js'
+import { dateString, domQueryOne } from './utils.js'
 
 export class Input {
   static init() {
@@ -86,21 +86,22 @@ export class Input {
     const editPosition = ({ target, offsetX, offsetY }) => {
       const { width: clientW, height: clientH } = target.getBoundingClientRect()
       const { width, height } = animationStore.frame
-      const x = clamp(~~((offsetX * width) / clientW), width, 0)
-      const y = clamp(~~((offsetY * height) / clientH), height, 0)
-      return { x, y }
+      const x = ~~((offsetX * width) / clientW)
+      const y = ~~((offsetY * height) / clientH)
+      const inbounds = x >= 0 && x < width && y >= 0 && y < height
+      return inbounds ? { x, y } : null
     }
 
     editCanvas.addEventListener('pointerdown', (evt) => {
       if (![Tools.Draw, Tools.Fill].includes(editStore.tool)) return
       const pos = editPosition(evt)
-      editStore.editAt(pos)
+      pos && editStore.editAt(pos)
     })
 
     editCanvas.addEventListener('pointermove', (evt) => {
       if (editStore.tool !== Tools.Draw) return
       const pos = editPosition(evt)
-      editStore.continueEdit(pos)
+      pos && editStore.continueEdit(pos)
     })
 
     const preventCallback = (e) => e.preventDefault()
