@@ -1,6 +1,6 @@
 import { DrawTools, Tools } from './consts.js'
 import { Store } from './stores/store.js'
-import { dateString, domQueryOne } from './utils.js'
+import { clamp, dateString, domQueryOne } from './utils.js'
 
 export class Input {
   static init() {
@@ -86,8 +86,8 @@ export class Input {
     const editPosition = ({ target, offsetX, offsetY }) => {
       const { width: clientW, height: clientH } = target.getBoundingClientRect()
       const { width, height } = animationStore.frame
-      const x = ~~((offsetX * width) / clientW)
-      const y = ~~((offsetY * height) / clientH)
+      const x = clamp(~~((offsetX * width) / clientW), width, 0)
+      const y = clamp(~~((offsetY * height) / clientH), height, 0)
       return { x, y }
     }
 
