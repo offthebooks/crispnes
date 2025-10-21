@@ -4,7 +4,7 @@ import { Input } from './input.js'
 async function registerServiceWorker() {
   const sw = navigator.serviceWorker
   if (sw && sw.controller !== null) return
-  const reg = await sw.register('/serviceWorker.js')
+  const reg = await sw.register('./serviceWorker.js')
   reg.addEventListener('updatefound', () => {
     const regSW = reg.installing
     // Reload on first activating service worker so all files cache
