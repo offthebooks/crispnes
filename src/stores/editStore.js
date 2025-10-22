@@ -78,9 +78,19 @@ export class EditStore {
   }
 
   clear() {
+    const { undoStore } = Store.context
     const { frame } = Store.context.animationStore
-    frame.clear()
-    this.#renderCanvas()
+    const bytes = frame.cloneBytes()
+    const setBytes = (bytes) => {
+      bytes ? frame.setBytes(bytes) : frame.clear()
+      this.#renderCanvas()
+    }
+    undoStore.record({
+      name: 'Clear',
+      undo: () => setBytes(bytes),
+      redo: () => setBytes(null)
+    })
+    setBytes(null)
   }
 
   get tool() {

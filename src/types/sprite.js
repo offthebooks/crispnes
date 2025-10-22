@@ -20,6 +20,18 @@ export class Sprite {
     return this.#height
   }
 
+  setBytes(bytes) {
+    if (bytes.length !== this.#bytes.length) {
+      console.error('Could not set bytes, array length mismatch.')
+      return
+    }
+    this.#bytes = new Uint8Array(bytes)
+  }
+
+  cloneBytes() {
+    return new Uint8Array(this.#bytes)
+  }
+
   clear() {
     this.#bytes = new Uint8Array(this.#width * this.#height)
   }
