@@ -3,16 +3,25 @@ import { hexStringForByte } from '../utils.js'
 export class Color {
   #rgba
 
-  constructor(red = 0, green, blue, alpha) {
+  constructor({ r, g, b, a = 255, gray, bytes }) {
+    if (bytes instanceof Uint8Array && bytes.length === 4) {
+      this.#rgba = bytes
+      return
+    }
+
     this.#rgba = new Uint8Array(4)
-    this.r = red
-    this.g = green ?? red
-    this.b = blue ?? red
-    this.a = alpha ?? 255
+    this.r = gray ?? r ?? 0
+    this.g = gray ?? g ?? 0
+    this.b = gray ?? b ?? 0
+    this.a = a
   }
 
-  static fromRGB = (r, g, b, a) => new Color(r, g, b, a)
-  static gray = (value, alpha) => new Color(value, value, value, alpha)
+  static fromRGB = (r, g, b, a) => new Color({ r, g, b, a })
+  static fromGray = (gray, a) => new Color({ gray, a })
+
+  cloneBytes() {
+    return Uint8Array(this.#rgba)
+  }
 
   get array() {
     return Object.freeze(Array.from(this.#rgba))
@@ -57,39 +66,12 @@ export class Color {
 
   // Named Colors
   static get Transparent() {
-    return new Color(0, 0, 0, 0)
+    return Color.fromGray(0, 0)
   }
   static get Black() {
-    return new Color()
+    return Color.fromGray(0)
   }
   static get White() {
-    return new Color(255)
-  }
-  static get Gray() {
-    return new Color(128)
-  }
-  static get Red() {
-    return new Color(255, 0, 0)
-  }
-  static get Orange() {
-    return new Color(255, 128, 0)
-  }
-  static get Yellow() {
-    return new Color(255, 255, 0)
-  }
-  static get Green() {
-    return new Color(0, 255, 0)
-  }
-  static get Cyan() {
-    return new Color(0, 255, 255)
-  }
-  static get Blue() {
-    return new Color(0, 0, 255)
-  }
-  static get Purple() {
-    return new Color(128, 0, 255)
-  }
-  static get Magenta() {
-    return new Color(255, 0, 255)
+    return Color.fromGray(255)
   }
 }

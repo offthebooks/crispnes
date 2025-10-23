@@ -3,6 +3,7 @@ import { FileStore } from './fileStore.js'
 import { PaletteStore } from './paletteStore.js'
 import { AnimationStore } from './animationStore.js'
 import { UndoStore } from './undoStore.js'
+import { DataStore } from './dataStore.js'
 
 export class Store {
   static #context = {}
@@ -12,6 +13,7 @@ export class Store {
     // the objects so that all managers are present in their init
     // functions and available to other dependencies
     Object.assign(this.#context, {
+      dataStore: new DataStore(),
       editStore: new EditStore(),
       fileStore: new FileStore(),
       paletteStore: new PaletteStore(),

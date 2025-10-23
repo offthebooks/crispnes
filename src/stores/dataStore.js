@@ -1,7 +1,17 @@
-import { DBStore } from '../consts.js'
-
 const dbName = 'CrispnesDB'
 const dbVersion = 1
+
+const DBStore = Object.freeze({
+  Animations: 'animations',
+  Frames: 'frames',
+  Palettes: 'palettes',
+  State: 'state'
+})
+
+const DBStateKey = Object.freeze({
+  Palette: 'palette',
+  Animation: 'animation'
+})
 
 const dataStoreKeyPaths = {
   [DBStore.Animations]: { keyPath: 'name' },
@@ -19,7 +29,7 @@ export class DataStore {
   async db() {
     if (this.#db) return this.#db
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const request = indexedDB.open(dbName, dbVersion)
 
       request.onupgradeneeded = ({ target: { result } }) => {
@@ -36,9 +46,7 @@ export class DataStore {
         resolve(this.#db)
       }
 
-      request.onerror = ({ target: { error } }) => {
-        console.error('Failed to open IndexedDB: ' + error)
-      }
+      request.onerror = ({ target: { error } }) => reject(error)
     })
   }
 
@@ -50,10 +58,10 @@ export class DataStore {
     const stateStore = transaction.objectStore(DBStore.State)
 
     if (paletteState) {
-      stateStore.put(paletteState, 'palette')
+      stateStore.put(paletteState, DBStateKey.Palette)
     }
     if (animationState) {
-      stateStore.put(animationState, 'animation')
+      stateStore.put(animationState, DBStateKey.Animation)
     }
     if (palettes) {
       const palettesStore = transaction.objectStore(DBStore.Palettes)
@@ -72,6 +80,99 @@ export class DataStore {
       transaction.oncomplete = () => resolve()
       transaction.onerror = ({ target: { error } }) => reject(error)
       transaction.onabort = ({ target: { error } }) => reject(error)
+    })
+  }
+
+  async get(store, key, tx = null) {
+    const db = await this.db()
+    const transaction = tx || db.transaction([store], 'readonly')
+
+    return new Promise((resolve, reject) => {
+      const request = transaction.objectStore(store).get(key)
+      request.onsuccess = ({ target: { result } }) => resolve(result)
+      request.onerror = ({ target: { error } }) => reject(error)
+    })
+  }
+
+  async put(store, value, key, tx = null) {
+    const db = await this.db()
+    const transaction = tx || db.transaction([store], 'readwrite')
+
+    return new Promise((resolve, reject) => {
+      const request = transaction.objectStore(store).put(value, key)
+      request.onsuccess = ({ target: { result } }) => resolve(result)
+      request.onerror = ({ target: { error } }) => reject(error)
+    })
+  }
+
+  loadState(key) {
+    return this.get(DBStore.State, key)
+  }
+
+  async loadPaletteData() {
+    const paletteState = await this.loadState(DBStateKey.Palette)
+
+    if (!paletteState) return null
+
+    const palettes = await this.loadPalettesByNames(paletteState.palettes)
+
+    return {
+      ...paletteState,
+      palettes
+    }
+  }
+
+  async loadPalettesByNames(names) {
+    const db = await this.db()
+    const transaction = db.transaction([DBStore.Palettes], 'readonly')
+    return Promise.all(
+      names.map((name) => this.get(DBStore.Palettes, name, transaction))
+    )
+  }
+
+  async loadAnimationData() {
+    const animationState = await this.loadState(DBStateKey.Animation)
+
+    if (!animationState) return null
+
+    const animations = await this.loadAnimationsByNames(
+      animationState.animations
+    )
+
+    return {
+      ...animationState,
+      animations
+    }
+  }
+
+  async loadAnimationsByNames(names) {
+    const db = await this.db()
+    const transaction = db.transaction([DBStore.Animations], 'readonly')
+    const animations = await Promise.all(
+      names.map((name) => this.get(DBStore.Animations, name, transaction))
+    )
+    return Promise.all(
+      animations.map(async (a) => {
+        const frames = await this.loadAnimationFramesByName(a.name)
+        return {
+          ...a,
+          frames
+        }
+      })
+    )
+  }
+
+  async loadAnimationFramesByName(name) {
+    const db = await this.db()
+    const tx = db.transaction([DBStore.Frames], 'readonly')
+    const store = tx.objectStore(DBStore.Frames)
+
+    const range = IDBKeyRange.bound([name, 0], [name, Number.MAX_SAFE_INTEGER])
+
+    return new Promise((resolve, reject) => {
+      const request = store.getAll(range)
+      request.onsuccess = ({ target: { result } }) => resolve(result)
+      request.onerror = ({ target: { error } }) => reject(error)
     })
   }
 }

@@ -1,16 +1,14 @@
 import { Color } from './types/color.js'
 
-export const transparentColor = Color.gray(0, 0)
-
 // NES Colors: https://www.nesdev.org/wiki/PPU_palettes (indices changed)
 export const nesColorPalette = [
-  Color.gray(0, 0),
-  Color.gray(0),
-  Color.gray(78),
-  Color.gray(98),
-  Color.gray(171),
-  Color.gray(184),
-  Color.gray(255),
+  Color.fromGray(0, 0),
+  Color.fromGray(0),
+  Color.fromGray(78),
+  Color.fromGray(98),
+  Color.fromGray(171),
+  Color.fromGray(184),
+  Color.fromGray(255),
 
   Color.fromRGB(0, 31, 178),
   Color.fromRGB(13, 87, 255),

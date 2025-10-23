@@ -3,6 +3,7 @@ import {
   dataFromStorageWithKeys,
   dataStoreObjectValuesForKeys
 } from '../utils.js'
+import { Store } from './store.js'
 
 const paletteItemsEl = document.getElementById('paletteItems')
 const paletteColorsEl = document.getElementById('paletteColors')
@@ -57,23 +58,17 @@ export class PaletteStore {
   }
 
   // State persistence
-  serialize(object = this.#data) {
-    dataStoreObjectValuesForKeys(object)
+  #serialize() {
+    const { dataStore } = Store.context
+    const storeData = {
+      paletteState: {
+        selectedColor: this.selectedColor,
+        palettes: this.palettes.map((p) => p.name)
+      },
+      palettes: this.palettes.map((p) => p.serialize())
+    }
+    dataStore.save(storeData)
   }
 
-  #deserialize() {
-    const data = dataFromStorageWithKeys(Object.keys(defaultData))
-    const { spritePalettes, backgroundPalettes } = data
-
-    if (spritePalettes)
-      data.spritePalettes = spritePalettes.map((pal) =>
-        Object.assign(new Uint8Array(4), pal)
-      )
-    if (backgroundPalettes)
-      data.backgroundPalettes = backgroundPalettes.map((pal) =>
-        Object.assign(new Uint8Array(4), pal)
-      )
-
-    return data
-  }
+  #deserialize() {}
 }

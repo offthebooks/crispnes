@@ -16,8 +16,8 @@ export class Palette {
   #item
   #colorItems
 
-  constructor(name) {
-    this.#data = { ...defaultData }
+  constructor(data = {}) {
+    this.#data = { ...defaultData, ...data }
   }
 
   get name() {
@@ -49,6 +49,11 @@ export class Palette {
 
   get length() {
     return this.#data.colors.length
+  }
+
+  serialize() {
+    const { name, colors } = this.#data
+    return { name, colors: colors.map((c) => c.cloneBytes()) }
   }
 
   color(index) {

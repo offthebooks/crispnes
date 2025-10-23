@@ -12,13 +12,6 @@ export const Tools = Object.freeze({
   ZoomOut: 'zoomOut'
 })
 
-export const DBStore = Object.freeze({
-  Animations: 'animations',
-  Frames: 'frames',
-  Palettes: 'palettes',
-  State: 'state'
-})
-
 // Sets
 export const DrawTools = Object.freeze(
   new Set([Tools.Draw, Tools.Fill, Tools.Move])
