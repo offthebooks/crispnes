@@ -8,10 +8,11 @@ import { DataStore } from './dataStore.js'
 export class Store {
   static #context = {}
 
-  static init() {
+  static async init() {
     // Constructors should only set internal state, this hooks up
     // the objects so that all managers are present in their init
-    // functions and available to other dependencies
+    // functions and available to other dependencies, sequence matters
+    // here for deserialization in the awaited init methods below
     Object.assign(this.#context, {
       dataStore: new DataStore(),
       editStore: new EditStore(),
@@ -22,7 +23,10 @@ export class Store {
     })
 
     Object.freeze(this.#context)
-    Object.values(this.#context).forEach((store) => store?.init?.())
+
+    for (const store of Object.values(this.#context)) {
+      await store?.init?.()
+    }
   }
 
   static get context() {

@@ -33,6 +33,8 @@ export class DataStore {
       const request = indexedDB.open(dbName, dbVersion)
 
       request.onupgradeneeded = ({ target: { result } }) => {
+        // Currently just creates the object stores on first run
+        // This will need migration logic if bumping dbVersion
         const db = result
         Object.entries(dataStoreKeyPaths).forEach(([store, keyPath]) => {
           if (!db.objectStoreNames.contains(store)) {
@@ -50,6 +52,8 @@ export class DataStore {
     })
   }
 
+  // Monolithic save function, can save data for any or all object stores
+  // depending on the scope of the change we need to serialize
   async save(appData) {
     const { paletteState, animationState, palettes, animations, frames } =
       appData
