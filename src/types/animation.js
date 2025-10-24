@@ -6,6 +6,7 @@ export class Animation {
 
   #name
   #frames
+  #palette
   #width
   #height
   #item
