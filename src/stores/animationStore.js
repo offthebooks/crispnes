@@ -5,49 +5,89 @@ const defaultModel = Object.seal({
   selectedAnimation: null,
   selectedFrame: 0,
 
-  animations: [new Animation('Untitled', 16, 16)]
+  animationList: [] // [new Animation('Untitled', 16, 16)]
 })
 
 export class AnimationStore {
   #model
+  #animationMap
 
   constructor() {
-    this.#model = { ...defaultData }
+    this.#model = { ...defaultModel }
+    this.#animationMap = {}
+  }
+
+  async init() {
+    const { dataStore } = Store.context
+    const dataModel = await dataStore.loadAnimationData()
+
+    if (!this.#loadFromDataModel(dataModel)) {
+    }
+  }
+
+  #loadFromDataModel(dataModel) {
+    const { animationState, animations, frames } = dataModel
+
+    if (!animationState || !animations || !frames) return false
+
+    //
+
+    return true
+  }
+
+  #persist() {
+    const { dataStore } = Store.context
+    dataStore.save(this.dataModel)
+  }
+
+  // Accessors
+  get dataModel() {
+    return {
+      animationState: {
+        selectedAnimation: this.animation.name,
+        selectedFrame: this.#model.selectedFrame,
+        animationList: this.animations.map((a) => a.name)
+      },
+      animations: this.animations.map((a) => a.dataModel),
+      frames: this.animations.flatMap((a) =>
+        a.frames.map((f) => {
+          f.dataModel
+        })
+      )
+    }
   }
 
   get animation() {
-    return this.#data.animations[this.#data.selectedAnimation]
+    return this.#model.selectedAnimation
   }
 
   get frame() {
-    return this.animation.sprite(this.#data.selectedFrame)
+    return this.animation.sprite(this.#model.selectedFrame)
   }
 
   get animationItems() {
-    return this.#data.animations.map((a) => a.item)
+    return this.#model.animationList.map((a) => a.item)
   }
 
-  set animation(index) {
-    this.#data.selectedAnimation = index
+  get animations() {
+    return this.#model.animationList
+  }
+
+  set animation(name) {
+    this.#model.selectedAnimation = this.animationForName(name)
     this.frame = 0
   }
 
   set frame(index) {
-    this.#data.selectedFrame = index
+    this.#model.selectedFrame = index
     Store.context.editStore.renderCanvas()
   }
 
   addAnimation(name, width, height) {
-    this.#data.animations.push(new Animation(name, width, height))
+    this.animations.push(new Animation(name, width, height))
   }
 
-  // State persistence
-  serialize(object = this.#data) {
-    // dataStoreObjectValuesForKeys(object)
-  }
-
-  #deserialize() {
-    // const data = dataFromStorageWithKeys(Object.keys(defaultData))
-    return {}
+  animationForName(name) {
+    return this.#animationMap[name]
   }
 }

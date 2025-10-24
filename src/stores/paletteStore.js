@@ -1,8 +1,4 @@
 import { Palette } from '../types/palette.js'
-import {
-  dataFromStorageWithKeys,
-  dataStoreObjectValuesForKeys
-} from '../utils.js'
 import { Store } from './store.js'
 
 const paletteItemsEl = document.getElementById('paletteItems')
@@ -14,7 +10,7 @@ const defaultModel = Object.seal({
 
 export class PaletteStore {
   #model
-  #selected // For the palette selection in palette edit UI
+  #selected
   #paletteMap // Convenience for finding palettes by name
 
   constructor() {
@@ -91,7 +87,7 @@ export class PaletteStore {
   }
 
   get palette() {
-    return this.palettes[this.paletteIndex]
+    return this.#selected
   }
 
   get color() {
@@ -116,6 +112,6 @@ export class PaletteStore {
   }
 
   paletteForName(name) {
-    return this.#model.paletteMap[name]
+    return this.#paletteMap[name]
   }
 }

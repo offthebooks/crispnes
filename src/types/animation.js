@@ -1,4 +1,4 @@
-import { Sprite, maxSideLength } from './sprite.js'
+import { Sprite, maxSideLength, minSideLength } from './sprite.js'
 import { clamp, elementFromTemplate } from '../utils.js'
 
 export class Animation {
@@ -9,14 +9,24 @@ export class Animation {
   #palette
   #width
   #height
-  #item
+  #DOM
 
   constructor(name, width, height) {
     this.#name = name || 'Untitled'
-    this.#width = Math.floor(clamp(width, maxSideLength))
-    this.#height = Math.floor(clamp(height, maxSideLength))
+    this.#width = Math.floor(clamp(width, maxSideLengt, minSideLength))
+    this.#height = Math.floor(clamp(height, maxSideLength, minSideLength))
     this.#frames = []
+    this.#palette = null
+    this.#DOM = null
     this.add()
+  }
+
+  static fromDataModel = ({ name, width, height }) => {
+    return new Animation(name, width, height)
+  }
+
+  get dataModel() {
+    return {}
   }
 
   get name() {
@@ -29,28 +39,50 @@ export class Animation {
   }
 
   get item() {
-    return this.#item ?? this.#render()
+    return this.#DOM.item ?? this.#render().item
+  }
+
+  get width() {
+    return this.#width
+  }
+
+  get height() {
+    return this.#height
+  }
+
+  get length() {
+    return this.#frames.length
+  }
+
+  get palette() {
+    return this.#palette
   }
 
   add() {
     this.#frames.push(new Sprite(this.#width, this.#height))
+    this.#render()
   }
 
   remove(index) {
     this.#frames.splice(index, 1)
+    this.#render()
   }
 
   sprite(index) {
     return this.#frames[index]
   }
 
+  indexOfFrame(frame) {
+    return this.#frames.indexOf(frame)
+  }
+
   #render() {
-    this.#item ??= elementFromTemplate(Animation.itemTemplate)
-    this.#item.querySelector('.name').textContent = this.#name
-    this.#item.querySelector('.frameCount').textContent =
-      `${this.#frames.length} frames`
-    this.#item.querySelector('.size').textContent =
-      `${this.#width} x ${this.#height} pixels`
-    return this.#item
+    this.#DOM.item ??= elementFromTemplate(Animation.itemTemplate)
+    const { item } = this.#DOM
+    const { name, length, width, height } = this
+    item.querySelector('.name').textContent = name
+    item.querySelector('.frameCount').textContent = `${length} frames`
+    item.querySelector('.size').textContent = `${width} x ${height} pixels`
+    return this.#DOM
   }
 }

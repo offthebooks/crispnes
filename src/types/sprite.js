@@ -1,43 +1,71 @@
+import { Store } from '../stores/store.js'
 import { clamp } from '../utils.js'
 export const maxSideLength = 256
+export const minSideLength = 8
+
+const defaultModel = {
+  bytes: null,
+  animation: null,
+  duration: 10 // frames at 60hz
+}
 
 export class Sprite {
-  #bytes
-  #width
-  #height
+  #model
 
-  constructor(width, height) {
-    this.#width = Math.floor(clamp(width, maxSideLength))
-    this.#height = Math.floor(clamp(height, maxSideLength))
-    this.clear()
+  constructor(model) {
+    this.#model = { ...defaultModel, ...model }
+    this.#model.bytes || this.clear()
+  }
+
+  static fromDataModel = ({ animation, duration, bytes }) => {
+    const { animationStore } = Store.context
+    return new Sprite({
+      animation: animationStore.animationForName(animation),
+      duration,
+      bytes
+    })
+  }
+
+  get dataModel() {
+    const { animation, duration, bytes } = this.#model
+    return {
+      animation: animation.name,
+      index: animation.indexOfFrame(this),
+      bytes: new Uint8Array(bytes),
+      duration
+    }
   }
 
   get width() {
-    return this.#width
+    return this.#model.animation.width
   }
 
   get height() {
-    return this.#height
+    return this.#model.animation.height
+  }
+
+  get duration() {
+    return this.#model.duration
+  }
+
+  set duration(d) {
+    this.#model.duration = d
   }
 
   setBytes(bytes) {
-    if (bytes.length !== this.#bytes.length) {
+    if (bytes.length !== this.#model.bytes.length) {
       console.error('Could not set bytes, array length mismatch.')
       return
     }
-    this.#bytes = new Uint8Array(bytes)
-  }
-
-  cloneBytes() {
-    return new Uint8Array(this.#bytes)
+    this.#model.bytes = new Uint8Array(bytes)
   }
 
   clear() {
-    this.#bytes = new Uint8Array(this.#width * this.#height)
+    this.#model.bytes = new Uint8Array(this.width * this.height)
   }
 
   read(x, y) {
-    return this.#bytes[this.#index(x, y)]
+    return this.#model.bytes[this.#index(x, y)]
   }
 
   draw(x, y, val) {
@@ -65,14 +93,15 @@ export class Sprite {
     return outColor
   }
 
-  generateImageDataWithPalette(palette) {
-    const imageData = new ImageData(this.#width, this.#height)
+  generateImageData() {
+    const { palette } = this.#model.animation
+    const imageData = new ImageData(this.width, this.height)
     const data = imageData.data
     let spriteIndex = 0
     let bufferIndex = 0
-    for (let y = 0; y < this.#height; ++y) {
-      for (let x = 0; x < this.#width; ++x) {
-        const colIdx = this.#bytes[spriteIndex++]
+    for (let y = 0; y < this.height; ++y) {
+      for (let x = 0; x < this.width; ++x) {
+        const colIdx = this.#model.bytes[spriteIndex++]
         const { r, g, b, a } = palette.color(colIdx)
         data[bufferIndex++] = r
         data[bufferIndex++] = g
@@ -84,15 +113,15 @@ export class Sprite {
   }
 
   #index(x, y) {
-    return y * this.#width + x
+    return y * this.width + x
   }
 
   #write(x, y, val) {
-    this.#bytes[this.#index(x, y)] = val
+    this.#model.bytes[this.#index(x, y)] = val
   }
 
   #flood(x, y, val, match) {
-    if (x < 0 || x >= this.#width || y < 0 || y >= this.#height) return []
+    if (x < 0 || x >= this.width || y < 0 || y >= this.height) return []
 
     if (this.read(x, y) !== match) return []
 

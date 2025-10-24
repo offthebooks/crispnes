@@ -62,8 +62,6 @@ export class Palette {
     return this.#model.colors.length
   }
 
-  serialize() {}
-
   color(index) {
     return this.#model.colors[index]
   }
