@@ -1,18 +1,18 @@
 import { Animation } from '../types/animation.js'
 import { Store } from './store.js'
 
-const defaultData = Object.seal({
-  selectedAnimation: 0,
+const defaultModel = Object.seal({
+  selectedAnimation: null,
   selectedFrame: 0,
 
   animations: [new Animation('Untitled', 16, 16)]
 })
 
 export class AnimationStore {
-  #data
+  #model
 
   constructor() {
-    this.#data = { ...defaultData, ...this.#deserialize() }
+    this.#model = { ...defaultData }
   }
 
   get animation() {

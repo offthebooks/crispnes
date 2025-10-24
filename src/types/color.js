@@ -18,8 +18,10 @@ export class Color {
 
   static fromRGB = (r, g, b, a) => new Color({ r, g, b, a })
   static fromGray = (gray, a) => new Color({ gray, a })
+  static fromDataModel = (bytes) => new Color({ bytes })
+  static cloneArray = (array) => array.map((c) => new Color({ bytes: c.#rgba }))
 
-  cloneBytes() {
+  get dataModel() {
     return Uint8Array(this.#rgba)
   }
 

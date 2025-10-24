@@ -8,28 +8,76 @@ import { Store } from './store.js'
 const paletteItemsEl = document.getElementById('paletteItems')
 const paletteColorsEl = document.getElementById('paletteColors')
 
-const defaultData = Object.seal({
-  // This selected palette is for the palette list
-  // In-use pallete is associated with the current animation
-  selectedPalette: null,
-  paletteList: [],
-  paletteMap: {}
+const defaultModel = Object.seal({
+  paletteList: []
 })
 
 export class PaletteStore {
-  #data
+  #model
+  #selected // For the palette selection in palette edit UI
+  #paletteMap // Convenience for finding palettes by name
 
   constructor() {
-    this.#data = { ...defaultData }
+    this.#model = { ...defaultModel }
+    this.#selected = null
+    this.#paletteMap = {}
   }
 
   async init() {
-    await this.#deserialize()
+    const { dataStore } = Store.context
+    const dataModel = await dataStore.loadPaletteData()
+
+    if (!this.#loadFromDataModel(dataModel)) {
+      // Populate default palette entry
+      const { nextPaletteName: name } = this
+      const palette = new Palette({ name })
+      this.#model.paletteList = [palette]
+      this.#paletteMap = { name: palette }
+      this.selected = palette
+      this.#persist()
+    }
+
     paletteItemsEl.replaceChildren(...this.paletteListItems)
     paletteColorsEl.replaceChildren(...this.paletteColorItems)
   }
 
+  #loadFromDataModel(dataModel) {
+    const {
+      paletteState: { paletteList },
+      palettes
+    } = dataModel
+
+    if (!paletteList || !palettes) return false
+
+    const paletteMap = Object.fromEntries(
+      palettes.map((dataModel) => {
+        const palette = Palette.fromDataModel(dataModel)
+        return [palette.name, palette]
+      })
+    )
+
+    this.#model.paletteList = paletteList.map((name) => paletteMap[name])
+    this.selected = this.#model.paletteList[0]
+    this.paletteMap = paletteMap
+
+    return true
+  }
+
+  #persist() {
+    const { dataStore } = Store.context
+    dataStore.save(this.dataModel)
+  }
+
   // Accessors
+  get dataModel() {
+    return {
+      paletteState: {
+        paletteList: this.palettes.map((p) => p.name)
+      },
+      palettes: this.palettes.map((p) => p.dataModel)
+    }
+  }
+
   get colorIndex() {
     return this.palette.selected
   }
@@ -39,7 +87,7 @@ export class PaletteStore {
   }
 
   get palettes() {
-    return this.#data.paletteList
+    return this.#model.paletteList
   }
 
   get palette() {
@@ -68,40 +116,6 @@ export class PaletteStore {
   }
 
   paletteForName(name) {
-    return this.#data.paletteMap[name]
-  }
-
-  // State persistence
-  #serialize() {
-    const { dataStore } = Store.context
-    const paletteData = {
-      paletteState: {
-        paletteList: this.palettes.map((p) => p.name)
-      },
-      palettes: this.palettes.map((p) => p.serialize())
-    }
-    dataStore.save(paletteData)
-  }
-
-  async #deserialize() {
-    const { dataStore } = Store.context
-    const {
-      paletteState: { paletteList },
-      palettes
-    } = await dataStore.loadPaletteData()
-
-    if (!paletteList || !palettes) return
-
-    const paletteMap = Object.fromEntries(
-      paletteData.palettes.map((p) => {
-        const colors = p.colors.map((bytes) => new Color({ bytes }))
-        const palette = new Palette({ name: p.name, colors })
-        return [p.name, palette]
-      })
-    )
-
-    this.#data.paletteList = paletteList.map((name) => paletteMap[name])
-    this.#data.paletteMap = paletteMap
-    this.#data.selectedPalette = this.#data.paletteList[0]
+    return this.#model.paletteMap[name]
   }
 }
