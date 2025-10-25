@@ -118,10 +118,10 @@ export class DataStore {
 
     if (!paletteState) return null
 
-    const palettes = await this.loadPalettesByNames(paletteState.palettes)
+    const palettes = await this.loadPalettesByNames(paletteState.paletteList)
 
     return {
-      ...paletteState,
+      paletteState,
       palettes
     }
   }
@@ -144,7 +144,7 @@ export class DataStore {
     )
 
     return {
-      ...animationState,
+      animationState,
       animations
     }
   }

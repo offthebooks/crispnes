@@ -1,4 +1,5 @@
 import { Palette } from '../types/palette.js'
+import { generateUniqueName } from '../utils.js'
 import { Store } from './store.js'
 
 const paletteItemsEl = document.getElementById('paletteItems')
@@ -11,7 +12,7 @@ const defaultModel = Object.seal({
 export class PaletteStore {
   #model
   #selected
-  #paletteMap // Convenience for finding palettes by name
+  #paletteMap
 
   constructor() {
     this.#model = { ...defaultModel }
@@ -23,12 +24,12 @@ export class PaletteStore {
     const { dataStore } = Store.context
     const dataModel = await dataStore.loadPaletteData()
 
-    if (!this.#loadFromDataModel(dataModel)) {
+    if (!dataModel || !this.#loadFromDataModel(dataModel)) {
       // Populate default palette entry
-      const { nextPaletteName: name } = this
+      const name = generateUniqueName()
       const palette = new Palette({ name })
       this.#model.paletteList = [palette]
-      this.#paletteMap = { name: palette }
+      this.#paletteMap = { [name]: palette }
       this.selected = palette
       this.#persist()
     }
@@ -53,8 +54,8 @@ export class PaletteStore {
     )
 
     this.#model.paletteList = paletteList.map((name) => paletteMap[name])
-    this.selected = this.#model.paletteList[0]
-    this.paletteMap = paletteMap
+    this.#selected = this.#model.paletteList[0]
+    this.#paletteMap = paletteMap
 
     return true
   }
@@ -90,6 +91,10 @@ export class PaletteStore {
     return this.#selected
   }
 
+  get paletteNames() {
+    return this.palettes.map((p) => p.name)
+  }
+
   get color() {
     return this.palette[this.colorIndex]
   }
@@ -100,15 +105,6 @@ export class PaletteStore {
 
   get paletteColorItems() {
     return this.palette.colorItems.slice(1)
-  }
-
-  get nextPaletteName() {
-    let num = this.palettes.length
-    let name
-    do {
-      name = `Untitled ${num++}`
-    } while (this.paletteForName(name))
-    return name
   }
 
   paletteForName(name) {

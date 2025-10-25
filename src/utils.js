@@ -94,3 +94,12 @@ export const dateString = () => {
   const iso = new Date().toISOString()
   return iso.replace(/[-:T]/g, '').split('.')[0]
 }
+
+export const generateUniqueName = (existingNames = []) => {
+  let num = existingNames.length
+  let name
+  do {
+    name = `Untitled ${++num}`
+  } while (existingNames.includes(name))
+  return name
+}

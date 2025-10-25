@@ -1,5 +1,6 @@
 import { Sprite, maxSideLength, minSideLength } from './sprite.js'
 import { clamp, elementFromTemplate } from '../utils.js'
+import { Store } from '../stores/store.js'
 
 export class Animation {
   static itemTemplate = document.querySelector('#animationItems template')
@@ -11,12 +12,12 @@ export class Animation {
   #height
   #DOM
 
-  constructor(name, width, height) {
-    this.#name = name || 'Untitled'
-    this.#width = Math.floor(clamp(width, maxSideLengt, minSideLength))
+  constructor({ name, width, height, palette }) {
+    this.#name = name || Store.context.animationStore.nextAnimationName()
+    this.#palette = palette ?? Store.context.paletteStore.palette
+    this.#width = Math.floor(clamp(width, maxSideLength, minSideLength))
     this.#height = Math.floor(clamp(height, maxSideLength, minSideLength))
     this.#frames = []
-    this.#palette = null
     this.#DOM = null
     this.add()
   }

@@ -22,7 +22,7 @@ export class Color {
   static cloneArray = (array) => array.map((c) => new Color({ bytes: c.#rgba }))
 
   get dataModel() {
-    return Uint8Array(this.#rgba)
+    return new Uint8Array(this.#rgba)
   }
 
   get array() {

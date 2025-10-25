@@ -21,7 +21,13 @@ export class AnimationStore {
     const { dataStore } = Store.context
     const dataModel = await dataStore.loadAnimationData()
 
-    if (!this.#loadFromDataModel(dataModel)) {
+    if (!dataModel || !this.#loadFromDataModel(dataModel)) {
+      // Populate default animation entry
+      const animation = new Animation({ width: 16, height: 16 })
+      this.#model.animationList = [animation]
+      this.#animationMap = { [animation.name]: animation }
+      this.#model.selectedAnimation = animation
+      this.#persist()
     }
   }
 
@@ -29,8 +35,6 @@ export class AnimationStore {
     const { animationState, animations, frames } = dataModel
 
     if (!animationState || !animations || !frames) return false
-
-    //
 
     return true
   }
@@ -55,6 +59,10 @@ export class AnimationStore {
         })
       )
     }
+  }
+
+  get animations() {
+    return this.#model.animationList
   }
 
   get animation() {
@@ -85,6 +93,15 @@ export class AnimationStore {
 
   addAnimation(name, width, height) {
     this.animations.push(new Animation(name, width, height))
+  }
+
+  get nextAnimationName() {
+    let num = this.animations.length
+    let name
+    do {
+      name = `Untitled ${++num}`
+    } while (this.animationForName(name))
+    return name
   }
 
   animationForName(name) {

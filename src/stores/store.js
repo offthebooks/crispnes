@@ -15,10 +15,10 @@ export class Store {
     // here for deserialization in the awaited init methods below
     Object.assign(this.#context, {
       dataStore: new DataStore(),
-      editStore: new EditStore(),
-      fileStore: new FileStore(),
       paletteStore: new PaletteStore(),
       animationStore: new AnimationStore(),
+      editStore: new EditStore(),
+      fileStore: new FileStore(),
       undoStore: new UndoStore()
     })
 

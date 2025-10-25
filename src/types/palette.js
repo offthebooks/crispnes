@@ -1,10 +1,11 @@
 import { nesColorPalette } from '../colors.js'
-import { elementFromTemplate } from '../utils.js'
+import { elementFromTemplate, generateUniqueName } from '../utils.js'
+import { Color } from './color.js'
 
 export const maxPaletteSize = 256
 
 const defaultModel = Object.seal({
-  name: 'Untitled',
+  name: generateUniqueName(),
   colors: nesColorPalette
 })
 
@@ -23,7 +24,7 @@ export class Palette {
   }
 
   static fromDataModel = ({ name, colors }) => {
-    return new Palette({ name, colors: colors.map(colors.fromDataModel) })
+    return new Palette({ name, colors: colors.map(Color.fromDataModel) })
   }
 
   get dataModel() {
