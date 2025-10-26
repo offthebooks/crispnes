@@ -95,7 +95,7 @@ export const dateString = () => {
   return iso.replace(/[-:T]/g, '').split('.')[0]
 }
 
-export const generateUniqueName = (existingNames = []) => {
+export const untitledNameUniqueFromStrings = (existingNames = []) => {
   let num = existingNames.length
   let name
   do {

@@ -1,25 +1,30 @@
 import { Sprite, maxSideLength, minSideLength } from './sprite.js'
-import { clamp, elementFromTemplate } from '../utils.js'
+import {
+  clamp,
+  elementFromTemplate,
+  untitledNameUniqueFromStrings
+} from '../utils.js'
 import { Store } from '../stores/store.js'
+
+const defaultModel = Object.seal({
+  name: Store.context.animationStore.nextAnimationName,
+  palette: Store.context.paletteStore.palette,
+  width: 16,
+  height: 16
+})
 
 export class Animation {
   static itemTemplate = document.querySelector('#animationItems template')
 
-  #name
+  #model
   #frames
-  #palette
-  #width
-  #height
   #DOM
 
-  constructor({ name, width, height, palette }) {
-    this.#name = name || Store.context.animationStore.nextAnimationName()
-    this.#palette = palette ?? Store.context.paletteStore.palette
-    this.#width = Math.floor(clamp(width, maxSideLength, minSideLength))
-    this.#height = Math.floor(clamp(height, maxSideLength, minSideLength))
-    this.#frames = []
+  constructor(model = {}) {
+    this.#model = { ...defaultModel, ...model }
+    this.#frames = model.frames ?? []
     this.#DOM = null
-    this.add()
+    this.#frames.length || this.add()
   }
 
   static fromDataModel = ({ name, width, height }) => {
@@ -31,11 +36,11 @@ export class Animation {
   }
 
   get name() {
-    return this.#name
+    return this.#model.name
   }
 
   set name(val) {
-    this.#name = val
+    this.#model.name = val
     this.#render()
   }
 
@@ -44,11 +49,11 @@ export class Animation {
   }
 
   get width() {
-    return this.#width
+    return this.#model.width
   }
 
   get height() {
-    return this.#height
+    return this.#model.height
   }
 
   get length() {
@@ -56,11 +61,11 @@ export class Animation {
   }
 
   get palette() {
-    return this.#palette
+    return this.#model.palette
   }
 
   add() {
-    this.#frames.push(new Sprite(this.#width, this.#height))
+    this.#frames.push(new Sprite({ animation: this }))
     this.#render()
   }
 

@@ -1,4 +1,5 @@
 import { Animation } from '../types/animation.js'
+import { untitledNameUniqueFromStrings } from '../utils.js'
 import { Store } from './store.js'
 
 const defaultModel = Object.seal({
@@ -50,7 +51,7 @@ export class AnimationStore {
       animationState: {
         selectedAnimation: this.animation.name,
         selectedFrame: this.#model.selectedFrame,
-        animationList: this.animations.map((a) => a.name)
+        animationList: this.animationNames
       },
       animations: this.animations.map((a) => a.dataModel),
       frames: this.animations.flatMap((a) =>
@@ -86,6 +87,10 @@ export class AnimationStore {
     this.frame = 0
   }
 
+  get animationNames() {
+    this.#model.animationList.map((a) => a.name)
+  }
+
   set frame(index) {
     this.#model.selectedFrame = index
     Store.context.editStore.renderCanvas()
@@ -96,12 +101,7 @@ export class AnimationStore {
   }
 
   get nextAnimationName() {
-    let num = this.animations.length
-    let name
-    do {
-      name = `Untitled ${++num}`
-    } while (this.animationForName(name))
-    return name
+    return untitledNameUniqueFromStrings(this.animationNames)
   }
 
   animationForName(name) {

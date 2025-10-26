@@ -1,5 +1,5 @@
 import { Palette } from '../types/palette.js'
-import { generateUniqueName } from '../utils.js'
+import { untitledNameUniqueFromStrings } from '../utils.js'
 import { Store } from './store.js'
 
 const paletteItemsEl = document.getElementById('paletteItems')
@@ -26,7 +26,7 @@ export class PaletteStore {
 
     if (!dataModel || !this.#loadFromDataModel(dataModel)) {
       // Populate default palette entry
-      const name = generateUniqueName()
+      const name = untitledNameUniqueFromStrings()
       const palette = new Palette({ name })
       this.#model.paletteList = [palette]
       this.#paletteMap = { [name]: palette }

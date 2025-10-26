@@ -1,11 +1,11 @@
 import { nesColorPalette } from '../colors.js'
-import { elementFromTemplate, generateUniqueName } from '../utils.js'
+import { elementFromTemplate, untitledNameUniqueFromStrings } from '../utils.js'
 import { Color } from './color.js'
 
 export const maxPaletteSize = 256
 
 const defaultModel = Object.seal({
-  name: generateUniqueName(),
+  name: untitledNameUniqueFromStrings(),
   colors: nesColorPalette
 })
 
