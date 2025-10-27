@@ -20,6 +20,7 @@ export class Palette {
     const name = model.name ?? defaultModel.name
     const colors = model.colors ?? Color.cloneArray(defaultModel.colors)
     this.#model = { name, colors }
+    this.#selected = 0
     this.#DOM = { item: '', colorItems: '' }
   }
 

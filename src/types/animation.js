@@ -72,7 +72,7 @@ export class Animation {
   }
 
   get framesData() {
-    this.#frames.map((f) => f.dataModel)
+    return this.#frames.map((f) => f.dataModel)
   }
 
   add() {

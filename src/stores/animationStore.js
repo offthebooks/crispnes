@@ -51,7 +51,7 @@ export class AnimationStore {
       animationState: {
         selectedAnimation: this.animation.name,
         selectedFrame: this.#model.selectedFrame,
-        animationList: this.animationList
+        animationList: this.animationNames
       },
       animations: this.animations.map((a) => a.dataModel),
       frames: this.animations.flatMap((a) => a.framesData)
@@ -84,7 +84,7 @@ export class AnimationStore {
   }
 
   get animationNames() {
-    this.#model.animationList.map((a) => a.name)
+    return this.#model.animationList.map((a) => a.name)
   }
 
   set frame(index) {
