@@ -160,14 +160,13 @@ export class EditStore {
   }
 
   #renderCanvas() {
-    const { palette } = Store.context.paletteStore
     const { frame } = Store.context.animationStore
 
     editCanvas.width = frame.width
     editCanvas.height = frame.height
 
     const context = editCanvas.getContext('2d')
-    const imageData = frame.generateImageDataWithPalette(palette)
+    const imageData = frame.generateImageData()
     context.putImageData(imageData, 0, 0)
   }
 

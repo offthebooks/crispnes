@@ -51,14 +51,10 @@ export class AnimationStore {
       animationState: {
         selectedAnimation: this.animation.name,
         selectedFrame: this.#model.selectedFrame,
-        animationList: this.animationNames
+        animationList: this.animationList
       },
       animations: this.animations.map((a) => a.dataModel),
-      frames: this.animations.flatMap((a) =>
-        a.frames.map((f) => {
-          f.dataModel
-        })
-      )
+      frames: this.animations.flatMap((a) => a.framesData)
     }
   }
 

@@ -30,7 +30,7 @@ export class PaletteStore {
       const palette = new Palette({ name })
       this.#model.paletteList = [palette]
       this.#paletteMap = { [name]: palette }
-      this.selected = palette
+      this.#selected = palette
       this.#persist()
     }
 
@@ -76,11 +76,11 @@ export class PaletteStore {
   }
 
   get colorIndex() {
-    return this.palette.selected
+    return this.palette.#selected
   }
 
   set colorIndex(index) {
-    this.palette.selected = index
+    this.palette.#selected = index
   }
 
   get palettes() {

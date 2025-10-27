@@ -1,20 +1,23 @@
 import { Store } from '../stores/store.js'
 import { clamp } from '../utils.js'
+import { Whoops } from '../whoops.js'
 export const maxSideLength = 256
 export const minSideLength = 8
 
 const defaultModel = {
   bytes: null,
   animation: null,
-  duration: 10 // frames at 60hz
+  duration: 5 // frames at 60hz
 }
 
 export class Sprite {
   #model
 
-  constructor(model) {
-    this.#model = { ...defaultModel, ...model }
-    this.#model.bytes || this.clear()
+  constructor(model = {}) {
+    this.#model = { ...model }
+    this.#model.duration ??= defaultModel.duration
+    if (!this.#model.animation) throw Whoops.missingArgument('animation')
+    if (!this.#model.bytes) this.clear()
   }
 
   static fromDataModel = ({ animation, duration, bytes }) => {

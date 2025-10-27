@@ -7,8 +7,8 @@ import {
 import { Store } from '../stores/store.js'
 
 const defaultModel = Object.seal({
-  name: Store.context.animationStore.nextAnimationName,
-  palette: Store.context.paletteStore.palette,
+  name: null,
+  palette: null,
   width: 16,
   height: 16
 })
@@ -22,17 +22,24 @@ export class Animation {
 
   constructor(model = {}) {
     this.#model = { ...defaultModel, ...model }
-    this.#frames = model.frames ?? []
-    this.#DOM = null
-    this.#frames.length || this.add()
+    this.#model.name ??= Store.context.animationStore.nextAnimationName
+    this.#model.palette ??= Store.context.paletteStore.palette
+    this.#frames = []
+    this.#DOM = { item: null }
+    this.add()
   }
 
-  static fromDataModel = ({ name, width, height }) => {
-    return new Animation(name, width, height)
+  static fromDataModel = (model, framesData) => {
+    const animation = new Animation(model)
+    animation.#frames = framesData.map((f) =>
+      Sprite.fromDataModel({ ...f, animation })
+    )
+    return animation
   }
 
   get dataModel() {
-    return {}
+    const palette = this.palette.name
+    return { ...this.#model, palette }
   }
 
   get name() {
@@ -45,7 +52,7 @@ export class Animation {
   }
 
   get item() {
-    return this.#DOM.item ?? this.#render().item
+    return this.#DOM?.item ?? this.#render().item
   }
 
   get width() {
@@ -62,6 +69,10 @@ export class Animation {
 
   get palette() {
     return this.#model.palette
+  }
+
+  get framesData() {
+    this.#frames.map((f) => f.dataModel)
   }
 
   add() {
