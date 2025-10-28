@@ -15,17 +15,32 @@ export class Store {
     // here for deserialization in the awaited init methods below
     Object.assign(this.#context, {
       dataStore: new DataStore(),
-      editStore: new EditStore(),
-      fileStore: new FileStore(),
       paletteStore: new PaletteStore(),
       animationStore: new AnimationStore(),
+      editStore: new EditStore(),
+      fileStore: new FileStore(),
       undoStore: new UndoStore()
     })
 
     Object.freeze(this.#context)
 
+    let initializationErrorMsg = null
     for (const store of Object.values(this.#context)) {
-      await store?.init?.()
+      try {
+        await store?.init?.()
+      } catch (e) {
+        const { name, message } = e
+        const storeName = store?.constructor.name || 'Invalid Store'
+        const error = name || 'Unnamed Error'
+        initializationErrorMsg = `${error} while initializing ${storeName}: ${message}`
+        break
+      }
+    }
+
+    if (initializationErrorMsg) {
+      console.error(initializationErrorMsg)
+    } else {
+      document.body.classList.remove('initializing')
     }
   }
 
