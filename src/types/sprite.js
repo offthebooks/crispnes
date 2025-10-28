@@ -1,7 +1,7 @@
 import { Store } from '../stores/store.js'
 import { clamp } from '../utils.js'
 import { Whoops } from '../whoops.js'
-import { BufferedEdits } from './bufferedEdits.js'
+import { EditBuffer } from './editBuffer.js'
 export const maxSideLength = 256
 export const minSideLength = 8
 
@@ -85,7 +85,7 @@ export class Sprite {
     const match = this.read(x, y)
     if (val === match) return null
 
-    const edits = new BufferedEdits({ before: match, after: val })
+    const edits = new EditBuffer({ before: match, after: val })
     const indices = this.#flood(x, y, val, match, edits)
     return edits.finalize() ? edits : null
   }
@@ -116,7 +116,7 @@ export class Sprite {
     return imageData
   }
 
-  applyBufferedEdits(edits) {
+  applyEdits(edits) {
     edits.forEach((edit) => this.#write(...edit))
   }
 

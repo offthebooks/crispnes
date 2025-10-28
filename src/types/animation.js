@@ -1,9 +1,5 @@
-import { Sprite, maxSideLength, minSideLength } from './sprite.js'
-import {
-  clamp,
-  elementFromTemplate,
-  untitledNameUniqueFromStrings
-} from '../utils.js'
+import { Sprite } from './sprite.js'
+import { elementFromTemplate } from '../utils.js'
 import { Store } from '../stores/store.js'
 
 const defaultModel = Object.seal({

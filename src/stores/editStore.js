@@ -1,15 +1,12 @@
 import { DrawTools, Tools } from '../consts.js'
-import { BufferedEdits } from '../types/bufferedEdits.js'
+import { EditBuffer } from '../types/editBuffer.js'
 import {
   clamp,
-  dataFromStorageWithKeys,
-  dataStoreObjectValuesForKeys,
   domQueryOne,
   forElements,
   removeClass,
   restyle
 } from '../utils.js'
-import { DataStore } from './dataStore.js'
 import { Store } from './store.js'
 
 const maxZoomLevel = 256
@@ -29,8 +26,12 @@ export class EditStore {
   #data
   #drawEdits
 
+  get drawEdits() {
+    return this.#drawEdits
+  }
+
   constructor() {
-    this.#data = { ...defaultData, ...this.#deserialize() }
+    this.#data = { ...defaultData }
     this.#drawEdits = null
   }
 
@@ -49,7 +50,7 @@ export class EditStore {
         const before = frame.read(x, y)
         const after = frame.toggle(x, y, paletteColor)
         if (before === after) return
-        this.#drawEdits = new BufferedEdits({ after })
+        this.#drawEdits = new EditBuffer({ after })
         this.#drawEdits.editIndex(frame.indexAt(x, y), { before })
         break
       }
@@ -67,9 +68,7 @@ export class EditStore {
   }
 
   continueEdit({ x, y }) {
-    debugger
     if (!this.#drawEdits) return
-    debugger
     const { frame } = Store.context.animationStore
     const { after } = this.#drawEdits
     const index = frame.indexAt(x, y)
@@ -139,12 +138,6 @@ export class EditStore {
     this.#positionContainer()
   }
 
-  #keyForXY = ({ x, y }) => `${x},${y}`
-  #xyForKey = (key) => {
-    const [x, y] = key.split(',').map((n) => Number(n))
-    return { x, y }
-  }
-
   #positionContainer() {
     const { width, height } = Store.context.animationStore.frame
     const { x, y } = this.pan
@@ -163,7 +156,7 @@ export class EditStore {
     const {
       animationStore: { frame }
     } = Store.context
-    frame.applyBufferedEdits(edits)
+    frame.applyEdits(edits)
     frame.persist()
     this.#renderCanvas()
   }
@@ -208,7 +201,7 @@ export class EditStore {
       undoStore,
       animationStore: { frame }
     } = Store.context
-    const { beforeValues, afterValues } = fillOperation
+    const { beforeValues, afterValues } = fillEdits
 
     undoStore.record({
       name: 'Fill',
@@ -217,14 +210,5 @@ export class EditStore {
     })
 
     frame.persist()
-  }
-
-  // State persistence
-  serialize(object = this.#data) {
-    dataStoreObjectValuesForKeys(object)
-  }
-
-  #deserialize() {
-    return dataFromStorageWithKeys(Object.keys(defaultData))
   }
 }

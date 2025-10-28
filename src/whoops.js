@@ -7,39 +7,38 @@ class MissingArgumentError extends Error {
   }
 }
 
-class IncompleteBufferedEditsError extends Error {
+class IncompleteEditBufferError extends Error {
   constructor(change) {
     const { index, before } = change
     const missing = before === undefined ? 'before' : 'after'
     super(`Missing '${missing}' value for buffer edit at index: ${index}`)
-    this.name = 'IncompleteBufferedEditsError'
+    this.name = 'IncompleteEditBufferError'
   }
 }
 
-class FinalizedBufferedEditsError extends Error {
+class FinalizedEditBufferError extends Error {
   constructor(change) {
     super(
       `Attempt to modify finalized buffer edit with change:\n${formatJSON(change)}`
     )
-    this.name = 'FinalizedBufferedEditsError'
+    this.name = 'FinalizedEditBufferError'
   }
 }
 
-class BufferedEditsReadError extends Error {
+class EditBufferReadError extends Error {
   constructor(type) {
     super(
       `Attempt to read ${type} values for a buffer edit that is not finalized.`
     )
-    this.name = 'BufferedEditsReadError'
+    this.name = 'EditBufferReadError'
   }
 }
 
 export class Whoops extends Error {
   static missingArgument = (arg) => new MissingArgumentError(arg)
 
-  static incompleteBufferedEdits = (change) =>
-    new IncompleteBufferedEditsError(change)
-  static finalizedBufferedEdits = (change) =>
-    new FinalizedBufferedEditsError(change)
-  static bufferedEditsRead = (type) => new BufferedEditsReadError(type)
+  static incompleteEditBuffer = (change) =>
+    new IncompleteEditBufferError(change)
+  static finalizedEditBuffer = (change) => new FinalizedEditBufferError(change)
+  static editBufferRead = (type) => new EditBufferReadError(type)
 }

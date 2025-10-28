@@ -34,7 +34,7 @@ export class AnimationStore {
 
   #loadFromDataModel(dataModel) {
     const { animationState, animations } = dataModel
-    const { animationList, selectedAnimation, selectedFrame } = animationState
+    const { selectedAnimation, selectedFrame } = animationState
 
     if (!animationState || !animations) return false
 

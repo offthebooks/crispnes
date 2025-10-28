@@ -1,6 +1,6 @@
 import { Whoops } from '../whoops.js'
 
-export class BufferedEdits {
+export class EditBuffer {
   #global // {before?: primitive, after?: primitive}
   #edits // {[index: integer]: {before: primitive, after: primitive}, ...}
   #finalized
@@ -20,16 +20,17 @@ export class BufferedEdits {
   editIndex(index, values = {}) {
     const change = { index, ...this.#global, ...values }
 
-    if (this.#finalized) throw Whoops.finalizedBufferedEdits(change)
+    if (this.#finalized) throw Whoops.finalizedEditBuffer(change)
 
     if (change.before === undefined || change.after === undefined)
-      throw Whoops.incompleteBufferedEdits(change)
+      throw Whoops.incompleteEditBuffer(change)
 
     this.#edits[index] = values
   }
 
   valuesForIndex(index) {
-    return { ...this.#edits[index] }
+    const edits = this.#edits[index] ?? null
+    return edits && { ...edits }
   }
 
   get before() {
@@ -41,7 +42,7 @@ export class BufferedEdits {
   }
 
   get beforeValues() {
-    if (!this.#finalized) throw Whoops.bufferedEditsRead('before')
+    if (!this.#finalized) throw Whoops.editBufferRead('before')
 
     return Object.entries(this.#edits).map(([index, { before }]) => [
       index,
@@ -50,7 +51,7 @@ export class BufferedEdits {
   }
 
   get afterValues() {
-    if (!this.#finalized) throw Whoops.bufferedEditsRead('after')
+    if (!this.#finalized) throw Whoops.editBufferRead('after')
 
     return Object.entries(this.#edits).map(([index, { after }]) => [
       index,
