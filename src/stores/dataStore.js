@@ -140,7 +140,7 @@ export class DataStore {
     if (!animationState) return null
 
     const animations = await this.loadAnimationsByNames(
-      animationState.animations
+      animationState.animationList
     )
 
     return {

@@ -8,6 +8,7 @@ import {
   removeClass,
   restyle
 } from '../utils.js'
+import { DataStore } from './dataStore.js'
 import { Store } from './store.js'
 
 const maxZoomLevel = 256
@@ -83,6 +84,7 @@ export class EditStore {
     const bytes = frame.cloneBytes()
     const setBytes = (bytes) => {
       bytes ? frame.setBytes(bytes) : frame.clear()
+      this.#saveFrame()
       this.#renderCanvas()
     }
     undoStore.record({
@@ -154,8 +156,12 @@ export class EditStore {
   }
 
   #renderPixelList(pixels) {
-    const { frame } = Store.context.animationStore
+    const {
+      animationStore: { frame },
+      dataStore
+    } = Store.context
     pixels.forEach(({ x, y, color }) => frame.draw(x, y, color))
+    this.#saveFrame()
     this.#renderCanvas()
   }
 
@@ -168,6 +174,15 @@ export class EditStore {
     const context = editCanvas.getContext('2d')
     const imageData = frame.generateImageData()
     context.putImageData(imageData, 0, 0)
+  }
+
+  #saveFrame() {
+    const {
+      animationStore: { frame },
+      dataStore
+    } = Store.context
+    const frames = [frame.dataModel]
+    dataStore.save({ frames })
   }
 
   // Commit draw operation, and capture undo action
@@ -191,6 +206,7 @@ export class EditStore {
       redo: () => this.#renderPixelList(afterPixels)
     })
 
+    this.#saveFrame()
     this.#drawOperation = null
   }
 
@@ -207,6 +223,8 @@ export class EditStore {
       undo: () => this.#renderPixelList(beforePixels),
       redo: () => this.#renderPixelList(afterPixels)
     })
+
+    this.#saveFrame()
   }
 
   // State persistence

@@ -20,8 +20,8 @@ export class Palette {
     const name = model.name ?? defaultModel.name
     const colors = model.colors ?? Color.cloneArray(defaultModel.colors)
     this.#model = { name, colors }
-    this.#selected = 0
-    this.#DOM = { item: '', colorItems: '' }
+    this.#selected = 1 // First non-background color
+    this.#DOM = { item: null, colorItems: null }
   }
 
   static fromDataModel = ({ name, colors }) => {

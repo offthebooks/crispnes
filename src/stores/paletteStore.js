@@ -76,11 +76,11 @@ export class PaletteStore {
   }
 
   get colorIndex() {
-    return this.palette.#selected
+    return this.palette.selected
   }
 
   set colorIndex(index) {
-    this.palette.#selected = index
+    this.palette.selected = index
   }
 
   get palettes() {
