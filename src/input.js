@@ -102,6 +102,7 @@ export class Input {
     editCanvas.addEventListener('pointermove', (evt) => {
       if (editStore.tool !== Tools.Draw) return
       const pos = editPosition(evt)
+      debugger
       pos && editStore.continueEdit(pos)
     })
 

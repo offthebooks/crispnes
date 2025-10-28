@@ -18,6 +18,15 @@
     scrollbar-width: thin;
     scrollbar-gutter: stable;
 
+    &::before {
+      /* Match height of li, so bar doesn't pop in */
+      content: ' ';
+      display: block;
+      padding: 0.5rem 0;
+      margin: 0 -0.5rem 0 0;
+      height: 1.5rem;
+    }
+
     li {
       padding: 0.5rem;
       margin: 0;

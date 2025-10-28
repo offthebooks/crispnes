@@ -107,6 +107,10 @@ export class PaletteStore {
     return this.palette.colorItems.slice(1)
   }
 
+  get nextPaletteName() {
+    return untitledNameUniqueFromStrings(this.paletteNames)
+  }
+
   paletteForName(name) {
     return this.#paletteMap[name]
   }

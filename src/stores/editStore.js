@@ -1,4 +1,5 @@
 import { DrawTools, Tools } from '../consts.js'
+import { BufferedEdits } from '../types/bufferedEdits.js'
 import {
   clamp,
   dataFromStorageWithKeys,
@@ -26,10 +27,11 @@ const defaultData = Object.seal({
 
 export class EditStore {
   #data
-  #drawOperation
+  #drawEdits
 
   constructor() {
     this.#data = { ...defaultData, ...this.#deserialize() }
+    this.#drawEdits = null
   }
 
   init() {
@@ -47,13 +49,14 @@ export class EditStore {
         const before = frame.read(x, y)
         const after = frame.toggle(x, y, paletteColor)
         if (before === after) return
-        this.#drawOperation = { after, [this.#keyForXY({ x, y })]: before }
+        this.#drawEdits = new BufferedEdits({ after })
+        this.#drawEdits.editIndex(frame.indexAt(x, y), { before })
         break
       }
       case Tools.Fill: {
-        const fillOperation = frame.fill(x, y, paletteColor)
-        if (!fillOperation) return
-        this.#recordFill(fillOperation)
+        const fillEdits = frame.fill(x, y, paletteColor)
+        if (!fillEdits) return
+        this.#recordFill(fillEdits)
         break
       }
       default:
@@ -64,27 +67,28 @@ export class EditStore {
   }
 
   continueEdit({ x, y }) {
-    if (!this.#drawOperation) return
-
+    debugger
+    if (!this.#drawEdits) return
+    debugger
     const { frame } = Store.context.animationStore
-    const { after } = this.#drawOperation
-    const key = this.#keyForXY({ x, y })
+    const { after } = this.#drawEdits
+    const index = frame.indexAt(x, y)
     const before = frame.read(x, y)
 
-    if (this.#drawOperation[key] || before === after) return
+    if (this.#drawEdits.valuesForIndex(index) || before === after) return
 
-    this.#drawOperation[key] = before
+    this.#drawEdits.editIndex(index, { before })
     frame.draw(x, y, after)
     this.#renderCanvas()
   }
 
   clear() {
-    const { undoStore } = Store.context
-    const { frame } = Store.context.animationStore
-    const bytes = frame.cloneBytes()
+    const { undoStore, animationStore } = Store.context
+    const { frame } = animationStore
+    const { bytes } = frame
     const setBytes = (bytes) => {
       bytes ? frame.setBytes(bytes) : frame.clear()
-      this.#saveFrame()
+      frame.persist()
       this.#renderCanvas()
     }
     undoStore.record({
@@ -155,13 +159,12 @@ export class EditStore {
     })
   }
 
-  #renderPixelList(pixels) {
+  #applyEdits(edits) {
     const {
-      animationStore: { frame },
-      dataStore
+      animationStore: { frame }
     } = Store.context
-    pixels.forEach(({ x, y, color }) => frame.draw(x, y, color))
-    this.#saveFrame()
+    frame.applyBufferedEdits(edits)
+    frame.persist()
     this.#renderCanvas()
   }
 
@@ -176,55 +179,44 @@ export class EditStore {
     context.putImageData(imageData, 0, 0)
   }
 
-  #saveFrame() {
-    const {
-      animationStore: { frame },
-      dataStore
-    } = Store.context
-    const frames = [frame.dataModel]
-    dataStore.save({ frames })
-  }
-
   // Commit draw operation, and capture undo action
   recordDraw() {
-    if (!this.#drawOperation) return
+    if (!this.#drawEdits) return
 
-    const { undoStore } = Store.context
-    const { after, ...coords } = this.#drawOperation
-    const beforePixels = Object.entries(coords).map(([key, before]) => ({
-      ...this.#xyForKey(key),
-      color: before
-    }))
-    const afterPixels = beforePixels.map((pixel) => ({
-      ...pixel,
-      color: after
-    }))
+    this.#drawEdits.finalize()
+
+    const {
+      undoStore,
+      animationStore: { frame }
+    } = Store.context
+    const { beforeValues, afterValues } = this.#drawEdits
 
     undoStore.record({
       name: 'Draw',
-      undo: () => this.#renderPixelList(beforePixels),
-      redo: () => this.#renderPixelList(afterPixels)
+      undo: () => this.#applyEdits(beforeValues),
+      redo: () => this.#applyEdits(afterValues)
     })
 
-    this.#saveFrame()
-    this.#drawOperation = null
+    frame.persist()
+    this.#drawEdits = null
   }
 
-  #recordFill(fillOperation) {
-    if (!fillOperation) return
+  #recordFill(fillEdits) {
+    if (!fillEdits) return
 
-    const { undoStore } = Store.context
-    const { pixels, before, after } = fillOperation
-    const beforePixels = pixels.map((pixel) => ({ ...pixel, color: before }))
-    const afterPixels = pixels.map((pixel) => ({ ...pixel, color: after }))
+    const {
+      undoStore,
+      animationStore: { frame }
+    } = Store.context
+    const { beforeValues, afterValues } = fillOperation
 
     undoStore.record({
       name: 'Fill',
-      undo: () => this.#renderPixelList(beforePixels),
-      redo: () => this.#renderPixelList(afterPixels)
+      undo: () => this.#applyEdits(beforeValues),
+      redo: () => this.#applyEdits(afterValues)
     })
 
-    this.#saveFrame()
+    frame.persist()
   }
 
   // State persistence

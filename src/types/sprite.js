@@ -1,6 +1,7 @@
 import { Store } from '../stores/store.js'
 import { clamp } from '../utils.js'
 import { Whoops } from '../whoops.js'
+import { BufferedEdits } from './bufferedEdits.js'
 export const maxSideLength = 256
 export const minSideLength = 8
 
@@ -20,14 +21,11 @@ export class Sprite {
     if (!this.#model.bytes) this.clear()
   }
 
-  static fromDataModel = ({ animation, duration, bytes }) => {
-    const { animationStore } = Store.context
-    return new Sprite({
-      animation: animationStore.animationForName(animation),
-      duration,
-      bytes
-    })
-  }
+  // These are deserialized by their host animation
+  // which hydrates the animation name to the class
+  // instance. It could call the constructor directly,
+  // but this is for consistency and future proofing.
+  static fromDataModel = (model) => new Sprite(model)
 
   get dataModel() {
     const { animation, duration, bytes } = this.#model
@@ -39,12 +37,20 @@ export class Sprite {
     }
   }
 
+  get animation() {
+    return this.#model.animation
+  }
+
   get width() {
-    return this.#model.animation.width
+    return this.animation.width
   }
 
   get height() {
-    return this.#model.animation.height
+    return this.animation.height
+  }
+
+  get bytes() {
+    new Uint8Array(this.#model.bytes)
   }
 
   get duration() {
@@ -68,31 +74,26 @@ export class Sprite {
   }
 
   read(x, y) {
-    return this.#model.bytes[this.#index(x, y)]
+    return this.#read(this.indexAt(x, y))
   }
 
   draw(x, y, val) {
-    this.#write(x, y, val)
+    this.#writeAt(x, y, val)
   }
 
   fill(x, y, val) {
     const match = this.read(x, y)
     if (val === match) return null
 
-    const pixels = this.#flood(x, y, val, match)
-    return pixels.length
-      ? {
-          pixels,
-          before: match,
-          after: val
-        }
-      : null
+    const edits = new BufferedEdits({ before: match, after: val })
+    const indices = this.#flood(x, y, val, match, edits)
+    return edits.finalize() ? edits : null
   }
 
   toggle(x, y, val) {
     // If we're setting a matching color, toggle to background color
     const outColor = val === this.read(x, y) ? 0 : val
-    this.#write(x, y, outColor)
+    this.#writeAt(x, y, outColor)
     return outColor
   }
 
@@ -115,26 +116,44 @@ export class Sprite {
     return imageData
   }
 
-  #index(x, y) {
+  applyBufferedEdits(edits) {
+    edits.forEach((edit) => this.#write(...edit))
+  }
+
+  persist() {
+    const frames = [this.dataModel]
+    Store.context.dataStore.save({ frames })
+  }
+
+  indexAt(x, y) {
     return y * this.width + x
   }
 
-  #write(x, y, val) {
-    this.#model.bytes[this.#index(x, y)] = val
+  #writeAt(x, y, val) {
+    this.#write(this.indexAt(x, y), val)
   }
 
-  #flood(x, y, val, match) {
-    if (x < 0 || x >= this.width || y < 0 || y >= this.height) return []
+  #write(index, val) {
+    this.#model.bytes[index] = val
+  }
 
-    if (this.read(x, y) !== match) return []
+  #read(index) {
+    return this.#model.bytes[index]
+  }
 
-    this.#write(x, y, val)
-    return [
-      { x, y },
-      ...this.#flood(x + 1, y, val, match),
-      ...this.#flood(x - 1, y, val, match),
-      ...this.#flood(x, y + 1, val, match),
-      ...this.#flood(x, y - 1, val, match)
-    ]
+  #flood(x, y, val, match, edits) {
+    if (x < 0 || x >= this.width || y < 0 || y >= this.height) return
+
+    const index = this.indexAt(x, y)
+
+    if (this.#read(index) !== match) return
+
+    this.#write(index, val)
+    edits.editIndex(index)
+
+    this.#flood(x + 1, y, val, match, edits),
+      this.#flood(x - 1, y, val, match, edits),
+      this.#flood(x, y + 1, val, match, edits),
+      this.#flood(x, y - 1, val, match, edits)
   }
 }

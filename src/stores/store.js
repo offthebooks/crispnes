@@ -24,6 +24,7 @@ export class Store {
 
     Object.freeze(this.#context)
 
+    let initializationErrorMsg = null
     for (const store of Object.values(this.#context)) {
       try {
         await store?.init?.()
@@ -31,8 +32,15 @@ export class Store {
         const { name, message } = e
         const storeName = store?.constructor.name || 'Invalid Store'
         const error = name || 'Unnamed Error'
-        console.error(`${error} while initializing ${storeName}: ${message}`)
+        initializationErrorMsg = `${error} while initializing ${storeName}: ${message}`
+        break
       }
+    }
+
+    if (initializationErrorMsg) {
+      console.error(initializationErrorMsg)
+    } else {
+      document.body.classList.remove('initializing')
     }
   }
 

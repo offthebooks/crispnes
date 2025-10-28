@@ -30,7 +30,9 @@ export class Animation {
   }
 
   static fromDataModel = (model, framesData) => {
-    const animation = new Animation(model)
+    const { paletteStore } = Store.context
+    const palette = paletteStore.paletteForName(model.palette)
+    const animation = new Animation({ ...model, palette })
     animation.#frames = framesData.map((f) =>
       Sprite.fromDataModel({ ...f, animation })
     )

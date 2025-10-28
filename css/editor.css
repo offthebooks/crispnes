@@ -3,6 +3,12 @@
   overflow: hidden;
   inset: 0;
 
+  .initializing & {
+    #editContainer {
+      display: none;
+    }
+  }
+
   #editContainer {
     position: relative;
     top: round(down, 50%, 1px);

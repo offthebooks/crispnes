@@ -50,7 +50,6 @@ export class UndoStore {
 
   #renderToolState() {
     const { nextUndo, nextRedo } = this
-    console.log({ nextRedo, nextUndo })
     undoTool.classList[nextUndo ? 'remove' : 'add']('inactive')
     redoTool.classList[nextRedo ? 'remove' : 'add']('inactive')
     undoTool.querySelector('span.tip').innerHTML = nextUndo ?? ''

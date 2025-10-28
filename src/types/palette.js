@@ -1,11 +1,12 @@
 import { nesColorPalette } from '../colors.js'
-import { elementFromTemplate, untitledNameUniqueFromStrings } from '../utils.js'
+import { Store } from '../stores/store.js'
+import { elementFromTemplate } from '../utils.js'
 import { Color } from './color.js'
 
 export const maxPaletteSize = 256
 
 const defaultModel = Object.seal({
-  name: untitledNameUniqueFromStrings(),
+  name: null,
   colors: nesColorPalette
 })
 
@@ -17,7 +18,7 @@ export class Palette {
   #DOM
 
   constructor(model = {}) {
-    const name = model.name ?? defaultModel.name
+    const name = model.name ?? Store.context.paletteStore.nextPaletteName
     const colors = model.colors ?? Color.cloneArray(defaultModel.colors)
     this.#model = { name, colors }
     this.#selected = 1 // First non-background color

@@ -33,9 +33,20 @@ export class AnimationStore {
   }
 
   #loadFromDataModel(dataModel) {
-    const { animationState, animations, frames } = dataModel
+    const { animationState, animations } = dataModel
+    const { animationList, selectedAnimation, selectedFrame } = animationState
 
-    if (!animationState || !animations || !frames) return false
+    if (!animationState || !animations) return false
+
+    this.#model.animationList = animations.map(({ frames, ...dataModel }) =>
+      Animation.fromDataModel(dataModel, frames)
+    )
+    this.#animationMap = Object.fromEntries(
+      this.animations.map((a) => [a.name, a])
+    )
+
+    this.#model.selectedAnimation = this.animationForName(selectedAnimation)
+    this.#model.selectedFrame = selectedFrame
 
     return true
   }

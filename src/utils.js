@@ -103,3 +103,5 @@ export const untitledNameUniqueFromStrings = (existingNames = []) => {
   } while (existingNames.includes(name))
   return name
 }
+
+export const formatJSON = (value) => JSON.stringify(value, undefined, '  ')
