@@ -1,4 +1,5 @@
 import { DrawTools, Tools } from './consts.js'
+import { GestureInput } from './gestureInput.js'
 import { Store } from './stores/store.js'
 import { dateString, domQueryOne } from './utils.js'
 
@@ -6,6 +7,7 @@ export class Input {
   static init() {
     const { fileStore, editStore, animationStore, undoStore } = Store.context
     const editCanvas = domQueryOne('#editor canvas')
+    const editor = document.getElementById('editor')
     const palette = document.getElementById('palette')
     const tools = document.getElementById('tools')
     const menu = document.getElementById('menu')
@@ -117,6 +119,18 @@ export class Input {
         evt.preventDefault()
         if (evt.shiftKey) undoStore.redo()
         else undoStore.undo()
+      }
+    })
+
+    GestureInput.captureGestures({
+      element: editor,
+      onZoom: (factor) => {
+        editStore.cancelEdit()
+        editStore.zoom = factor
+      },
+      onPan: (delta) => {
+        editStore.cancelEdit()
+        editStore.pan = delta
       }
     })
   }
