@@ -1,100 +1,76 @@
-function getDistance(p1, p2) {
-  const dx = p2.clientX - p1.clientX
-  const dy = p2.clientY - p1.clientY
-  return Math.hypot(dx, dy)
-}
+const getDistance = (t1, t2) =>
+  Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY)
 
-function sharedHandlers(state) {
-  const { element, pointers, onZoom, onPan } = state
-  const pointerDelete = (e) => {
-    pointers.delete(e.pointerId)
-    state.lastDistance = null
-  }
-  return {
-    pointerdown: (e) => {
-      pointers.set(e.pointerId, e)
-      element.setPointerCapture(e.pointerId)
-    },
-    pointermove: (e) => {
-      console.log(e.pointerType)
-      if (!pointers.has(e.pointerId)) return
+const getPosition = (t1, t2) => ({
+  x: (t1.clientX + t2.clientX) / 2,
+  y: (t1.clientY + t2.clientY) / 2
+})
 
-      pointers.set(e.pointerId, e)
-
-      if (pointers.size !== 2) return
-
-      const [p1, p2] = Array.from(pointers.values())
-
-      if (typeof onZoom === 'function') {
-        const distance = getDistance(p1, p2)
-        state.lastDistance !== null && onZoom(distance / state.lastDistance)
-        state.lastDistance = distance
-      }
-      if (typeof onPan === 'function') {
-        const x = (p1.movementX + p2.movementX) / 2
-        const y = (p1.movementY + p2.movementY) / 2
-        onPan({ x, y })
-      }
-    },
-    pointerup: pointerDelete,
-    pointercancel: pointerDelete
-  }
-}
-
-function zoomHandlers(state) {
-  const { onZoom, onPan } = state
-  if (typeof onZoom !== 'function') return {}
-
-  return {
-    wheel: (e) => {
-      // if ('ongesturestart' in window) {
-      onPan({ x: e.dx, y: e.dy })
-      // } else {
-      //   onZoom(Math.exp(e.deltaY * 0.01))
-      // }
-      e.preventDefault()
-    },
-    touchmove: (e) => {
-      if (e.touches.length !== 2) return
-
-      const distance = getDistance(...e.touches)
-      state.lastDistance !== null && onZoom(distance / state.lastDistance)
-      state.lastDistance = distance
-      e.preventDefault()
-    },
-    gesturestart: () => {
-      state.lastGestureScale = 1
-    },
-    gesturechange: ({ scale }) => {
-      const deltaZoom = scale / state.lastGestureScale
-      onZoom(deltaZoom)
-      state.lastGestureScale = scale
-    },
-    gestureend: () => {
-      state.lastGestureScale = null
-    }
-  }
+const evaluateTouches = ({ touches }) => {
+  state.lastPosition =
+    touches.length === 2 ? getPosition(...touches) : (state.lastPosition = null)
 }
 
 export class GestureInput {
   static #activeElements = new Map()
 
   static captureGestures({ element, onZoom, onPan }) {
-    if (!element || this.#activeElements.has(element) || !(onZoom || onPan))
+    if (!element || this.#activeElements.has(element) || !onZoom || !onPan)
       return
 
     const state = {
       element,
       onZoom,
       onPan,
-      pointers: new Map(),
+      touches: new Map(),
       lastDistance: null,
+      lastPosition: null,
       lastGestureScale: null
     }
 
     const handlers = {
-      ...sharedHandlers(state),
-      ...zoomHandlers(state)
+      wheel: (e) => {
+        onZoom(Math.exp(e.deltaY * 0.01))
+        e.preventDefault()
+      },
+
+      mousemove: ({ buttons, movementX: x, movementY: y }) => {
+        if (buttons & 2) {
+          onPan({ x, y })
+        }
+      },
+
+      // Generic touch screen pan/zoom
+      touchstart: evaluateTouches,
+      touchend: evaluateTouches,
+      touchmove: (e) => {
+        if (e.touches.length !== 2) return
+
+        const pos = getPosition(...e.touches)
+        state.lastPosition &&
+          onPan({
+            x: pos.x - state.lastPosition.x,
+            y: pos.y - state.lastPosition.y
+          })
+        state.lastPosition = pos
+
+        const dist = getDistance(...e.touches)
+        state.lastDistance && onZoom(dist / state.lastDistance)
+        state.lastDistance = dist
+      },
+
+      // Apple OS pinch to zoom
+      gesturestart: () => {
+        state.lastGestureScale = 1
+      },
+      gesturechange: ({ scale }) => {
+        const deltaZoom = scale / state.lastGestureScale
+        onZoom(deltaZoom)
+        state.lastGestureScale = scale
+      },
+      gestureend: () => {
+        state.lastGestureScale = null
+      }
     }
 
     for (const [type, fn] of Object.entries(handlers)) {

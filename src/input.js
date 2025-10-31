@@ -122,6 +122,7 @@ export class Input {
       }
     })
 
+    editor.addEventListener('contextmenu', preventCallback)
     GestureInput.captureGestures({
       element: editor,
       onZoom: (factor) => {
