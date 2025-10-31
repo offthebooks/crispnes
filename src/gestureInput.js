@@ -16,6 +16,7 @@ function sharedHandlers(state) {
       element.setPointerCapture(e.pointerId)
     },
     pointermove: (e) => {
+      console.log(e.pointerType)
       if (!pointers.has(e.pointerId)) return
 
       pointers.set(e.pointerId, e)
@@ -41,15 +42,17 @@ function sharedHandlers(state) {
 }
 
 function zoomHandlers(state) {
-  const { onZoom } = state
+  const { onZoom, onPan } = state
   if (typeof onZoom !== 'function') return {}
 
   return {
     wheel: (e) => {
-      if (e.ctrlKey) {
-        onZoom(Math.exp(e.deltaY * 0.01))
-        e.preventDefault()
-      }
+      // if ('ongesturestart' in window) {
+      onPan({ x: e.dx, y: e.dy })
+      // } else {
+      //   onZoom(Math.exp(e.deltaY * 0.01))
+      // }
+      e.preventDefault()
     },
     touchmove: (e) => {
       if (e.touches.length !== 2) return
@@ -58,6 +61,17 @@ function zoomHandlers(state) {
       state.lastDistance !== null && onZoom(distance / state.lastDistance)
       state.lastDistance = distance
       e.preventDefault()
+    },
+    gesturestart: () => {
+      state.lastGestureScale = 1
+    },
+    gesturechange: ({ scale }) => {
+      const deltaZoom = scale / state.lastGestureScale
+      onZoom(deltaZoom)
+      state.lastGestureScale = scale
+    },
+    gestureend: () => {
+      state.lastGestureScale = null
     }
   }
 }
@@ -74,7 +88,8 @@ export class GestureInput {
       onZoom,
       onPan,
       pointers: new Map(),
-      lastDistance: null
+      lastDistance: null,
+      lastGestureScale: null
     }
 
     const handlers = {
