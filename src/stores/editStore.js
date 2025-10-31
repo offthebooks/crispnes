@@ -81,6 +81,18 @@ export class EditStore {
     this.#renderCanvas()
   }
 
+  cancelEdit() {
+    if (!this.#drawEdits) return
+
+    this.#drawEdits.finalize()
+
+    const { frame } = Store.context.animationStore
+    const { beforeValues: edits } = this.#drawEdits
+
+    this.#applyEdits({ frame, edits, persist: false })
+    this.#drawEdits = null
+  }
+
   clear() {
     const { undoStore, animationStore } = Store.context
     const { frame } = animationStore
@@ -152,12 +164,9 @@ export class EditStore {
     })
   }
 
-  #applyEdits(edits) {
-    const {
-      animationStore: { frame }
-    } = Store.context
+  #applyEdits({ frame, edits, persist = true }) {
     frame.applyEdits(edits)
-    frame.persist()
+    persist && frame.persist()
     this.#renderCanvas()
   }
 
@@ -186,8 +195,8 @@ export class EditStore {
 
     undoStore.record({
       name: 'Draw',
-      undo: () => this.#applyEdits(beforeValues),
-      redo: () => this.#applyEdits(afterValues)
+      undo: () => this.#applyEdits({ frame, edits: beforeValues }),
+      redo: () => this.#applyEdits({ frame, edits: afterValues })
     })
 
     frame.persist()
@@ -205,8 +214,8 @@ export class EditStore {
 
     undoStore.record({
       name: 'Fill',
-      undo: () => this.#applyEdits(beforeValues),
-      redo: () => this.#applyEdits(afterValues)
+      undo: () => this.#applyEdits({ frame, edits: beforeValues }),
+      redo: () => this.#applyEdits({ frame, edits: afterValues })
     })
 
     frame.persist()
