@@ -9,6 +9,8 @@ const getPosition = (t1, t2) => ({
 const evaluateTouches = ({ touches }) => {
   state.lastPosition =
     touches.length === 2 ? getPosition(...touches) : (state.lastPosition = null)
+  state.lastDistance =
+    touches.length === 2 ? getDistance(...touches) : (state.lastDistance = null)
 }
 
 export class GestureInput {
