@@ -6,13 +6,6 @@ const getPosition = (t1, t2) => ({
   y: (t1.clientY + t2.clientY) / 2
 })
 
-const evaluateTouches = ({ touches }) => {
-  state.lastPosition =
-    touches.length === 2 ? getPosition(...touches) : (state.lastPosition = null)
-  state.lastDistance =
-    touches.length === 2 ? getDistance(...touches) : (state.lastDistance = null)
-}
-
 export class GestureInput {
   static #activeElements = new Map()
 
@@ -20,14 +13,16 @@ export class GestureInput {
     if (!element || this.#activeElements.has(element) || !onZoom || !onPan)
       return
 
-    const state = {
-      element,
-      onZoom,
-      onPan,
-      touches: new Map(),
-      lastDistance: null,
-      lastPosition: null,
-      lastGestureScale: null
+    const touches = new Map()
+    let lastDistance = null
+    let lastPosition = null
+    let lastGestureScale = null
+
+    const evaluateTouches = ({ touches }) => {
+      lastPosition =
+        touches.length === 2 ? getPosition(...touches) : (lastPosition = null)
+      lastDistance =
+        touches.length === 2 ? getDistance(...touches) : (lastDistance = null)
     }
 
     const handlers = {
@@ -46,32 +41,36 @@ export class GestureInput {
       touchstart: evaluateTouches,
       touchend: evaluateTouches,
       touchmove: (e) => {
-        if (e.touches.length !== 2) return
+        if (e.touches.length !== 2) {
+          lastDistance = null
+          lastPosition = null
+          return
+        }
 
         const pos = getPosition(...e.touches)
-        state.lastPosition &&
+        lastPosition &&
           onPan({
-            x: pos.x - state.lastPosition.x,
-            y: pos.y - state.lastPosition.y
+            x: pos.x - lastPosition.x,
+            y: pos.y - lastPosition.y
           })
-        state.lastPosition = pos
+        lastPosition = pos
 
         const dist = getDistance(...e.touches)
-        state.lastDistance && onZoom(dist / state.lastDistance)
-        state.lastDistance = dist
+        lastDistance && onZoom(dist / lastDistance)
+        lastDistance = dist
       },
 
       // Apple OS pinch to zoom
       gesturestart: () => {
-        state.lastGestureScale = 1
+        lastGestureScale = 1
       },
       gesturechange: ({ scale }) => {
-        const deltaZoom = scale / state.lastGestureScale
+        const deltaZoom = scale / lastGestureScale
         onZoom(deltaZoom)
-        state.lastGestureScale = scale
+        lastGestureScale = scale
       },
       gestureend: () => {
-        state.lastGestureScale = null
+        lastGestureScale = null
       }
     }
 
