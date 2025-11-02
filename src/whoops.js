@@ -7,6 +7,13 @@ class MissingArgumentError extends Error {
   }
 }
 
+class InvalidOperationError extends Error {
+  constructor(msg) {
+    super(`Invalid operation: ${msg}`)
+    this.name = 'InvalidOperationError'
+  }
+}
+
 class IncompleteEditBufferError extends Error {
   constructor(change) {
     const { index, before } = change
@@ -36,6 +43,7 @@ class EditBufferReadError extends Error {
 
 export class Whoops extends Error {
   static missingArgument = (arg) => new MissingArgumentError(arg)
+  static invalidOperation = (msg) => new InvalidOperationError(msg)
 
   static incompleteEditBuffer = (change) =>
     new IncompleteEditBufferError(change)

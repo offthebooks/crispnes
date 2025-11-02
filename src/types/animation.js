@@ -1,6 +1,7 @@
 import { Sprite } from './sprite.js'
 import { elementFromTemplate } from '../utils.js'
 import { Store } from '../stores/store.js'
+import { Whoops } from '../whoops.js'
 
 const defaultModel = Object.seal({
   name: null,
@@ -20,9 +21,8 @@ export class Animation {
     this.#model = { ...defaultModel, ...model }
     this.#model.name ??= Store.context.animationStore.nextAnimationName
     this.#model.palette ??= Store.context.paletteStore.palette
-    this.#frames = []
+    this.#frames = [new Sprite({ animation: this })]
     this.#DOM = { item: null }
-    this.add()
   }
 
   static fromDataModel = (model, framesData) => {
@@ -79,6 +79,8 @@ export class Animation {
   }
 
   remove(index) {
+    if (this.length <= 1)
+      throw Whoops.invalidOperation('Cannot delete last frame of an animation.')
     this.#frames.splice(index, 1)
     this.#render()
   }
@@ -95,9 +97,12 @@ export class Animation {
     this.#DOM.item ??= elementFromTemplate(Animation.itemTemplate)
     const { item } = this.#DOM
     const { name, length, width, height } = this
+    const s = length === 1 ? '' : 's'
     item.querySelector('.name').textContent = name
-    item.querySelector('.frameCount').textContent = `${length} frames`
+    item.querySelector('.frameCount').textContent = `${length} frame${s}`
     item.querySelector('.size').textContent = `${width} x ${height} pixels`
+    const canvas = item.querySelector('.preview canvas')
+    this.sprite(0).renderToCanvas(canvas)
     return this.#DOM
   }
 }

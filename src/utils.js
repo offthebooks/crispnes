@@ -34,6 +34,9 @@ export const domQueryAll = (selector) => document.querySelectorAll(selector)
 
 export const restyle = (el, styles) => Object.assign(el.style, styles)
 
+export const isElementOfType = (el, type) => el instanceof type
+export const isCanvas = (el) => isElementOfType(el, HTMLCanvasElement)
+
 export const resolveElements = (elementsOrSelector) => {
   if (typeof elementsOrSelector === 'string') {
     return document.querySelectorAll(elementsOrSelector)
@@ -105,3 +108,10 @@ export const untitledNameUniqueFromStrings = (existingNames = []) => {
 }
 
 export const formatJSON = (value) => JSON.stringify(value, undefined, '  ')
+
+export const describeType = (value) => {
+  if (value === null) return 'null'
+  if (value === undefined) return 'undefined'
+
+  return Object.prototype.toString.call(value).slice(8, -1)
+}

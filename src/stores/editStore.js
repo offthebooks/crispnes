@@ -151,7 +151,7 @@ export class EditStore {
   }
 
   #positionContainer() {
-    const { width, height } = Store.context.animationStore.frame
+    const { width, height } = Store.context.animationStore.animation
     const { x, y } = this.pan
     const w = Math.floor(width * this.zoom)
     const h = Math.floor(height * this.zoom)
@@ -172,13 +172,7 @@ export class EditStore {
 
   #renderCanvas() {
     const { frame } = Store.context.animationStore
-
-    editCanvas.width = frame.width
-    editCanvas.height = frame.height
-
-    const context = editCanvas.getContext('2d')
-    const imageData = frame.generateImageData()
-    context.putImageData(imageData, 0, 0)
+    frame.renderToCanvas(editCanvas)
   }
 
   // Commit draw operation, and capture undo action

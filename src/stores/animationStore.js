@@ -2,6 +2,9 @@ import { Animation } from '../types/animation.js'
 import { untitledNameUniqueFromStrings } from '../utils.js'
 import { Store } from './store.js'
 
+const animationItemsEl = document.getElementById('animationItems')
+const animationAddButtonEl = document.getElementById('animationAdd')
+
 const defaultModel = Object.seal({
   selectedAnimation: null,
   selectedFrame: 0,
@@ -30,6 +33,8 @@ export class AnimationStore {
       this.#model.selectedAnimation = animation
       this.#persist()
     }
+
+    this.refreshItems()
   }
 
   #loadFromDataModel(dataModel) {
@@ -81,8 +86,8 @@ export class AnimationStore {
     return this.animation.sprite(this.#model.selectedFrame)
   }
 
-  get animationItems() {
-    return this.#model.animationList.map((a) => a.item)
+  get animationListItems() {
+    return this.animations.map((a) => a.item)
   }
 
   get animations() {
@@ -105,6 +110,13 @@ export class AnimationStore {
 
   addAnimation(name, width, height) {
     this.animations.push(new Animation(name, width, height))
+  }
+
+  refreshItems() {
+    animationItemsEl.replaceChildren(
+      animationAddButtonEl,
+      ...this.animationListItems
+    )
   }
 
   get nextAnimationName() {

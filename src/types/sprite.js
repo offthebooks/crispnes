@@ -1,5 +1,5 @@
 import { Store } from '../stores/store.js'
-import { clamp } from '../utils.js'
+import { describeType, isCanvas } from '../utils.js'
 import { Whoops } from '../whoops.js'
 import { EditBuffer } from './editBuffer.js'
 export const maxSideLength = 256
@@ -95,6 +95,18 @@ export class Sprite {
     const outColor = val === this.read(x, y) ? 0 : val
     this.#writeAt(x, y, outColor)
     return outColor
+  }
+
+  renderToCanvas(canvasEl) {
+    if (!isCanvas(canvasEl))
+      throw Whoops.invalidOperation(
+        `Called renderToCanvas with ${describeType(canvasEl)}`
+      )
+
+    const { width, height } = this
+    canvasEl.width = width
+    canvasEl.height = height
+    canvasEl.getContext('2d').putImageData(this.generateImageData(), 0, 0)
   }
 
   generateImageData() {

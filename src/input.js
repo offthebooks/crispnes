@@ -43,7 +43,7 @@ export class Input {
       }
 
       const toolEl = target.closest('[data-tool]')
-      const tool = toolEl.getAttribute('data-tool')
+      const tool = toolEl?.getAttribute('data-tool')
 
       if (DrawTools.has(tool)) {
         editStore.tool = tool
