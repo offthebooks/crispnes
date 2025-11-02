@@ -132,9 +132,9 @@ details > summary {
 }
 
 /*@media (max-width: 500px) or (max-height: 500px)*/
-/* #animationItems{
+#animationItems {
   display: none;
-} */
+}
 #paletteItems {
   display: none;
 }
