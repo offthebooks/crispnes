@@ -27,6 +27,7 @@ export class GestureInput {
 
     const handlers = {
       wheel: (e) => {
+        if (lastGestureScale !== null || lastDistance !== null) return
         onZoom(Math.exp(e.deltaY * 0.01))
         e.preventDefault()
       },
@@ -55,8 +56,9 @@ export class GestureInput {
           })
         lastPosition = pos
 
+        const shouldZoom = lastGestureScale === null && lastDistance !== null
         const dist = getDistance(...e.touches)
-        lastDistance && onZoom(dist / lastDistance)
+        shouldZoom && onZoom(dist / lastDistance)
         lastDistance = dist
       },
 
