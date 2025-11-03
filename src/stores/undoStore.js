@@ -1,9 +1,9 @@
-import { Tools } from '../consts.js'
+import { Tool } from '../consts.js'
 import { domQueryOne } from '../utils.js'
 
 const actionLimit = 50
-const undoTool = domQueryOne(`[data-tool="${Tools.Undo}"]`)
-const redoTool = domQueryOne(`[data-tool="${Tools.Redo}"]`)
+const undoTool = domQueryOne(`[data-tool="${Tool.Undo}"]`)
+const redoTool = domQueryOne(`[data-tool="${Tool.Redo}"]`)
 
 export class UndoStore {
   #undoActions

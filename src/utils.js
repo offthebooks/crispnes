@@ -34,8 +34,8 @@ export const domQueryAll = (selector) => document.querySelectorAll(selector)
 
 export const restyle = (el, styles) => Object.assign(el.style, styles)
 
-export const isElementOfType = (el, type) => el instanceof type
-export const isCanvas = (el) => isElementOfType(el, HTMLCanvasElement)
+export const isInstance = (el, type) => el instanceof type
+export const isCanvas = (el) => isInstance(el, HTMLCanvasElement)
 
 export const resolveElements = (elementsOrSelector) => {
   if (typeof elementsOrSelector === 'string') {

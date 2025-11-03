@@ -2,8 +2,8 @@ import { Palette } from '../types/palette.js'
 import { untitledNameUniqueFromStrings } from '../utils.js'
 import { Store } from './store.js'
 
-const paletteItemsEl = document.getElementById('paletteItems')
-const paletteColorsEl = document.getElementById('paletteColors')
+// const paletteItemsEl = document.getElementById('paletteItems')
+// const paletteColorsEl = document.getElementById('paletteColors')
 
 const defaultModel = Object.seal({
   paletteList: []
@@ -34,8 +34,8 @@ export class PaletteStore {
       this.#persist()
     }
 
-    paletteItemsEl.replaceChildren(...this.paletteListItems)
-    paletteColorsEl.replaceChildren(...this.paletteColorItems)
+    // paletteItemsEl.replaceChildren(...this.paletteListItems)
+    // paletteColorsEl.replaceChildren(...this.paletteColorItems)
   }
 
   #loadFromDataModel(dataModel) {

@@ -2,8 +2,8 @@ import { Animation } from '../types/animation.js'
 import { untitledNameUniqueFromStrings } from '../utils.js'
 import { Store } from './store.js'
 
-const animationItemsEl = document.getElementById('animationItems')
-const animationAddButtonEl = document.getElementById('animationAdd')
+// const animationItemsEl = document.getElementById('animationItems')
+// const animationAddButtonEl = document.getElementById('animationAdd')
 
 const defaultModel = Object.seal({
   selectedAnimation: null,
@@ -113,10 +113,10 @@ export class AnimationStore {
   }
 
   refreshItems() {
-    animationItemsEl.replaceChildren(
-      animationAddButtonEl,
-      ...this.animationListItems
-    )
+    // animationItemsEl.replaceChildren(
+    //   animationAddButtonEl,
+    //   ...this.animationListItems
+    // )
   }
 
   get nextAnimationName() {

@@ -1,4 +1,4 @@
-import { DrawTools, Tools } from './consts.js'
+import { DrawTools, Tool } from './consts.js'
 import { GestureInput } from './gestureInput.js'
 import { Store } from './stores/store.js'
 import { dateString, domQueryOne } from './utils.js'
@@ -50,25 +50,25 @@ export class Input {
         tools.classList.remove('open')
       } else {
         switch (tool) {
-          case Tools.Animations:
+          case Tool.Animations:
             // Show Animations list modal
             break
-          case Tools.Palettes:
+          case Tool.Palettes:
             // Show Palettes list modal
             break
-          case Tools.Redo:
+          case Tool.Redo:
             undoStore.redo()
             break
-          case Tools.Undo:
+          case Tool.Undo:
             undoStore.undo()
             break
-          case Tools.ZoomIn:
+          case Tool.ZoomIn:
             editStore.zoomIn()
             break
-          case Tools.ZoomOut:
+          case Tool.ZoomOut:
             editStore.zoomOut()
             break
-          case Tools.Collapse:
+          case Tool.Collapse:
             tools.classList.remove('open')
             break
           default:
@@ -96,13 +96,13 @@ export class Input {
     }
 
     editCanvas.addEventListener('pointerdown', (evt) => {
-      if (![Tools.Draw, Tools.Fill].includes(editStore.tool)) return
+      if (![Tool.Draw, Tool.Fill].includes(editStore.tool)) return
       const pos = editPosition(evt)
       pos && editStore.editAt(pos)
     })
 
     editCanvas.addEventListener('pointermove', (evt) => {
-      if (editStore.tool !== Tools.Draw) return
+      if (editStore.tool !== Tool.Draw) return
       const pos = editPosition(evt)
       pos && editStore.continueEdit(pos)
     })

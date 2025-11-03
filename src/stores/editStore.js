@@ -1,4 +1,4 @@
-import { DrawTools, Tools } from '../consts.js'
+import { DrawTools, Tool } from '../consts.js'
 import { EditBuffer } from '../types/editBuffer.js'
 import {
   clamp,
@@ -19,7 +19,7 @@ const editCanvas = domQueryOne('#editor canvas')
 const defaultData = Object.seal({
   pan: { x: 0, y: 0 },
   zoomLevel: 16,
-  currentTool: Tools.Draw
+  currentTool: Tool.Draw
 })
 
 export class EditStore {
@@ -46,7 +46,7 @@ export class EditStore {
     const { colorIndex: paletteColor } = Store.context.paletteStore
 
     switch (this.tool) {
-      case Tools.Draw: {
+      case Tool.Draw: {
         const before = frame.read(x, y)
         const after = frame.toggle(x, y, paletteColor)
         if (before === after) return
@@ -54,7 +54,7 @@ export class EditStore {
         this.#drawEdits.editIndex(frame.indexAt(x, y), { before })
         break
       }
-      case Tools.Fill: {
+      case Tool.Fill: {
         const fillEdits = frame.fill(x, y, paletteColor)
         if (!fillEdits) return
         this.#recordFill(fillEdits)
