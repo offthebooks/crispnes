@@ -1,12 +1,11 @@
 import { ButtonStyle } from '../consts.js'
-import { isInstance } from '../utils.js'
+import { elementFromTemplate, isInstance } from '../utils.js'
 
-const viewEl = querySelector('#view')
-const titleEl = querySelector('#view .title')
-const contentEl = querySelector('#view .content')
-const buttonsEl = querySelector('#view .buttons')
+const viewContainerEl = querySelector('#viewContainer')
 
 export class ViewStore {
+  static viewTemplate = querySelector('#view template')
+
   #stack = []
   #cancelButton = null
 
@@ -18,13 +17,53 @@ export class ViewStore {
   }
 
   pushView = ({ title, content, buttons }) => {
-    titleEl.replaceChildren(title)
-    contentEl.replaceChildren(content)
-    buttonsEl.replaceChildren([this.#cancelButton, ...buttons])
+    const view = elementFromTemplate(ViewStore.viewTemplate)
+
+    view.querySelector('.title').replaceChildren(title)
+    view.querySelector('.content').replaceChildren(content)
+    view
+      .querySelector('.buttons')
+      .replaceChildren([this.#cancelButton, ...buttons])
+
+    if (this.#stack.length === 0) {
+      view.classList.add('offDown')
+      viewContainerEl.appendChild(view)
+      requestAnimationFrame(() => {
+        view.classList.remove('offDown')
+      })
+    } else {
+      const current = this.#stack.at(-1).el
+
+      view.classList.add('offRight')
+      viewContainerEl.appendChild(view)
+
+      requestAnimationFrame(() => {
+        current.classList.add('offLeft')
+        view.classList.remove('offRight')
+      })
+    }
+
+    this.#stack.push({ el: view, title, content, buttons })
   }
 
-  popView() {
-    this.#stack.pop()
+  popView = () => {
+    if (this.#stack.length === 0) return
+    const leaving = this.#stack.pop().el
+
+    if (this.#stack.length === 0) {
+      leaving.classList.add('offDown')
+      leaving.addEventListener('transitionend', () => leaving.remove(), {
+        once: true
+      })
+    } else {
+      const previous = this.#stack[this.#stack.length - 1].el
+      leaving.classList.add('offRight')
+      leaving.addEventListener('transitionend', () => leaving.remove(), {
+        once: true
+      })
+
+      previous.classList.remove('offLeft')
+    }
   }
 
   #button = ({ label, handler, style = ButtonStyle.Default }) => {

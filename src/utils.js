@@ -21,10 +21,10 @@ export const elementIndex = (el) => {
 }
 
 export const elementFromTemplate = (templateEl, rootClass) => {
-  const clone = templateEl.content.cloneNode(true)
-  if (clone.children.length > 1)
+  const { children } = templateEl.content.cloneNode(true)
+  if (children.length > 1)
     console.error('elementFromTemplate expects template with single child')
-  const el = clone.children[0]
+  const [el] = children
   rootClass && el.classList.add(rootClass)
   return el
 }

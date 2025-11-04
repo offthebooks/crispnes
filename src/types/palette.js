@@ -11,7 +11,7 @@ const defaultModel = Object.seal({
 })
 
 export class Palette {
-  static itemTemplate = document.querySelector('#paletteItems template')
+  static itemTemplate = document.getElementById('paletteItem')
 
   #model
   #selected

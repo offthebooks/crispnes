@@ -3,7 +3,7 @@ import { untitledNameUniqueFromStrings } from '../utils.js'
 import { Store } from './store.js'
 
 // const paletteItemsEl = document.getElementById('paletteItems')
-// const paletteColorsEl = document.getElementById('paletteColors')
+const paletteColorsEl = document.getElementById('paletteColors')
 
 const defaultModel = Object.seal({
   paletteList: []
@@ -35,7 +35,7 @@ export class PaletteStore {
     }
 
     // paletteItemsEl.replaceChildren(...this.paletteListItems)
-    // paletteColorsEl.replaceChildren(...this.paletteColorItems)
+    paletteColorsEl.replaceChildren(...this.paletteColorItems)
   }
 
   #loadFromDataModel(dataModel) {

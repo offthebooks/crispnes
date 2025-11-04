@@ -1,0 +1,21 @@
+#viewContainer {
+  position: relative;
+  overflow: hidden;
+}
+
+.view {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.3s ease;
+  transform: translateX(0);
+}
+
+.view.offLeft {
+  transform: translateX(-100%);
+}
+.view.offRight {
+  transform: translateX(100%);
+}
+.view.offDown {
+  transform: translateY(100%);
+}
