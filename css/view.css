@@ -31,6 +31,22 @@
       margin: var(--body-default-margin);
       overflow: hidden auto;
       flex-grow: 1;
+
+      .itemCard {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: var(--tool-gap);
+        padding: var(--body-default-margin);
+        border-radius: var(--interface-radius);
+        background-color: var(--col-background-tint-1);
+
+        &:hover:not(:has(button:hover)) {
+          /* Only enact state if not also hovering a child button */
+          cursor: pointer;
+          background-color: var(--col-highlight);
+        }
+      }
     }
 
     .buttons {
@@ -38,7 +54,8 @@
       flex-direction: row;
       gap: 0.5rem;
       padding: var(--tool-margin);
-      background-color: var(--col-background-tint-1);
+      padding-bottom: calc(var(--tool-margin) + env(safe-area-inset-bottom));
+      background-color: var(--col-background-tint-2);
 
       button {
         flex-grow: 1;

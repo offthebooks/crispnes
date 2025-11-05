@@ -41,9 +41,10 @@ export const elementIndex = (el) => {
 }
 
 export const elementFromTemplate = (templateEl, rootClass) => {
-  const { children } = templateEl.content.cloneNode(true)
+  const clone = templateEl.content.cloneNode(true)
+  const children = clone.querySelectorAll('*')
   if (children.length > 1)
-    console.error('elementFromTemplate expects template with single child')
+    console.error('elementFromTemplate expects template with one child element')
   const [el] = children
   rootClass && el.classList.add(rootClass)
   return el

@@ -63,6 +63,20 @@ button {
   }
 }
 
+.checkered {
+  --checkered1: #ffffff22;
+  --checkered2: #00000022;
+  background-image: conic-gradient(
+    var(--checkered1) 25%,
+    var(--checkered2) 25%,
+    var(--checkered2) 50%,
+    var(--checkered1) 50%,
+    var(--checkered1) 75%,
+    var(--checkered2) 75%
+  );
+  background-size: 8px 8px;
+}
+
 ol {
   list-style: none;
   margin: 0;
@@ -85,7 +99,12 @@ button {
     color: var(--col-foreground-tint-2);
   }
 
-  &:not(.inactive):hover span.tip {
+  /* Show tool tip if:
+      - I'm not .inactive
+      - I'm hovered
+      - I don't have a descendant showing a tool tip */
+  &:not(.inactive):hover:not(:has(li:hover > span.tip, button:hover > span.tip))
+    > span.tip {
     display: block;
     z-index: 1;
     font-size: 1rem;

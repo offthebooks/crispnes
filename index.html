@@ -30,7 +30,7 @@
     </details>
 
     <div id="editor">
-      <div id="editContainer">
+      <div id="editContainer" class="checkered">
         <canvas></canvas>
       </div>
     </div>
@@ -83,21 +83,23 @@
     </div>
 
     <!-- Animation templates -->
-    <template id="animationPicker">
-      <ol id="animationItems"></ol>
-    </template>
-
     <template id="animationItem">
-      <li>
-        <div class="name"></div>
-        <div class="frameCount"></div>
-        <div class="size"></div>
-        <div class="preview"><canvas></canvas></div>
-        <button class="edit"><i class="edit icon"></i></button>
+      <!-- Children of #viewContainer > .view > .content > ol.animationItems -->
+      <li class="itemCard">
+        <span class="tip">Select animation</span>
+        <ol class="info">
+          <li class="name"></li>
+          <li class="frameCount"></li>
+          <li class="size"></li>
+        </ol>
+        <div class="preview checkered"><canvas></canvas></div>
+        <button class="edit">
+          <i class="edit icon"></i><span class="tip">Edit info</span>
+        </button>
       </li>
     </template>
 
-    <template id="animationDetail">
+    <template id="animationEdit">
       <form>
         <label>Name <input type="text" name="name" /></label>
         <label>Width <input type="number" name="width" /></label>

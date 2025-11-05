@@ -16,18 +16,6 @@
     margin: auto;
     border: 2px solid var(--col-background-tint-2);
 
-    --checkered1: #ffffff22;
-    --checkered2: #00000022;
-    background-image: conic-gradient(
-      var(--checkered1) 25%,
-      var(--checkered2) 25%,
-      var(--checkered2) 50%,
-      var(--checkered1) 50%,
-      var(--checkered1) 75%,
-      var(--checkered2) 75%
-    );
-    background-size: 8px 8px;
-
     canvas {
       width: 100%;
       height: 100%;
