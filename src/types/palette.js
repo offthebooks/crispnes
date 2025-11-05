@@ -1,6 +1,6 @@
 import { nesColorPalette } from '../colors.js'
 import { Store } from '../stores/store.js'
-import { elementFromTemplate } from '../utils.js'
+import { domCreate, elementFromTemplate } from '../utils.js'
 import { Color } from './color.js'
 
 export const maxPaletteSize = 256
@@ -86,15 +86,18 @@ export class Palette {
     item.querySelector('.name').textContent = this.name
     item.querySelector('.size').textContent = `${this.length} colors`
 
-    this.#DOM.colorItems = this.#model.colors.map((color, index) => {
-      const li = document.createElement('li')
-      li.style.backgroundColor = color.hex
-      li.setAttribute('data-color-index', index)
-      if (this.selected === index) {
-        li.classList.add('selected')
-      }
-      return li
-    })
+    this.#DOM.colorItems = this.#model.colors.map((color, index) =>
+      domCreate({
+        tag: 'li',
+        cls: this.selected === index ? 'selected' : null,
+        styles: {
+          backgroundColor: color.hex
+        },
+        attrs: {
+          'data-color-index': index
+        }
+      })
+    )
 
     return { ...this.#DOM }
   }

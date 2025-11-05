@@ -44,6 +44,11 @@
         flex-grow: 1;
         height: 2.5rem;
         background-color: var(--col-background);
+        font-size: 1rem;
+
+        i.icon {
+          margin-bottom: -0.2rem;
+        }
 
         &.primary {
           font-weight: bolder;

@@ -11,7 +11,7 @@ const defaultModel = Object.seal({
 })
 
 export class Animation {
-  static itemTemplate = document.querySelector('#animationItems template')
+  static itemTemplate = document.querySelector('#animationItem')
 
   #model
   #frames

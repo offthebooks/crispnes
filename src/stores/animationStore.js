@@ -1,6 +1,6 @@
 import { ButtonStyle } from '../consts.js'
 import { Animation } from '../types/animation.js'
-import { untitledNameUniqueFromStrings } from '../utils.js'
+import { domCreate, untitledNameUniqueFromStrings } from '../utils.js'
 import { Store } from './store.js'
 
 // const animationItemsEl = document.getElementById('animationItems')
@@ -34,8 +34,6 @@ export class AnimationStore {
       this.#model.selectedAnimation = animation
       this.#persist()
     }
-
-    this.refreshItems()
   }
 
   #loadFromDataModel(dataModel) {
@@ -88,7 +86,9 @@ export class AnimationStore {
   }
 
   get animationListItems() {
-    return this.animations.map((a) => a.item)
+    const ol = domCreate({ tag: 'ol', cls: 'animationItems' })
+    ol.replaceChildren(...this.animations.map((a) => a.item))
+    return ol
   }
 
   get animations() {
@@ -113,22 +113,15 @@ export class AnimationStore {
     this.animations.push(new Animation(name, width, height))
   }
 
-  refreshItems() {
-    // animationItemsEl.replaceChildren(
-    //   animationAddButtonEl,
-    //   ...this.animationListItems
-    // )
-  }
-
   presentAnimationList() {
     const { viewStore } = Store.context
     viewStore.pushView({
       title: 'Animations',
-      content: 'Here be a list of animations.',
+      content: this.animationListItems,
       buttons: [
         {
-          label: 'Does nothing',
-          handler: () => alert('I warned you.'),
+          label: `Add Animation <i class="add icon"</i>`,
+          handler: () => alert('I bet you would like a new animation.'),
           style: ButtonStyle.Primary
         }
       ]

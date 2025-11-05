@@ -1,8 +1,8 @@
 import { ButtonStyle } from '../consts.js'
 import {
+  domCreate,
   domQueryOne,
   elementFromTemplate,
-  isInstance,
   listenOnce
 } from '../utils.js'
 
@@ -62,18 +62,20 @@ export class ViewStore {
     }
   }
 
-  #renderButtons = (buttons) => {
-    return buttons.map(({ label, handler, style = ButtonStyle.Default }) => {
-      const btn = document.createElement('button')
-      btn.append(label)
+  #renderButtons = (buttons) =>
+    buttons.map(({ label, handler, style = ButtonStyle.Default }) => {
+      const btn = domCreate({ tag: 'button', cls: style })
+
+      if (typeof label === 'string') {
+        btn.innerHTML = label
+      } else {
+        btn.append(label)
+      }
+
       btn.onclick =
         handler ??
-        (() => {
-          const text = isInstance(label, Node) ? label.textContent : label
-          alert(`${text} button was not assigned a handler`)
-        })
-      btn.classList.add(style)
+        (() => alert(`${label?.textContent ?? label} not implemented`))
+
       return btn
     })
-  }
 }

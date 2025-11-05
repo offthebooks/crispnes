@@ -82,12 +82,9 @@
       </template>
     </div>
 
+    <!-- Animation templates -->
     <template id="animationPicker">
-      <div class="view">
-        <h2>Animations</h2>
-        <button id="animationAdd">New Animation</button>
-        <ol id="animationItems"></ol>
-      </div>
+      <ol id="animationItems"></ol>
     </template>
 
     <template id="animationItem">
@@ -96,44 +93,38 @@
         <div class="frameCount"></div>
         <div class="size"></div>
         <div class="preview"><canvas></canvas></div>
-        <button class="edit"></button>
+        <button class="edit"><i class="edit icon"></i></button>
       </li>
     </template>
 
     <template id="animationDetail">
-      <div class="view">
-        <h2>Edit Animation</h2>
-        <form>
-          <label>Name <input type="text" name="name"></label>
-          <label>Width <input type="number" name="width"></label>
-          <label>Height <input type="number" name="width"></label>
-          <label>Palette <input type="text" name="palette"></label>
-        </form>
-      </div>
+      <form>
+        <label>Name <input type="text" name="name" /></label>
+        <label>Width <input type="number" name="width" /></label>
+        <label>Height <input type="number" name="width" /></label>
+        <label>Palette <input type="text" name="palette" /></label>
+      </form>
     </template>
 
+    <!-- Palette templates -->
     <template id="palettePicker">
-      <div class="view">
-        <h2>Palettes</h2>
-        <button id="paletteAdd">New Palette</button>
-        <ol id="paletteItems"></ol>
-      </div>
+      <ol id="paletteItems"></ol>
     </template>
-    
+
     <template id="paletteItem">
-        <li>
-          <div class="name"></div>
-          <div class="size"></div>
-          <div class="colors"></div>
-        </li>
+      <li>
+        <div class="name"></div>
+        <div class="size"></div>
+        <div class="colors"></div>
+      </li>
     </template>
 
     <template id="paletteDetail">
       <div class="view">
         <h2>Edit Palette</h2>
         <form>
-          <label>Name <input type="text" name="name"></label>
-          <label>Palette <input type="text" name="palette"></label>
+          <label>Name <input type="text" name="name" /></label>
+          <label>Palette <input type="text" name="palette" /></label>
         </form>
       </div>
     </template>

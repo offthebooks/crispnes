@@ -1,3 +1,9 @@
+// Math Utils
+export const clamp = (val, max, min = 0) => {
+  return Math.max(Math.min(val, max), min)
+}
+
+// String Utils
 export const byteString = (byte) => {
   return (256 + byte).toString(2).substring(1)
 }
@@ -6,13 +12,27 @@ export const hexStringForByte = (byte) => {
   return (256 + byte).toString(16).substring(1)
 }
 
-export const clamp = (val, max, min = 0) => {
-  return Math.max(Math.min(val, max), min)
+export const dateString = () => {
+  const iso = new Date().toISOString()
+  return iso.replace(/[-:T]/g, '').split('.')[0]
 }
 
-export const ensureArray = (maybeArray) => {
-  if (maybeArray == null || Array.isArray(maybeArray)) return maybeArray
-  return [maybeArray]
+export const untitledNameUniqueFromStrings = (existingNames = []) => {
+  let num = existingNames.length
+  let name
+  do {
+    name = `Untitled ${++num}`
+  } while (existingNames.includes(name))
+  return name
+}
+
+export const formatJSON = (value) => JSON.stringify(value, undefined, '  ')
+
+export const describeType = (value) => {
+  if (value === null) return 'null'
+  if (value === undefined) return 'undefined'
+
+  return Object.prototype.toString.call(value).slice(8, -1)
 }
 
 // DOM Utils
@@ -34,7 +54,29 @@ export const domQueryOne = (selector, scope = document) =>
 export const domQueryAll = (selector, scope = document) =>
   scope.querySelectorAll(selector)
 
-export const restyle = (el, styles) => Object.assign(el.style, styles)
+const sizeTags = new Set(['canvas', 'img'])
+
+export const domCreate = ({
+  tag = 'div',
+  cls,
+  id,
+  w,
+  h,
+  styles = {},
+  attrs = {}
+}) => {
+  const tagname = tag.toLowerCase()
+  const el = document.createElement(tagname)
+  if (id) el.id = id
+  if (cls) el.className = Array.isArray(cls) ? cls.join(' ') : cls
+  if (typeof w === 'number' && sizeTags.has(tagname)) el.width = w
+  if (typeof h === 'number' && sizeTags.has(tagname)) el.height = h
+  Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v))
+  restyle(el, styles)
+  return el
+}
+
+export const restyle = (el, styles = {}) => Object.assign(el.style, styles)
 
 export const isInstance = (el, type) => el instanceof type
 export const isCanvas = (el) => isInstance(el, HTMLCanvasElement)
@@ -96,27 +138,4 @@ export const diffObjectValues = (nextObj, prevObj) => {
     }
   }
   return { next, prev }
-}
-
-export const dateString = () => {
-  const iso = new Date().toISOString()
-  return iso.replace(/[-:T]/g, '').split('.')[0]
-}
-
-export const untitledNameUniqueFromStrings = (existingNames = []) => {
-  let num = existingNames.length
-  let name
-  do {
-    name = `Untitled ${++num}`
-  } while (existingNames.includes(name))
-  return name
-}
-
-export const formatJSON = (value) => JSON.stringify(value, undefined, '  ')
-
-export const describeType = (value) => {
-  if (value === null) return 'null'
-  if (value === undefined) return 'undefined'
-
-  return Object.prototype.toString.call(value).slice(8, -1)
 }

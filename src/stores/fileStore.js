@@ -1,3 +1,5 @@
+import { domCreate } from '../utils.js'
+
 const fileInput = document.querySelector('input[type=file]')
 const saveLink = document.getElementById('saveLink')
 
@@ -39,10 +41,11 @@ export class FileStore {
     if (Math.max(canvas.width, canvas.height) > 256)
       return this.saveCanvasImage(filename, canvas)
 
-    const upscaledCanvas = document.createElement('canvas')
-    upscaledCanvas.width = canvas.width * scale
-    upscaledCanvas.height = canvas.height * scale
-
+    const upscaledCanvas = domCreate({
+      tag: 'canvas',
+      w: canvas.width * scale,
+      h: canvas.height * scale
+    })
     const ctx = upscaledCanvas.getContext('2d')
     ctx.imageSmoothingEnabled = false
     ctx.drawImage(canvas, 0, 0, upscaledCanvas.width, upscaledCanvas.height)
