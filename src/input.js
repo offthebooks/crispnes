@@ -51,7 +51,7 @@ export class Input {
       } else {
         switch (tool) {
           case Tool.Animations:
-            // Show Animations list modal
+            animationStore.presentAnimationList()
             break
           case Tool.Palettes:
             // Show Palettes list modal

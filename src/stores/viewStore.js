@@ -1,29 +1,28 @@
 import { ButtonStyle } from '../consts.js'
-import { elementFromTemplate, isInstance } from '../utils.js'
+import { domQueryOne, elementFromTemplate, isInstance } from '../utils.js'
 
-const viewContainerEl = querySelector('#viewContainer')
+const viewContainerEl = domQueryOne('#viewContainer')
+const viewTemplate = domQueryOne('template', viewContainerEl)
 
 export class ViewStore {
-  static viewTemplate = querySelector('#view template')
-
   #stack = []
   #cancelButton = null
 
   constructor() {
-    this.#cancelButton = this.#button({
+    this.#cancelButton = {
       label: 'Cancel',
       handler: this.popView
-    })
+    }
   }
 
   pushView = ({ title, content, buttons }) => {
-    const view = elementFromTemplate(ViewStore.viewTemplate)
+    const view = elementFromTemplate(viewTemplate)
 
     view.querySelector('.title').replaceChildren(title)
     view.querySelector('.content').replaceChildren(content)
     view
       .querySelector('.buttons')
-      .replaceChildren([this.#cancelButton, ...buttons])
+      .replaceChildren(...this.#renderButtons([this.#cancelButton, ...buttons]))
 
     if (this.#stack.length === 0) {
       view.classList.add('offDown')
@@ -66,16 +65,18 @@ export class ViewStore {
     }
   }
 
-  #button = ({ label, handler, style = ButtonStyle.Default }) => {
-    const btn = document.createElement('button')
-    btn.append(label)
-    btn.onclick =
-      handler ??
-      (() => {
-        const text = isInstance(label, Node) ? label.textContent : label
-        alert(`${text} button was not assigned a handler`)
-      })
-    btn.classList.add(style)
-    return button
+  #renderButtons = (buttons) => {
+    return buttons.map(({ label, handler, style = ButtonStyle.Default }) => {
+      const btn = document.createElement('button')
+      btn.append(label)
+      btn.onclick =
+        handler ??
+        (() => {
+          const text = isInstance(label, Node) ? label.textContent : label
+          alert(`${text} button was not assigned a handler`)
+        })
+      btn.classList.add(style)
+      return btn
+    })
   }
 }

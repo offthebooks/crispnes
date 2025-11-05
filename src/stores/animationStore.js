@@ -119,6 +119,17 @@ export class AnimationStore {
     // )
   }
 
+  presentAnimationList() {
+    const { viewStore } = Store.context
+    viewStore.pushView({
+      title: 'Animations',
+      content: 'Here be a list of animations.',
+      buttons: [
+        { label: 'Does nothing', handler: () => alert('I warned you.') }
+      ]
+    })
+  }
+
   get nextAnimationName() {
     return untitledNameUniqueFromStrings(this.animationNames)
   }

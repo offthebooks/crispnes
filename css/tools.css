@@ -23,7 +23,7 @@
     border: none;
     cursor: pointer;
 
-    &[data-tool='animations'],
+    /* &[data-tool='animations'], */
     &[data-tool='palettes'],
     &[data-tool='move'] {
       display: none;

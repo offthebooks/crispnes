@@ -29,8 +29,10 @@ export const elementFromTemplate = (templateEl, rootClass) => {
   return el
 }
 
-export const domQueryOne = (selector) => document.querySelector(selector)
-export const domQueryAll = (selector) => document.querySelectorAll(selector)
+export const domQueryOne = (selector, scope = document) =>
+  scope.querySelector(selector)
+export const domQueryAll = (selector, scope = document) =>
+  scope.querySelectorAll(selector)
 
 export const restyle = (el, styles) => Object.assign(el.style, styles)
 
