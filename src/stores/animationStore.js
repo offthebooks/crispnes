@@ -1,3 +1,4 @@
+import { ButtonStyle } from '../consts.js'
 import { Animation } from '../types/animation.js'
 import { untitledNameUniqueFromStrings } from '../utils.js'
 import { Store } from './store.js'
@@ -125,7 +126,11 @@ export class AnimationStore {
       title: 'Animations',
       content: 'Here be a list of animations.',
       buttons: [
-        { label: 'Does nothing', handler: () => alert('I warned you.') }
+        {
+          label: 'Does nothing',
+          handler: () => alert('I warned you.'),
+          style: ButtonStyle.Primary
+        }
       ]
     })
   }

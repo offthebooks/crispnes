@@ -22,11 +22,4 @@ header {
     font-size: 1.5rem;
     color: var(--col-background);
   }
-
-  #animations summary {
-    line-height: 100%;
-    text-align: center;
-    width: calc(var(--header-height) - 6rem);
-    margin-inline: 3rem;
-  }
 }

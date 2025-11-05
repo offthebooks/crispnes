@@ -1,5 +1,10 @@
 import { ButtonStyle } from '../consts.js'
-import { domQueryOne, elementFromTemplate, isInstance } from '../utils.js'
+import {
+  domQueryOne,
+  elementFromTemplate,
+  isInstance,
+  listenOnce
+} from '../utils.js'
 
 const viewContainerEl = domQueryOne('#viewContainer')
 const viewTemplate = domQueryOne('template', viewContainerEl)
@@ -25,13 +30,10 @@ export class ViewStore {
       .replaceChildren(...this.#renderButtons([this.#cancelButton, ...buttons]))
 
     if (this.#stack.length === 0) {
-      view.classList.add('offDown')
       viewContainerEl.appendChild(view)
-      requestAnimationFrame(() => {
-        view.classList.remove('offDown')
-      })
+      viewContainerEl.classList.remove('offDown')
     } else {
-      const current = this.#stack.at(-1).el
+      const current = this.#stack.at(-1)
 
       view.classList.add('offRight')
       viewContainerEl.appendChild(view)
@@ -42,26 +44,21 @@ export class ViewStore {
       })
     }
 
-    this.#stack.push({ el: view, title, content, buttons })
+    this.#stack.push(view)
   }
 
   popView = () => {
     if (this.#stack.length === 0) return
-    const leaving = this.#stack.pop().el
+    const leaving = this.#stack.pop()
 
     if (this.#stack.length === 0) {
-      leaving.classList.add('offDown')
-      leaving.addEventListener('transitionend', () => leaving.remove(), {
-        once: true
-      })
+      viewContainerEl.classList.add('offDown')
+      listenOnce(viewContainerEl, 'transitionend', () => leaving.remove())
     } else {
-      const previous = this.#stack[this.#stack.length - 1].el
-      leaving.classList.add('offRight')
-      leaving.addEventListener('transitionend', () => leaving.remove(), {
-        once: true
-      })
-
+      const previous = this.#stack.at(-1)
       previous.classList.remove('offLeft')
+      leaving.classList.add('offRight')
+      listenOnce(leaving, 'transitionend', () => leaving.remove())
     }
   }
 

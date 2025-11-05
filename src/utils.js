@@ -63,6 +63,9 @@ export const addClass =
   ({ classList }) =>
     classList.add(classname)
 
+export const listenOnce = (el, evt, fn) =>
+  el.addEventListener(evt, fn, { once: true })
+
 // Storage Utils
 export const dataFromStorageWithKeys = (keys) => {
   const data = {}

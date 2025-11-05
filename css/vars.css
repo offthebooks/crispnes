@@ -9,6 +9,7 @@
   --col-foreground-tint-2: #444;
   --col-highlight: #c3ffe9;
   --col-selection: #8a13ff;
+  --col-danger: #d55;
 
   --pad-panel: 16px 8px;
   --anim-bounce: cubic-bezier(0, -0.6, 0.6, 1.5);
@@ -17,7 +18,7 @@
   --body-default-margin: 1rem;
   --button-radius: 0.35rem;
   --interface-radius: 1rem;
+  --interface-duration: 150ms;
   --tool-margin: 0.75rem;
   --tool-gap: 0.5rem;
-  --tool-duration: 150ms;
 }

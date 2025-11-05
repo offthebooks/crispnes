@@ -92,35 +92,6 @@ button {
   }
 }
 
-.widget {
-  z-index: 1;
-}
-
-.tab-container {
-  display: flex;
-
-  button {
-    font-size: 1rem;
-    background-color: var(--col-background-tint-1);
-    border: solid 1px var(--col-background-tint-2);
-    border-radius: 8px 8px 0 0;
-    border-bottom: none;
-    margin-right: -1px;
-    padding: 8px 16px;
-    cursor: pointer;
-
-    &.selected {
-      background-color: var(--col-background);
-    }
-  }
-
-  &::after {
-    content: ' ';
-    flex: 1;
-    border-bottom: solid 1px var(--col-background-tint-1);
-  }
-}
-
 details > summary {
   box-sizing: border-box;
   list-style: none;
@@ -132,9 +103,3 @@ details > summary {
 }
 
 /*@media (max-width: 500px) or (max-height: 500px)*/
-#animationItems {
-  display: none;
-}
-#paletteItems {
-  display: none;
-}
