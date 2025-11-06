@@ -41,8 +41,7 @@ export const elementIndex = (el) => {
 }
 
 export const elementFromTemplate = (templateEl, rootClass) => {
-  const clone = templateEl.content.cloneNode(true)
-  const children = clone.querySelectorAll('*')
+  const { children } = templateEl.content.cloneNode(true)
   if (children.length > 1)
     console.error('elementFromTemplate expects template with one child element')
   const [el] = children
@@ -54,6 +53,8 @@ export const domQueryOne = (selector, scope = document) =>
   scope.querySelector(selector)
 export const domQueryAll = (selector, scope = document) =>
   scope.querySelectorAll(selector)
+export const domQueryList = (selectors, scope = document) =>
+  selectors.map((s) => domQueryOne(s, scope))
 
 const sizeTags = new Set(['canvas', 'img'])
 

@@ -1,6 +1,12 @@
 import { ButtonStyle } from '../consts.js'
 import { Animation } from '../types/animation.js'
-import { domCreate, untitledNameUniqueFromStrings } from '../utils.js'
+import {
+  domCreate,
+  domQueryList,
+  domQueryOne,
+  elementFromTemplate,
+  untitledNameUniqueFromStrings
+} from '../utils.js'
 import { Store } from './store.js'
 
 // const animationItemsEl = document.getElementById('animationItems')
@@ -14,6 +20,8 @@ const defaultModel = Object.seal({
 })
 
 export class AnimationStore {
+  static editTemplate = document.querySelector('#animationEdit')
+
   #model
   #animationMap
 
@@ -121,10 +129,52 @@ export class AnimationStore {
       buttons: [
         {
           label: `Add Animation <i class="add icon"</i>`,
-          handler: () => alert('I bet you would like a new animation.'),
+          handler: () => this.presentAnimationEdit(),
           style: ButtonStyle.Primary
         }
       ]
+    })
+  }
+
+  presentAnimationEdit(animation) {
+    const { viewStore } = Store.context
+    const form = elementFromTemplate(AnimationStore.editTemplate)
+    const { width, height, palette } = animation ?? this.animation
+    const name = animation?.name ?? this.nextAnimationName
+
+    const [nameInput, widthInput, heightInput, paletteInput] = domQueryList(
+      [
+        '[name="name"]',
+        '[name="width"]',
+        '[name="height"]',
+        '[name="palette"]'
+      ],
+      form
+    )
+
+    nameInput.value = name
+    widthInput.value = width
+    heightInput.value = height
+    paletteInput.value = palette.name
+
+    const button = animation
+      ? { label: 'Update', handler: () => {} }
+      : {
+          label: 'Create',
+          handler: () => {
+            this.addAnimation(
+              nameInput.value,
+              widthInput.value,
+              heightInput.value
+            )
+            viewStore.popView()
+          }
+        }
+
+    viewStore.pushView({
+      title: 'Edit Animation',
+      content: form,
+      buttons: [{ ...button, style: ButtonStyle.Primary }]
     })
   }
 
