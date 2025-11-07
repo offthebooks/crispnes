@@ -62,6 +62,14 @@ export class ViewStore {
     }
   }
 
+  dismiss = () => {
+    if (this.#stack.length === 0) return
+    const leaving = this.#stack.pop()
+    this.#stack.forEach((view) => view.remove())
+    viewContainerEl.classList.add('offDown')
+    listenOnce(viewContainerEl, 'transitionend', () => leaving.remove())
+  }
+
   #renderButtons = (buttons) =>
     buttons.map(({ label, handler, style = ButtonStyle.Default }) => {
       const btn = domCreate({ tag: 'button', cls: style })

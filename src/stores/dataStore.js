@@ -54,7 +54,7 @@ export class DataStore {
 
   // Monolithic save function, can save data for any or all object stores
   // depending on the scope of the change we need to serialize
-  async save(appData) {
+  async save(appData, removeData) {
     const { paletteState, animationState, palettes, animations, frames } =
       appData
     const db = await this.db()

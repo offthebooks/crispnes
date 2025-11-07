@@ -1,5 +1,5 @@
 import { Palette } from '../types/palette.js'
-import { untitledNameUniqueFromStrings } from '../utils.js'
+import { domCreate, untitledNameUniqueFromStrings } from '../utils.js'
 import { Store } from './store.js'
 
 // const paletteItemsEl = document.getElementById('paletteItems')
@@ -97,6 +97,16 @@ export class PaletteStore {
 
   get color() {
     return this.palette[this.colorIndex]
+  }
+
+  get paletteSelectOptions() {
+    return this.palettes.map(({ name, length }) =>
+      domCreate({
+        tag: 'option',
+        attrs: { value: name },
+        children: `${name} - ${length} colors`
+      })
+    )
   }
 
   get paletteListItems() {

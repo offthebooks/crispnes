@@ -1,12 +1,14 @@
 import { ButtonStyle } from '../consts.js'
 import { Animation } from '../types/animation.js'
 import {
+  describeType,
   domCreate,
   domQueryList,
   domQueryOne,
   elementFromTemplate,
   untitledNameUniqueFromStrings
 } from '../utils.js'
+import { Whoops } from '../whoops.js'
 import { Store } from './store.js'
 
 // const animationItemsEl = document.getElementById('animationItems')
@@ -103,8 +105,20 @@ export class AnimationStore {
     return this.#model.animationList
   }
 
-  set animation(name) {
-    this.#model.selectedAnimation = this.animationForName(name)
+  set animation(a) {
+    let animation = null
+
+    if (a instanceof Animation) animation = a
+    else if (typeof a === 'number' && a < this.animations.length)
+      animation = this.animations[a]
+    else if (typeof a === 'string') animation = this.animationForName(a)
+
+    if (animation == null)
+      throw Whoops.invalidOperation(
+        `Could not find animation for ${describeType(a)}: ${a}`
+      )
+
+    this.#model.selectedAnimation = animation
     this.frame = 0
   }
 
@@ -117,9 +131,34 @@ export class AnimationStore {
     Store.context.editStore.renderCanvas()
   }
 
-  addAnimation(name, width, height) {
-    this.animations.push(new Animation(name, width, height))
+  addAnimation(name, width, height, palette) {
+    const {
+      undoStore,
+      animationStore: { animation: previous }
+    } = Store.context
+    const frame = this.#model.selectedFrame
+
+    const redo = () => {
+      const animation = new Animation({ name, width, height, palette })
+      this.animations.push(animation)
+      this.#animationMap[name] = animation
+      this.animation = animation
+      this.#persist()
+    }
+
+    const undo = () => {
+      this.animation = previous
+      this.frame = frame
+      delete this.#animationMap[name]
+      this.animations.pop()
+      this.#persist()
+    }
+
+    undoStore.record({ name: 'Create Animation', undo, redo })
+    redo()
   }
+
+  cleanupAnimation(animation) {}
 
   presentAnimationList() {
     const { viewStore } = Store.context
@@ -137,7 +176,7 @@ export class AnimationStore {
   }
 
   presentAnimationEdit(animation) {
-    const { viewStore } = Store.context
+    const { viewStore, paletteStore } = Store.context
     const form = elementFromTemplate(AnimationStore.editTemplate)
     const { width, height, palette } = animation ?? this.animation
     const name = animation?.name ?? this.nextAnimationName
@@ -156,23 +195,37 @@ export class AnimationStore {
     widthInput.value = width
     heightInput.value = height
     paletteInput.value = palette.name
+    paletteInput.replaceChildren(...paletteStore.paletteSelectOptions)
 
     const button = animation
-      ? { label: 'Update', handler: () => {} }
+      ? {
+          label: 'Update',
+          handler: () => {
+            const { undoStore, animationStore: animation } = Store.context
+
+            const redo = () => {}
+            const undo = () => {}
+
+            undoStore.record({ name: 'Edit Animation', undo, redo })
+            redo()
+            viewStore.popView()
+          }
+        }
       : {
           label: 'Create',
           handler: () => {
             this.addAnimation(
               nameInput.value,
               widthInput.value,
-              heightInput.value
+              heightInput.value,
+              paletteStore.paletteForName(paletteInput.value)
             )
-            viewStore.popView()
+            viewStore.dismiss()
           }
         }
 
     viewStore.pushView({
-      title: 'Edit Animation',
+      title: animation ? 'Create Animation' : 'Edit Animation',
       content: form,
       buttons: [{ ...button, style: ButtonStyle.Primary }]
     })
