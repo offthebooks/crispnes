@@ -69,6 +69,10 @@ export class Animation {
     return this.#model.palette
   }
 
+  get framesIndices() {
+    return this.#frames.map((f) => f.dataIndex)
+  }
+
   get framesData() {
     return this.#frames.map((f) => f.dataModel)
   }

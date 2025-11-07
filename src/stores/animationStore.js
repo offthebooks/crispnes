@@ -163,17 +163,17 @@ export class AnimationStore {
 
   cleanupAnimation(animation) {
     const { dataStore } = Store.context
-    const { animationState } = this
-    const { name, frames } = animation
+    const { name, framesIndices } = animation
 
-    this.#model.animationList.splice(this.animations.indexOf(animation), 1)
     delete this.#animationMap[animation.name]
+    this.#model.animationList.splice(this.animations.indexOf(animation), 1)
+    const { animationState } = this
 
     dataStore.save({
       animationState,
       remove: {
         animations: [name],
-        frames: frames.map((f) => [name, f.index])
+        frames: framesIndices
       }
     })
   }

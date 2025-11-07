@@ -28,13 +28,18 @@ export class Sprite {
   static fromDataModel = (model) => new Sprite(model)
 
   get dataModel() {
-    const { animation, duration, bytes } = this.#model
+    const [animation, index] = this.dataIndex
+    const { duration, bytes } = this.#model
     return {
-      animation: animation.name,
-      index: animation.indexOfFrame(this),
+      animation,
+      index,
       bytes: new Uint8Array(bytes),
       duration
     }
+  }
+
+  get dataIndex() {
+    return [this.animation.name, this.animation.indexOfFrame(this)]
   }
 
   get animation() {

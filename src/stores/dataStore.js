@@ -77,7 +77,7 @@ export class DataStore {
 
       if (animations) {
         const animationsStore = transaction.objectStore(DBStore.Animations)
-        for (const a of animations) animationsStore.put(a)
+        for (const a of animations) animationsStore.delete(a)
       }
 
       if (palettes) {

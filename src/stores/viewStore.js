@@ -66,6 +66,7 @@ export class ViewStore {
     if (this.#stack.length === 0) return
     const leaving = this.#stack.pop()
     this.#stack.forEach((view) => view.remove())
+    this.#stack = []
     viewContainerEl.classList.add('offDown')
     listenOnce(viewContainerEl, 'transitionend', () => leaving.remove())
   }
