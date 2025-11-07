@@ -54,12 +54,37 @@ export class DataStore {
 
   // Monolithic save function, can save data for any or all object stores
   // depending on the scope of the change we need to serialize
-  async save(appData, removeData) {
-    const { paletteState, animationState, palettes, animations, frames } =
-      appData
+  async save(appData) {
+    const {
+      remove,
+      paletteState,
+      animationState,
+      palettes,
+      animations,
+      frames
+    } = appData
     const db = await this.db()
     const transaction = db.transaction(Object.values(DBStore), 'readwrite')
     const stateStore = transaction.objectStore(DBStore.State)
+
+    if (remove) {
+      const { frames, animations, palettes } = remove
+
+      if (frames) {
+        const framesStore = transaction.objectStore(DBStore.Frames)
+        for (const f of frames) framesStore.delete(f)
+      }
+
+      if (animations) {
+        const animationsStore = transaction.objectStore(DBStore.Animations)
+        for (const a of animations) animationsStore.put(a)
+      }
+
+      if (palettes) {
+        const palettesStore = transaction.objectStore(DBStore.Palettes)
+        for (const name of palettes) palettesStore.delete(name)
+      }
+    }
 
     if (paletteState) {
       stateStore.put(paletteState, DBStateKey.Palette)

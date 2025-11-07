@@ -4,7 +4,6 @@ import {
   describeType,
   domCreate,
   domQueryList,
-  domQueryOne,
   elementFromTemplate,
   untitledNameUniqueFromStrings
 } from '../utils.js'
@@ -72,14 +71,19 @@ export class AnimationStore {
 
   // Accessors
   get dataModel() {
+    const { animationState } = this
     return {
-      animationState: {
-        selectedAnimation: this.animation.name,
-        selectedFrame: this.#model.selectedFrame,
-        animationList: this.animationNames
-      },
+      animationState,
       animations: this.animations.map((a) => a.dataModel),
       frames: this.animations.flatMap((a) => a.framesData)
+    }
+  }
+
+  get animationState() {
+    return {
+      selectedAnimation: this.animation.name,
+      selectedFrame: this.#model.selectedFrame,
+      animationList: this.animationNames
     }
   }
 
@@ -120,6 +124,7 @@ export class AnimationStore {
 
     this.#model.selectedAnimation = animation
     this.frame = 0
+    Store.context.editStore.renderCanvas()
   }
 
   get animationNames() {
@@ -137,9 +142,9 @@ export class AnimationStore {
       animationStore: { animation: previous }
     } = Store.context
     const frame = this.#model.selectedFrame
+    const animation = new Animation({ name, width, height, palette })
 
     const redo = () => {
-      const animation = new Animation({ name, width, height, palette })
       this.animations.push(animation)
       this.#animationMap[name] = animation
       this.animation = animation
@@ -149,16 +154,29 @@ export class AnimationStore {
     const undo = () => {
       this.animation = previous
       this.frame = frame
-      delete this.#animationMap[name]
-      this.animations.pop()
-      this.#persist()
+      this.cleanupAnimation(animation)
     }
 
     undoStore.record({ name: 'Create Animation', undo, redo })
     redo()
   }
 
-  cleanupAnimation(animation) {}
+  cleanupAnimation(animation) {
+    const { dataStore } = Store.context
+    const { animationState } = this
+    const { name, frames } = animation
+
+    this.#model.animationList.splice(this.animations.indexOf(animation), 1)
+    delete this.#animationMap[animation.name]
+
+    dataStore.save({
+      animationState,
+      remove: {
+        animations: [name],
+        frames: frames.map((f) => [name, f.index])
+      }
+    })
+  }
 
   presentAnimationList() {
     const { viewStore } = Store.context

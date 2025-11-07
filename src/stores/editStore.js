@@ -36,7 +36,7 @@ export class EditStore {
   }
 
   init() {
-    this.#renderCanvas()
+    this.renderCanvas()
     this.#positionContainer()
   }
 
@@ -64,7 +64,7 @@ export class EditStore {
         return
     }
 
-    this.#renderCanvas()
+    this.renderCanvas()
   }
 
   continueEdit({ x, y }) {
@@ -78,7 +78,7 @@ export class EditStore {
 
     this.#drawEdits.editIndex(index, { before })
     frame.draw(x, y, after)
-    this.#renderCanvas()
+    this.renderCanvas()
   }
 
   cancelEdit() {
@@ -100,7 +100,7 @@ export class EditStore {
     const setBytes = (bytes) => {
       bytes ? frame.setBytes(bytes) : frame.clear()
       frame.persist()
-      this.#renderCanvas()
+      this.renderCanvas()
     }
     undoStore.record({
       name: 'Clear',
@@ -167,10 +167,10 @@ export class EditStore {
   #applyEdits({ frame, edits, persist = true }) {
     frame.applyEdits(edits)
     persist && frame.persist()
-    this.#renderCanvas()
+    this.renderCanvas()
   }
 
-  #renderCanvas() {
+  renderCanvas() {
     const { frame } = Store.context.animationStore
     frame.renderToCanvas(editCanvas)
   }
