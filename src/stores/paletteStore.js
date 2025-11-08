@@ -26,7 +26,7 @@ export class PaletteStore {
 
     if (!dataModel || !this.#loadFromDataModel(dataModel)) {
       // Populate default palette entry
-      const name = untitledNameUniqueFromStrings()
+      const name = 'NES Colors' //untitledNameUniqueFromStrings()
       const palette = new Palette({ name })
       this.#model.paletteList = [palette]
       this.#paletteMap = { [name]: palette }

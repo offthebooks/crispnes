@@ -5,6 +5,7 @@ import {
   describeType,
   domCreate,
   domQueryList,
+  domQueryOne,
   elementFromTemplate,
   elementIndex,
   untitledNameUniqueFromStrings
@@ -27,10 +28,31 @@ export class AnimationStore {
 
   #model
   #animationMap
+  #DOM
 
   constructor() {
     this.#model = { ...defaultModel }
     this.#animationMap = {}
+    this.#DOM = {
+      animationItems: domCreate({ tag: 'ol', cls: 'animationItems' })
+    }
+
+    this.#DOM.animationItems.addEventListener('click', ({ target: el }) => {
+      const { viewStore } = Store.context
+      const editBtn = el.closest('button.edit')
+      const itemEl = el.closest('.itemCard')
+      if (!itemEl) return
+
+      const animation = this.animations[elementIndex(itemEl)]
+
+      if (editBtn) {
+        this.presentAnimationEdit(animation)
+        return
+      }
+
+      this.animation = animation
+      viewStore.dismiss()
+    })
   }
 
   async init() {
@@ -102,9 +124,10 @@ export class AnimationStore {
   }
 
   get animationListItems() {
-    const ol = domCreate({ tag: 'ol', cls: 'animationItems' })
-    ol.replaceChildren(...this.animations.map((a) => a.item))
-    return ol
+    this.#DOM.animationItems.replaceChildren(
+      ...this.animations.map((a) => a.item)
+    )
+    return this.#DOM.animationItems
   }
 
   get animations() {
@@ -162,6 +185,35 @@ export class AnimationStore {
     }
 
     undoStore.record({ name: 'Create Animation', undo, redo })
+    redo()
+  }
+
+  removeAnimation(animation) {
+    if (this.animations.length <= 1) return
+
+    const { dataStore, undoStore } = Store.context
+    const frame = this.frame
+    const index = this.animations.indexOf(animation)
+
+    const redo = () => {
+      this.animation = index ? index - 1 : 1
+      this.cleanupAnimation(animation)
+      this.animationListItems // refresh items in the list
+    }
+
+    const undo = () => {
+      this.animations.splice(index, animation)
+      this.#animationMap[animation.name] = animation
+      this.animation = animation
+      this.frame = frame
+      dataStore.save({
+        animationState: this.animationState,
+        animations: [animation.dataModel],
+        frames: animation.framesData
+      })
+    }
+
+    undoStore.record({ name: 'Delete animation', undo, redo })
     redo()
   }
 
@@ -226,22 +278,6 @@ export class AnimationStore {
     const { viewStore } = Store.context
     const content = this.animationListItems
 
-    content.addEventListener('click', ({ target: el }) => {
-      const editBtn = el.closest('button.edit')
-      const itemEl = el.closest('.itemCard')
-      if (!itemEl) return
-
-      const animation = this.animations[elementIndex(itemEl)]
-
-      if (editBtn) {
-        this.presentAnimationEdit(animation)
-        return
-      }
-
-      this.animation = animation
-      viewStore.dismiss()
-    })
-
     viewStore.pushView({
       title: 'Animations',
       content,
@@ -257,7 +293,8 @@ export class AnimationStore {
 
   presentAnimationEdit(animation) {
     const { viewStore, paletteStore } = Store.context
-    const form = elementFromTemplate(AnimationStore.editTemplate)
+    const editForm = elementFromTemplate(AnimationStore.editTemplate)
+    const form = domQueryOne('form', editForm)
     const { width, height, palette } = animation ?? this.animation
     const name = animation?.name ?? this.nextAnimationName
 
@@ -280,6 +317,24 @@ export class AnimationStore {
     if (animation) {
       widthInput.disabled = true
       heightInput.disabled = true
+      if (this.animations.length > 1) {
+        const deleteBtn = domCreate({
+          tag: 'button',
+          cls: 'deleteAnimation',
+          children: 'Delete'
+        })
+        form.after(deleteBtn)
+        deleteBtn.addEventListener('click', () => {
+          viewStore.confirm({
+            action: 'Delete',
+            message: `Are you sure you want to delete animation: ${animation.name}`,
+            confirmed: () => {
+              this.removeAnimation(animation)
+              viewStore.popView()
+            }
+          })
+        })
+      }
     }
 
     form.addEventListener('input', () => {
@@ -336,7 +391,7 @@ export class AnimationStore {
 
     viewStore.pushView({
       title: animation ? 'Edit Animation' : 'Create Animation',
-      content: form,
+      content: editForm,
       buttons: [{ ...button, style: ButtonStyle.Primary }]
     })
   }

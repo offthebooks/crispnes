@@ -62,14 +62,38 @@ export class ViewStore {
     }
   }
 
+  confirm = ({ action, message, confirmed, style = ButtonStyle.Danger }) => {
+    this.pushView({
+      title: action + '?',
+      content: domCreate({ cls: 'confirmMessage', children: message }),
+      buttons: [
+        {
+          label: action,
+          style,
+          handler: () => {
+            confirmed?.()
+            this.popView()
+          }
+        }
+      ]
+    })
+  }
+
   dismiss = () => {
     if (this.#stack.length === 0) return
     const leaving = this.#stack.pop()
     this.#stack.forEach((view) => view.remove())
     this.#stack = []
     viewContainerEl.classList.add('offDown')
-    listenOnce(viewContainerEl, 'transitionend', () => leaving.remove())
+    listenOnce(viewContainerEl, 'transitionend', () => {
+      leaving.remove()
+    })
   }
+
+  #logStack = (msg) =>
+    console.log(
+      `${msg}: ${this.#stack.map((e) => domQueryOne('.title', e).textContent).join(', ')}`
+    )
 
   #renderButtons = (buttons) =>
     buttons.map(({ label, handler, style = ButtonStyle.Default }) => {
