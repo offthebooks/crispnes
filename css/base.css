@@ -111,6 +111,22 @@ button {
   }
 }
 
+:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+label:has(input:invalid),
+input:invalid {
+  color: var(--col-danger);
+}
+label:has(input:invalid)::before {
+  content: '!';
+  display: inline-block;
+  position: absolute;
+  margin-left: -0.5rem;
+}
+
 details > summary {
   box-sizing: border-box;
   list-style: none;

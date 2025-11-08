@@ -1,10 +1,12 @@
 import { ButtonStyle } from '../consts.js'
 import { Animation } from '../types/animation.js'
 import {
+  clamp,
   describeType,
   domCreate,
   domQueryList,
   elementFromTemplate,
+  elementIndex,
   untitledNameUniqueFromStrings
 } from '../utils.js'
 import { Whoops } from '../whoops.js'
@@ -110,6 +112,7 @@ export class AnimationStore {
   }
 
   set animation(a) {
+    const { editStore } = Store.context
     let animation = null
 
     if (a instanceof Animation) animation = a
@@ -124,7 +127,8 @@ export class AnimationStore {
 
     this.#model.selectedAnimation = animation
     this.frame = 0
-    Store.context.editStore.renderCanvas()
+    editStore.renderCanvas()
+    editStore.positionContainer()
   }
 
   get animationNames() {
@@ -178,11 +182,69 @@ export class AnimationStore {
     })
   }
 
+  updateAnimationInfo(animation, info) {
+    const { dataStore, undoStore } = Store.context
+    const {
+      name: oldName,
+      palette: oldPalette,
+      framesIndices: oldFramesIndices
+    } = animation
+    const name = info.name || oldName
+    const palette = info.palette || oldPalette
+
+    if (name === oldName && palette === oldPalette) return
+
+    const framesIndices = oldFramesIndices.map(([_, index]) => [name, index])
+
+    const applyInfo = (name, palette, remove) => {
+      animation.name = name
+      animation.palette = palette
+      dataStore.save({
+        animationState: this.animationState,
+        animations: [animation.dataModel],
+        frames: animation.framesData,
+        remove
+      })
+    }
+
+    const redo = () =>
+      applyInfo(name, palette, {
+        animations: [oldName],
+        frames: oldFramesIndices
+      })
+    const undo = () =>
+      applyInfo(oldName, oldPalette, {
+        animations: [name],
+        frames: framesIndices
+      })
+
+    undoStore.record({ name: 'Edit Animation', undo, redo })
+    redo()
+  }
+
   presentAnimationList() {
     const { viewStore } = Store.context
+    const content = this.animationListItems
+
+    content.addEventListener('click', ({ target: el }) => {
+      const editBtn = el.closest('button.edit')
+      const itemEl = el.closest('.itemCard')
+      if (!itemEl) return
+
+      const animation = this.animations[elementIndex(itemEl)]
+
+      if (editBtn) {
+        this.presentAnimationEdit(animation)
+        return
+      }
+
+      this.animation = animation
+      viewStore.dismiss()
+    })
+
     viewStore.pushView({
       title: 'Animations',
-      content: this.animationListItems,
+      content,
       buttons: [
         {
           label: `Add Animation <i class="add icon"</i>`,
@@ -215,23 +277,53 @@ export class AnimationStore {
     paletteInput.value = palette.name
     paletteInput.replaceChildren(...paletteStore.paletteSelectOptions)
 
+    if (animation) {
+      widthInput.disabled = true
+      heightInput.disabled = true
+    }
+
+    form.addEventListener('input', () => {
+      const nameValue = nameInput.value.trim()
+      nameInput.value = nameValue
+      widthInput.value = clamp(widthInput.value, 256, 1)
+      heightInput.value = clamp(heightInput.value, 256, 1)
+
+      if (nameValue === '') {
+        nameInput.setCustomValidity('Name required')
+      } else if (
+        nameInput.value !== name &&
+        this.animationForName(nameInput.value)
+      ) {
+        nameInput.setCustomValidity('Animation name already exists')
+      } else {
+        nameInput.setCustomValidity('')
+      }
+    })
+
     const button = animation
       ? {
           label: 'Update',
           handler: () => {
-            const { undoStore, animationStore: animation } = Store.context
+            if (!form.checkValidity()) {
+              form.reportValidity()
+              return
+            }
 
-            const redo = () => {}
-            const undo = () => {}
-
-            undoStore.record({ name: 'Edit Animation', undo, redo })
-            redo()
+            this.updateAnimationInfo(animation, {
+              name: nameInput.value,
+              palette: paletteStore.paletteForName(paletteInput.value)
+            })
             viewStore.popView()
           }
         }
       : {
           label: 'Create',
           handler: () => {
+            if (!form.checkValidity()) {
+              form.reportValidity()
+              return
+            }
+
             this.addAnimation(
               nameInput.value,
               widthInput.value,
@@ -243,7 +335,7 @@ export class AnimationStore {
         }
 
     viewStore.pushView({
-      title: animation ? 'Create Animation' : 'Edit Animation',
+      title: animation ? 'Edit Animation' : 'Create Animation',
       content: form,
       buttons: [{ ...button, style: ButtonStyle.Primary }]
     })

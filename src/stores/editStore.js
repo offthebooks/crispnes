@@ -37,7 +37,7 @@ export class EditStore {
 
   init() {
     this.renderCanvas()
-    this.#positionContainer()
+    this.positionContainer()
   }
 
   // Mutations
@@ -129,7 +129,7 @@ export class EditStore {
   set zoom(scalar) {
     const zoom = clamp(this.zoom * scalar, maxZoomLevel, 1)
     this.#data.zoomLevel = zoom
-    this.#positionContainer()
+    this.positionContainer()
   }
 
   zoomIn() {
@@ -147,10 +147,10 @@ export class EditStore {
   set pan({ x = 0, y = 0 }) {
     this.#data.pan.x += x
     this.#data.pan.y += y
-    this.#positionContainer()
+    this.positionContainer()
   }
 
-  #positionContainer() {
+  positionContainer() {
     const { width, height } = Store.context.animationStore.animation
     const { x, y } = this.pan
     const w = Math.floor(width * this.zoom)

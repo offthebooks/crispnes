@@ -72,10 +72,12 @@ export class Sprite {
       return
     }
     this.#model.bytes = new Uint8Array(bytes)
+    this.animation.markDirty()
   }
 
   clear() {
     this.#model.bytes = new Uint8Array(this.width * this.height)
+    this.animation.markDirty()
   }
 
   read(x, y) {
@@ -152,6 +154,7 @@ export class Sprite {
 
   #write(index, val) {
     this.#model.bytes[index] = val
+    this.animation.markDirty()
   }
 
   #read(index) {

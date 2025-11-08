@@ -5,7 +5,8 @@ export const clamp = (val, max, min = 0) => {
 
 // Object Utils
 export const ensureArray = (maybeArray) => {
-  if (maybeArray == null || Array.isArray(maybeArray)) return maybeArray
+  if (maybeArray == null) return []
+  if (Array.isArray(maybeArray)) return maybeArray
   return [maybeArray]
 }
 
