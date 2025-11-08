@@ -339,7 +339,6 @@ export class AnimationStore {
 
     form.addEventListener('input', () => {
       const nameValue = nameInput.value.trim()
-      nameInput.value = nameValue
       widthInput.value = clamp(widthInput.value, 256, 1)
       heightInput.value = clamp(heightInput.value, 256, 1)
 
@@ -380,7 +379,7 @@ export class AnimationStore {
             }
 
             this.addAnimation(
-              nameInput.value,
+              nameInput.value.trim(),
               widthInput.value,
               heightInput.value,
               paletteStore.paletteForName(paletteInput.value)
