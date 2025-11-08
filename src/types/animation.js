@@ -11,11 +11,12 @@ const defaultModel = Object.seal({
 })
 
 export class Animation {
-  static itemTemplate = document.querySelector('#animationItems template')
+  static itemTemplate = document.querySelector('#animationItem')
 
   #model
   #frames
   #DOM
+  #dirty
 
   constructor(model = {}) {
     this.#model = { ...defaultModel, ...model }
@@ -23,6 +24,7 @@ export class Animation {
     this.#model.palette ??= Store.context.paletteStore.palette
     this.#frames = [new Sprite({ animation: this })]
     this.#DOM = { item: null }
+    this.#dirty = true
   }
 
   static fromDataModel = (model, framesData) => {
@@ -50,7 +52,7 @@ export class Animation {
   }
 
   get item() {
-    return this.#DOM?.item ?? this.#render().item
+    return this.#dirty ? this.#render().item : this.#DOM.item
   }
 
   get width() {
@@ -69,6 +71,15 @@ export class Animation {
     return this.#model.palette
   }
 
+  set palette(val) {
+    this.#model.palette = val
+    this.#render()
+  }
+
+  get framesIndices() {
+    return this.#frames.map((f) => f.dataIndex)
+  }
+
   get framesData() {
     return this.#frames.map((f) => f.dataModel)
   }
@@ -83,6 +94,10 @@ export class Animation {
       throw Whoops.invalidOperation('Cannot delete last frame of an animation.')
     this.#frames.splice(index, 1)
     this.#render()
+  }
+
+  markDirty() {
+    this.#dirty = true
   }
 
   sprite(index) {
@@ -103,6 +118,7 @@ export class Animation {
     item.querySelector('.size').textContent = `${width} x ${height} pixels`
     const canvas = item.querySelector('.preview canvas')
     this.sprite(0).renderToCanvas(canvas)
+    this.#dirty = false
     return this.#DOM
   }
 }

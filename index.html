@@ -19,8 +19,6 @@
   <body class="editor initializing">
     <header>
       <h1 class="editor"><i class="draw icon"></i>Crispnes &alpha;</h1>
-      <h1 class="animation">Animations</h1>
-      <h1 class="palette">Palettes</h1>
     </header>
 
     <details id="menu">
@@ -32,7 +30,7 @@
     </details>
 
     <div id="editor">
-      <div id="editContainer">
+      <div id="editContainer" class="checkered">
         <canvas></canvas>
       </div>
     </div>
@@ -74,7 +72,7 @@
       </button>
     </div>
 
-    <div id="viewContainer">
+    <div id="viewContainer" class="offDown">
       <template>
         <div class="view">
           <h2 class="title"></h2>
@@ -84,58 +82,60 @@
       </template>
     </div>
 
-    <template id="animationPicker">
-      <div class="view">
-        <h2>Animations</h2>
-        <button id="animationAdd">New Animation</button>
-        <ol id="animationItems"></ol>
-      </div>
-    </template>
-
+    <!-- Animation templates -->
     <template id="animationItem">
-      <li>
-        <div class="name"></div>
-        <div class="frameCount"></div>
-        <div class="size"></div>
-        <div class="preview"><canvas></canvas></div>
-        <button class="edit"></button>
+      <!-- Children of #viewContainer > .view > .content > ol.animationItems -->
+      <li class="itemCard">
+        <span class="tip">Select animation</span>
+        <ol class="info">
+          <li class="name"></li>
+          <li class="frameCount"></li>
+          <li class="size"></li>
+        </ol>
+        <div class="preview checkered"><canvas></canvas></div>
+        <button class="edit">
+          <i class="edit icon"></i><span class="tip">Edit info</span>
+        </button>
       </li>
     </template>
 
-    <template id="animationDetail">
-      <div class="view">
-        <h2>Edit Animation</h2>
-        <form>
-          <label>Name <input type="text" name="name"></label>
-          <label>Width <input type="number" name="width"></label>
-          <label>Height <input type="number" name="width"></label>
-          <label>Palette <input type="text" name="palette"></label>
-        </form>
+    <template id="animationEdit">
+      <div>
+      <form>
+        <label>Name <input name="name" type="text" /></label>
+        <label
+          >Width <input name="width" type="number" min="1" max="256" step="1"
+        /></label>
+        <label
+          >Height <input name="height" type="number" min="1" max="256" step="1"
+        /></label>
+        <label>
+          Palette
+          <select name="palette"></select>
+        </label>
+      </form>
       </div>
     </template>
 
+    <!-- Palette templates -->
     <template id="palettePicker">
-      <div class="view">
-        <h2>Palettes</h2>
-        <button id="paletteAdd">New Palette</button>
-        <ol id="paletteItems"></ol>
-      </div>
+      <ol id="paletteItems"></ol>
     </template>
-    
+
     <template id="paletteItem">
-        <li>
-          <div class="name"></div>
-          <div class="size"></div>
-          <div class="colors"></div>
-        </li>
+      <li>
+        <div class="name"></div>
+        <div class="size"></div>
+        <div class="colors"></div>
+      </li>
     </template>
 
     <template id="paletteDetail">
       <div class="view">
         <h2>Edit Palette</h2>
         <form>
-          <label>Name <input type="text" name="name"></label>
-          <label>Palette <input type="text" name="palette"></label>
+          <label>Name <input type="text" name="name" /></label>
+          <label>Palette <input type="text" name="palette" /></label>
         </form>
       </div>
     </template>

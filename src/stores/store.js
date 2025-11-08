@@ -4,6 +4,7 @@ import { PaletteStore } from './paletteStore.js'
 import { AnimationStore } from './animationStore.js'
 import { UndoStore } from './undoStore.js'
 import { DataStore } from './dataStore.js'
+import { ViewStore } from './viewStore.js'
 
 export class Store {
   static #context = {}
@@ -19,7 +20,8 @@ export class Store {
       animationStore: new AnimationStore(),
       editStore: new EditStore(),
       fileStore: new FileStore(),
-      undoStore: new UndoStore()
+      undoStore: new UndoStore(),
+      viewStore: new ViewStore()
     })
 
     Object.freeze(this.#context)

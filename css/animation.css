@@ -1,0 +1,30 @@
+.animationItems {
+  display: flex;
+  flex-direction: column;
+  gap: var(--body-default-margin);
+
+  .itemCard {
+    .info {
+      flex-grow: 1;
+    }
+
+    .preview {
+      box-sizing: border-box;
+      height: 2.75rem;
+      border: solid 1px var(--col-background-tint-2);
+      canvas {
+        height: 100%;
+      }
+    }
+
+    button.edit {
+      height: 2.75rem;
+      aspect-ratio: 1;
+
+      .icon {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+    }
+  }
+}

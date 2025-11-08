@@ -36,8 +36,8 @@ export class EditStore {
   }
 
   init() {
-    this.#renderCanvas()
-    this.#positionContainer()
+    this.renderCanvas()
+    this.positionContainer()
   }
 
   // Mutations
@@ -64,7 +64,7 @@ export class EditStore {
         return
     }
 
-    this.#renderCanvas()
+    this.renderCanvas()
   }
 
   continueEdit({ x, y }) {
@@ -78,7 +78,7 @@ export class EditStore {
 
     this.#drawEdits.editIndex(index, { before })
     frame.draw(x, y, after)
-    this.#renderCanvas()
+    this.renderCanvas()
   }
 
   cancelEdit() {
@@ -100,7 +100,7 @@ export class EditStore {
     const setBytes = (bytes) => {
       bytes ? frame.setBytes(bytes) : frame.clear()
       frame.persist()
-      this.#renderCanvas()
+      this.renderCanvas()
     }
     undoStore.record({
       name: 'Clear',
@@ -129,7 +129,7 @@ export class EditStore {
   set zoom(scalar) {
     const zoom = clamp(this.zoom * scalar, maxZoomLevel, 1)
     this.#data.zoomLevel = zoom
-    this.#positionContainer()
+    this.positionContainer()
   }
 
   zoomIn() {
@@ -147,10 +147,10 @@ export class EditStore {
   set pan({ x = 0, y = 0 }) {
     this.#data.pan.x += x
     this.#data.pan.y += y
-    this.#positionContainer()
+    this.positionContainer()
   }
 
-  #positionContainer() {
+  positionContainer() {
     const { width, height } = Store.context.animationStore.animation
     const { x, y } = this.pan
     const w = Math.floor(width * this.zoom)
@@ -167,10 +167,10 @@ export class EditStore {
   #applyEdits({ frame, edits, persist = true }) {
     frame.applyEdits(edits)
     persist && frame.persist()
-    this.#renderCanvas()
+    this.renderCanvas()
   }
 
-  #renderCanvas() {
+  renderCanvas() {
     const { frame } = Store.context.animationStore
     frame.renderToCanvas(editCanvas)
   }

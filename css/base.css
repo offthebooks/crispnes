@@ -63,6 +63,20 @@ button {
   }
 }
 
+.checkered {
+  --checkered1: #ffffff22;
+  --checkered2: #00000022;
+  background-image: conic-gradient(
+    var(--checkered1) 25%,
+    var(--checkered2) 25%,
+    var(--checkered2) 50%,
+    var(--checkered1) 50%,
+    var(--checkered1) 75%,
+    var(--checkered2) 75%
+  );
+  background-size: 8px 8px;
+}
+
 ol {
   list-style: none;
   margin: 0;
@@ -85,40 +99,32 @@ button {
     color: var(--col-foreground-tint-2);
   }
 
-  &:not(.inactive):hover span.tip {
+  /* Show tool tip if:
+      - I'm not .inactive
+      - I'm hovered
+      - I don't have a descendant showing a tool tip */
+  &:not(.inactive):hover:not(:has(li:hover > span.tip, button:hover > span.tip))
+    > span.tip {
     display: block;
     z-index: 1;
     font-size: 1rem;
   }
 }
 
-.widget {
-  z-index: 1;
+:disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-.tab-container {
-  display: flex;
-
-  button {
-    font-size: 1rem;
-    background-color: var(--col-background-tint-1);
-    border: solid 1px var(--col-background-tint-2);
-    border-radius: 8px 8px 0 0;
-    border-bottom: none;
-    margin-right: -1px;
-    padding: 8px 16px;
-    cursor: pointer;
-
-    &.selected {
-      background-color: var(--col-background);
-    }
-  }
-
-  &::after {
-    content: ' ';
-    flex: 1;
-    border-bottom: solid 1px var(--col-background-tint-1);
-  }
+label:has(input:invalid),
+input:invalid {
+  color: var(--col-danger);
+}
+label:has(input:invalid)::before {
+  content: '!';
+  display: inline-block;
+  position: absolute;
+  margin-left: -0.5rem;
 }
 
 details > summary {
@@ -132,9 +138,3 @@ details > summary {
 }
 
 /*@media (max-width: 500px) or (max-height: 500px)*/
-#animationItems {
-  display: none;
-}
-#paletteItems {
-  display: none;
-}

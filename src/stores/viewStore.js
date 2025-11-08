@@ -1,38 +1,39 @@
 import { ButtonStyle } from '../consts.js'
-import { elementFromTemplate, isInstance } from '../utils.js'
+import {
+  domCreate,
+  domQueryOne,
+  elementFromTemplate,
+  listenOnce
+} from '../utils.js'
 
-const viewContainerEl = querySelector('#viewContainer')
+const viewContainerEl = domQueryOne('#viewContainer')
+const viewTemplate = domQueryOne('template', viewContainerEl)
 
 export class ViewStore {
-  static viewTemplate = querySelector('#view template')
-
   #stack = []
   #cancelButton = null
 
   constructor() {
-    this.#cancelButton = this.#button({
+    this.#cancelButton = {
       label: 'Cancel',
       handler: this.popView
-    })
+    }
   }
 
   pushView = ({ title, content, buttons }) => {
-    const view = elementFromTemplate(ViewStore.viewTemplate)
+    const view = elementFromTemplate(viewTemplate)
 
     view.querySelector('.title').replaceChildren(title)
     view.querySelector('.content').replaceChildren(content)
     view
       .querySelector('.buttons')
-      .replaceChildren([this.#cancelButton, ...buttons])
+      .replaceChildren(...this.#renderButtons([this.#cancelButton, ...buttons]))
 
     if (this.#stack.length === 0) {
-      view.classList.add('offDown')
       viewContainerEl.appendChild(view)
-      requestAnimationFrame(() => {
-        view.classList.remove('offDown')
-      })
+      viewContainerEl.classList.remove('offDown')
     } else {
-      const current = this.#stack.at(-1).el
+      const current = this.#stack.at(-1)
 
       view.classList.add('offRight')
       viewContainerEl.appendChild(view)
@@ -43,39 +44,71 @@ export class ViewStore {
       })
     }
 
-    this.#stack.push({ el: view, title, content, buttons })
+    this.#stack.push(view)
   }
 
   popView = () => {
     if (this.#stack.length === 0) return
-    const leaving = this.#stack.pop().el
+    const leaving = this.#stack.pop()
 
     if (this.#stack.length === 0) {
-      leaving.classList.add('offDown')
-      leaving.addEventListener('transitionend', () => leaving.remove(), {
-        once: true
-      })
+      viewContainerEl.classList.add('offDown')
+      listenOnce(viewContainerEl, 'transitionend', () => leaving.remove())
     } else {
-      const previous = this.#stack[this.#stack.length - 1].el
-      leaving.classList.add('offRight')
-      leaving.addEventListener('transitionend', () => leaving.remove(), {
-        once: true
-      })
-
+      const previous = this.#stack.at(-1)
       previous.classList.remove('offLeft')
+      leaving.classList.add('offRight')
+      listenOnce(leaving, 'transitionend', () => leaving.remove())
     }
   }
 
-  #button = ({ label, handler, style = ButtonStyle.Default }) => {
-    const btn = document.createElement('button')
-    btn.append(label)
-    btn.onclick =
-      handler ??
-      (() => {
-        const text = isInstance(label, Node) ? label.textContent : label
-        alert(`${text} button was not assigned a handler`)
-      })
-    btn.classList.add(style)
-    return button
+  confirm = ({ action, message, confirmed, style = ButtonStyle.Danger }) => {
+    this.pushView({
+      title: action + '?',
+      content: domCreate({ cls: 'confirmMessage', children: message }),
+      buttons: [
+        {
+          label: action,
+          style,
+          handler: () => {
+            confirmed?.()
+            this.popView()
+          }
+        }
+      ]
+    })
   }
+
+  dismiss = () => {
+    if (this.#stack.length === 0) return
+    const leaving = this.#stack.pop()
+    this.#stack.forEach((view) => view.remove())
+    this.#stack = []
+    viewContainerEl.classList.add('offDown')
+    listenOnce(viewContainerEl, 'transitionend', () => {
+      leaving.remove()
+    })
+  }
+
+  #logStack = (msg) =>
+    console.log(
+      `${msg}: ${this.#stack.map((e) => domQueryOne('.title', e).textContent).join(', ')}`
+    )
+
+  #renderButtons = (buttons) =>
+    buttons.map(({ label, handler, style = ButtonStyle.Default }) => {
+      const btn = domCreate({ tag: 'button', cls: style })
+
+      if (typeof label === 'string') {
+        btn.innerHTML = label
+      } else {
+        btn.append(label)
+      }
+
+      btn.onclick =
+        handler ??
+        (() => alert(`${label?.textContent ?? label} not implemented`))
+
+      return btn
+    })
 }
