@@ -11,23 +11,20 @@ const viewTemplate = domQueryOne('template', viewContainerEl)
 
 export class ViewStore {
   #stack = []
-  #cancelButton = null
 
-  constructor() {
-    this.#cancelButton = {
-      label: 'Cancel',
-      handler: this.popView
-    }
-  }
-
-  pushView = ({ title, content, buttons }) => {
+  pushView = ({ title, content, buttons, closeLabel = 'Cancel' }) => {
     const view = elementFromTemplate(viewTemplate)
 
     view.querySelector('.title').replaceChildren(title)
     view.querySelector('.content').replaceChildren(content)
     view
       .querySelector('.buttons')
-      .replaceChildren(...this.#renderButtons([this.#cancelButton, ...buttons]))
+      .replaceChildren(
+        ...this.#renderButtons([
+          { label: closeLabel, handler: this.popView },
+          ...buttons
+        ])
+      )
 
     if (this.#stack.length === 0) {
       viewContainerEl.appendChild(view)

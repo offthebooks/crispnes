@@ -45,7 +45,8 @@ button {
 
 /* Selected items */
 #tools button,
-#paletteColors li {
+#paletteColors li,
+.itemCard {
   position: relative;
 
   &.selected::before {

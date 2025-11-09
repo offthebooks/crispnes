@@ -8,6 +8,8 @@ import {
   domQueryOne,
   elementFromTemplate,
   elementIndex,
+  forElements,
+  removeClass,
   untitledNameUniqueFromStrings
 } from '../utils.js'
 import { Whoops } from '../whoops.js'
@@ -67,6 +69,7 @@ export class AnimationStore {
       this.#model.selectedAnimation = animation
       this.#persist()
     }
+    this.animation.item.classList.add('selected')
   }
 
   #loadFromDataModel(dataModel) {
@@ -134,6 +137,8 @@ export class AnimationStore {
     const { editStore } = Store.context
     let animation = null
 
+    this.animation.item.classList.remove('selected')
+
     if (a instanceof Animation) animation = a
     else if (typeof a === 'number' && a < this.animations.length)
       animation = this.animations[a]
@@ -144,6 +149,7 @@ export class AnimationStore {
         `Could not find animation for ${describeType(a)}: ${a}`
       )
 
+    animation.item.classList.add('selected')
     this.#model.selectedAnimation = animation
     this.frame = 0
     editStore.renderCanvas()
@@ -285,11 +291,12 @@ export class AnimationStore {
       content,
       buttons: [
         {
-          label: `Add Animation <i class="add icon"</i>`,
+          label: 'Add Animation <i class="add icon"</i>',
           handler: () => this.presentAnimationEdit(),
           style: ButtonStyle.Primary
         }
-      ]
+      ],
+      closeLabel: 'Close'
     })
   }
 

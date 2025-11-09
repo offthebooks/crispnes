@@ -92,17 +92,17 @@ export const restyle = (el, styles = {}) => Object.assign(el.style, styles)
 export const isInstance = (el, type) => el instanceof type
 export const isCanvas = (el) => isInstance(el, HTMLCanvasElement)
 
-export const resolveElements = (elementsOrSelector) => {
+export const resolveElements = (elementsOrSelector, scope = document) => {
   if (typeof elementsOrSelector === 'string') {
-    return document.querySelectorAll(elementsOrSelector)
+    return scope.querySelectorAll(elementsOrSelector)
   } else if (elementsOrSelector instanceof Element) {
     return [elementsOrSelector]
   }
   return elementsOrSelector
 }
 
-export const forElements = (elementsOrSelector, fn) => {
-  const elements = resolveElements(elementsOrSelector)
+export const forElements = (elementsOrSelector, fn, scope = document) => {
+  const elements = resolveElements(elementsOrSelector, scope)
   elements.forEach(fn)
   return elements
 }

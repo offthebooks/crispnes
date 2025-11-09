@@ -107,6 +107,8 @@ export class Input {
     document.addEventListener('gesturestart', preventCallback)
     document.addEventListener('gesturechange', preventCallback)
     document.addEventListener('gestureend', preventCallback)
+    document.addEventListener('pointercancel', editStore.cancelEdit())
+    document.addEventListener('touchcancel', editStore.cancelEdit())
     document.addEventListener('pointerup', () => editStore.recordDraw())
     document.addEventListener('click', () => menu.removeAttribute('open'))
     document.addEventListener('keydown', (evt) => {

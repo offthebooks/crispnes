@@ -47,6 +47,11 @@
           cursor: pointer;
           background-color: var(--col-highlight);
         }
+
+        &.selected::before {
+          /* Adjust border radius from default selected items */
+          border-radius: calc(var(--interface-radius) + 2px);
+        }
       }
 
       form {
