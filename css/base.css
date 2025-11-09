@@ -50,6 +50,7 @@ button {
   position: relative;
 
   &.selected::before {
+    pointer-events: none;
     border-radius: calc(var(--button-radius) + 2px);
     box-shadow:
       inset 0 0 2px var(--col-highlight),
