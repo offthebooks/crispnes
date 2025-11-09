@@ -1,7 +1,16 @@
-import { domCreate } from '../utils.js'
+import { ButtonStyle } from '../consts.js'
+import {
+  clamp,
+  domCreate,
+  domQueryList,
+  domQueryOne,
+  elementFromTemplate
+} from '../utils.js'
+import { Store } from './store.js'
 
 const fileInput = document.querySelector('input[type=file]')
 const saveLink = document.getElementById('saveLink')
+const saveTemplate = document.getElementById('saveFrame')
 
 export class FileStore {
   #fileHandler
@@ -25,6 +34,71 @@ export class FileStore {
 
     saveLink.href = URL.createObjectURL(blob)
     saveLink.click()
+  }
+
+  saveFrameDialog(canvas) {
+    const {
+      viewStore,
+      animationStore: { animation }
+    } = Store.context
+    const saveForm = elementFromTemplate(saveTemplate)
+    const form = domQueryOne('form', saveForm)
+    const { name, width, height } = animation
+    const dimension = Math.max(width, height)
+    const defaultScale = Math.min(20, Math.floor(960 / dimension))
+    const maxScale = Math.floor(3840 / dimension)
+
+    const [nameInput, scaleInput, dimensionsDisplay] = domQueryList(
+      ['[name="name"]', '[name="scale"]', '[name="dimensions"]'],
+      form
+    )
+
+    const updateDimensions = () => {
+      const scale = scaleInput.value || 1
+      dimensionsDisplay.textContent = `${width * scale} x ${height * scale} pixels`
+    }
+
+    nameInput.value = name
+    scaleInput.value = defaultScale
+    updateDimensions()
+
+    form.addEventListener('input', () => {
+      const nameValue = nameInput.value.trim()
+      if (scaleInput.value !== '')
+        scaleInput.value = clamp(scaleInput.value, maxScale, 1)
+
+      if (nameValue === '') {
+        nameInput.setCustomValidity('Filename required')
+      } else {
+        nameInput.setCustomValidity('')
+      }
+
+      updateDimensions()
+    })
+
+    const button = viewStore.pushView({
+      title: 'Save Frame',
+      content: saveForm,
+      buttons: [
+        {
+          label: 'Save Frame',
+          style: ButtonStyle.Primary,
+          handler: () => {
+            if (!form.checkValidity()) {
+              form.reportValidity()
+              return
+            }
+
+            this.saveUpscaledCanvasImage(
+              nameInput.value.trim(),
+              canvas,
+              scaleInput.value || 1
+            )
+            viewStore.dismiss()
+          }
+        }
+      ]
+    })
   }
 
   saveCanvasImage(filename, canvas) {

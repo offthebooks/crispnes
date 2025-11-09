@@ -25,6 +25,7 @@
     border: none;
 
     li {
+      font-size: 1.15rem;
       padding: 0.5rem;
       i.icon {
         margin-right: 1em;

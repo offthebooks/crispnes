@@ -90,11 +90,6 @@ export class ViewStore {
     })
   }
 
-  #logStack = (msg) =>
-    console.log(
-      `${msg}: ${this.#stack.map((e) => domQueryOne('.title', e).textContent).join(', ')}`
-    )
-
   #renderButtons = (buttons) =>
     buttons.map(({ label, handler, style = ButtonStyle.Default }) => {
       const btn = domCreate({ tag: 'button', cls: style })

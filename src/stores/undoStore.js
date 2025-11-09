@@ -27,7 +27,7 @@ export class UndoStore {
   // Stack operations
   record(action) {
     this.#undoActions.push(action)
-    if (this.#undoActions.length > this.actionLimit) this.#undoActions.shift()
+    if (this.#undoActions.length > actionLimit) this.#undoActions.shift()
     this.#redoActions = []
     this.#renderToolState()
   }

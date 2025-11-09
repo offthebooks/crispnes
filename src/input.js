@@ -19,11 +19,7 @@ export class Input {
 
       switch (menuItem) {
         case 'save':
-          fileStore.saveUpscaledCanvasImage(
-            `Crispnes-${dateString()}.png`,
-            editCanvas,
-            20
-          )
+          fileStore.saveFrameDialog(editCanvas)
           break
         case 'clear':
           editStore.clear()

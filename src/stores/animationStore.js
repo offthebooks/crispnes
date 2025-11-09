@@ -130,10 +130,6 @@ export class AnimationStore {
     return this.#DOM.animationItems
   }
 
-  get animations() {
-    return this.#model.animationList
-  }
-
   set animation(a) {
     const { editStore } = Store.context
     let animation = null
@@ -202,7 +198,7 @@ export class AnimationStore {
     }
 
     const undo = () => {
-      this.animations.splice(index, animation)
+      this.animations.splice(index, 0, animation)
       this.#animationMap[animation.name] = animation
       this.animation = animation
       this.frame = frame
@@ -220,9 +216,15 @@ export class AnimationStore {
   cleanupAnimation(animation) {
     const { dataStore } = Store.context
     const { name, framesIndices } = animation
+    const removeIndex = this.animations.indexOf(animation)
+
+    if (removeIndex === -1)
+      throw Whoops.invalidOperation(
+        `Tried deleting animation "${animation?.name}", but it wasn't found`
+      )
 
     delete this.#animationMap[animation.name]
-    this.#model.animationList.splice(this.animations.indexOf(animation), 1)
+    this.#model.animationList.splice(removeIndex, 1)
     const { animationState } = this
 
     dataStore.save({
