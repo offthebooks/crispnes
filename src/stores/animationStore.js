@@ -339,8 +339,10 @@ export class AnimationStore {
 
     form.addEventListener('input', () => {
       const nameValue = nameInput.value.trim()
-      widthInput.value = clamp(widthInput.value, 256, 1)
-      heightInput.value = clamp(heightInput.value, 256, 1)
+      if (widthInput.value !== '')
+        widthInput.value = clamp(widthInput.value, 256, 1)
+      if (heightInput.value !== '')
+        heightInput.value = clamp(heightInput.value, 256, 1)
 
       if (nameValue === '') {
         nameInput.setCustomValidity('Name required')
