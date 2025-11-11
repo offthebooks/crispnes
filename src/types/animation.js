@@ -16,7 +16,6 @@ export class Animation {
   #model
   #frames
   #DOM
-  #dirty
 
   constructor(model = {}) {
     this.#model = { ...defaultModel, ...model }
@@ -24,7 +23,6 @@ export class Animation {
     this.#model.palette ??= Store.context.paletteStore.palette
     this.#frames = [new Sprite({ animation: this })]
     this.#DOM = { item: null }
-    this.#dirty = true
   }
 
   static fromDataModel = (model, framesData) => {
@@ -52,7 +50,7 @@ export class Animation {
   }
 
   get item() {
-    return this.#dirty ? this.#render().item : this.#DOM.item
+    return this.#DOM.item ?? this.#render().item
   }
 
   get width() {
@@ -96,16 +94,12 @@ export class Animation {
     this.#render()
   }
 
-  markDirty() {
-    this.#dirty = true
-  }
-
   sprite(index) {
     return this.#frames[index]
   }
 
   indexOfFrame(frame) {
-    return this.#frames.indexOf(frame)
+    return this.#frames?.indexOf(frame)
   }
 
   #render() {
@@ -117,8 +111,7 @@ export class Animation {
     item.querySelector('.frameCount').textContent = `${length} frame${s}`
     item.querySelector('.size').textContent = `${width} x ${height} pixels`
     const canvas = item.querySelector('.preview canvas')
-    this.sprite(0).renderToCanvas(canvas)
-    this.#dirty = false
+    this.sprite(0).addRenderCanvas(canvas)
     return this.#DOM
   }
 }

@@ -172,7 +172,7 @@ export class EditStore {
 
   renderCanvas() {
     const { frame } = Store.context.animationStore
-    frame.renderToCanvas(editCanvas)
+    frame.addRenderCanvas(editCanvas)
   }
 
   // Commit draw operation, and capture undo action

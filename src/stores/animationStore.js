@@ -8,8 +8,6 @@ import {
   domQueryOne,
   elementFromTemplate,
   elementIndex,
-  forElements,
-  removeClass,
   untitledNameUniqueFromStrings
 } from '../utils.js'
 import { Whoops } from '../whoops.js'
@@ -36,7 +34,8 @@ export class AnimationStore {
     this.#model = { ...defaultModel }
     this.#animationMap = {}
     this.#DOM = {
-      animationItems: domCreate({ tag: 'ol', cls: 'animationItems' })
+      animationItems: domCreate({ tag: 'ol', cls: 'animationItems' }),
+      frameItems: document.getElementById('frameItems')
     }
 
     this.#DOM.animationItems.addEventListener('click', ({ target: el }) => {
@@ -126,7 +125,7 @@ export class AnimationStore {
     return this.animation.sprite(this.#model.selectedFrame)
   }
 
-  get animationListItems() {
+  get animationItemsList() {
     this.#DOM.animationItems.replaceChildren(
       ...this.animations.map((a) => a.item)
     )
@@ -200,7 +199,7 @@ export class AnimationStore {
     const redo = () => {
       this.animation = index ? index - 1 : 1
       this.cleanupAnimation(animation)
-      this.animationListItems // refresh items in the list
+      this.animationItemsList // refresh items in the list
     }
 
     const undo = () => {
@@ -284,7 +283,7 @@ export class AnimationStore {
 
   presentAnimationList() {
     const { viewStore } = Store.context
-    const content = this.animationListItems
+    const content = this.animationItemsList
 
     viewStore.pushView({
       title: 'Animations',
@@ -355,6 +354,8 @@ export class AnimationStore {
 
       if (nameValue === '') {
         nameInput.setCustomValidity('Name required')
+      } else if (/['"/\\]/.test(nameValue)) {
+        nameInput.setCustomValidity('Quotes and slashes not allowed')
       } else if (
         nameInput.value !== name &&
         this.animationForName(nameInput.value)

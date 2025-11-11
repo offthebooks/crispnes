@@ -12,5 +12,6 @@
   ],
   "start_url": "/crispnes/",
   "display": "standalone",
-  "theme_color": "#5200B2"
+  "theme_color": "#5200B2",
+  "background_color": "#5200B2"
 }

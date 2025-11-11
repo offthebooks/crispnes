@@ -17,7 +17,7 @@ body {
   padding: 0;
   margin: 0;
   font-family: system-ui, Helvetica, sans-serif;
-  background-color: var(--col-background-tint-1);
+  background-color: var(--col-accent);
 }
 
 button {
