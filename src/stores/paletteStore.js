@@ -1,9 +1,12 @@
 import { Palette } from '../types/palette.js'
-import { domCreate, untitledNameUniqueFromStrings } from '../utils.js'
+import {
+  domCreate,
+  domQueryOne,
+  untitledNameUniqueFromStrings
+} from '../utils.js'
 import { Store } from './store.js'
 
-// const paletteItemsEl = document.getElementById('paletteItems')
-const paletteColorsEl = document.getElementById('paletteColors')
+const paletteColorsEl = domQueryOne('#paletteColors')
 
 const defaultModel = Object.seal({
   paletteList: []

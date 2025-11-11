@@ -32,6 +32,7 @@
 button.deleteAnimation,
 button.deleteAnimation:hover {
   display: flex;
+  align-items: center;
   margin-inline: auto;
   margin-top: 2rem;
   padding-inline: 3rem;

@@ -1,16 +1,16 @@
 import { DrawTools, Tool } from './consts.js'
 import { GestureInput } from './gestureInput.js'
 import { Store } from './stores/store.js'
-import { dateString, domQueryOne } from './utils.js'
+import { domQueryOne } from './utils.js'
 
 export class Input {
   static init() {
     const { fileStore, editStore, animationStore, undoStore } = Store.context
     const editCanvas = domQueryOne('#editor canvas')
-    const editor = document.getElementById('editor')
-    const palette = document.getElementById('palette')
-    const tools = document.getElementById('tools')
-    const menu = document.getElementById('menu')
+    const editor = domQueryOne('#editor')
+    const palette = domQueryOne('#palette')
+    const tools = domQueryOne('#tools')
+    const menu = domQueryOne('#menu')
 
     menu.addEventListener('click', (evt) => {
       const menuItem = evt.target

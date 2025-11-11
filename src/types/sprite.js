@@ -64,7 +64,7 @@ export class Sprite {
   }
 
   get bytes() {
-    new Uint8Array(this.#model.bytes)
+    return new Uint8Array(this.#model.bytes)
   }
 
   get duration() {
@@ -150,11 +150,16 @@ export class Sprite {
   }
 
   #render() {
+    const { animationStore } = Store.context
     this.#deferredRender = false
 
     const ref = this.#dataRef
     const selector = `canvas[data-sprite-ref="${ref}"]`
-    const canvases = Array.from(domQueryAll(selector))
+    const canvases = [
+      ...Array.from(domQueryAll(selector)),
+      ...Array.from(domQueryAll(selector, animationStore.animationItemsList))
+    ]
+
     if (!canvases.length) return
 
     const imageData = this.#generateImageData()
@@ -203,9 +208,10 @@ export class Sprite {
     this.#write(index, val)
     edits.editIndex(index)
 
-    this.#flood(x + 1, y, val, match, edits),
-      this.#flood(x - 1, y, val, match, edits),
-      this.#flood(x, y + 1, val, match, edits),
-      this.#flood(x, y - 1, val, match, edits)
+    // make recursive calls explicit statements (no comma operator)
+    this.#flood(x + 1, y, val, match, edits)
+    this.#flood(x - 1, y, val, match, edits)
+    this.#flood(x, y + 1, val, match, edits)
+    this.#flood(x, y - 1, val, match, edits)
   }
 }

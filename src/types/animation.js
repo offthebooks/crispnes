@@ -1,5 +1,5 @@
 import { Sprite } from './sprite.js'
-import { elementFromTemplate } from '../utils.js'
+import { domQueryOne, elementFromTemplate } from '../utils.js'
 import { Store } from '../stores/store.js'
 import { Whoops } from '../whoops.js'
 
@@ -11,7 +11,8 @@ const defaultModel = Object.seal({
 })
 
 export class Animation {
-  static itemTemplate = document.querySelector('#animationItem')
+  static itemTemplate = domQueryOne('#animationItem')
+  static frameItemTemplate = domQueryOne('#frameItem')
 
   #model
   #frames
@@ -80,6 +81,22 @@ export class Animation {
 
   get framesData() {
     return this.#frames.map((f) => f.dataModel)
+  }
+
+  get framesItems() {
+    const { width, height } = this
+    const { animationStore: selectedFrameIndex } = Store.context
+    return this.#frames.map((f, idx) => {
+      const li = elementFromTemplate(Animation.frameItemTemplate)
+      const canvas = domQueryOne('canvas', li)
+
+      if (idx === selectedFrameIndex) li.classList.add('selected')
+
+      canvas.width = width
+      canvas.height = height
+      f.addRenderCanvas(canvas)
+      return li
+    })
   }
 
   add() {

@@ -8,9 +8,9 @@ import {
 } from '../utils.js'
 import { Store } from './store.js'
 
-const fileInput = document.querySelector('input[type=file]')
-const saveLink = document.getElementById('saveLink')
-const saveTemplate = document.getElementById('saveFrame')
+const fileInput = domQueryOne('input[type=file]')
+const saveLink = domQueryOne('#saveLink')
+const saveTemplate = domQueryOne('#saveFrame')
 
 export class FileStore {
   #fileHandler
