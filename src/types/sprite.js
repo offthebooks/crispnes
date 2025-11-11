@@ -1,5 +1,5 @@
 import { Store } from '../stores/store.js'
-import { describeType, isCanvas } from '../utils.js'
+import { describeType, domQueryAll, isCanvas } from '../utils.js'
 import { Whoops } from '../whoops.js'
 import { EditBuffer } from './editBuffer.js'
 export const maxSideLength = 256
@@ -13,6 +13,7 @@ const defaultModel = {
 
 export class Sprite {
   #model
+  #deferredRender = false
 
   constructor(model = {}) {
     this.#model = { ...model }
@@ -39,11 +40,19 @@ export class Sprite {
   }
 
   get dataIndex() {
-    return [this.animation.name, this.animation.indexOfFrame(this)]
+    return [this.animation.name, this.frameIndex]
+  }
+
+  get #dataRef() {
+    return this.dataIndex.join('/')
   }
 
   get animation() {
     return this.#model.animation
+  }
+
+  get frameIndex() {
+    return this.animation.indexOfFrame(this)
   }
 
   get width() {
@@ -55,7 +64,7 @@ export class Sprite {
   }
 
   get bytes() {
-    new Uint8Array(this.#model.bytes)
+    return new Uint8Array(this.#model.bytes)
   }
 
   get duration() {
@@ -72,12 +81,12 @@ export class Sprite {
       return
     }
     this.#model.bytes = new Uint8Array(bytes)
-    this.animation.markDirty()
+    this.#renderDeferred()
   }
 
   clear() {
     this.#model.bytes = new Uint8Array(this.width * this.height)
-    this.animation.markDirty()
+    this.#renderDeferred()
   }
 
   read(x, y) {
@@ -93,7 +102,7 @@ export class Sprite {
     if (val === match) return null
 
     const edits = new EditBuffer({ before: match, after: val })
-    const indices = this.#flood(x, y, val, match, edits)
+    this.#flood(x, y, val, match, edits)
     return edits.finalize() ? edits : null
   }
 
@@ -104,19 +113,24 @@ export class Sprite {
     return outColor
   }
 
-  renderToCanvas(canvasEl) {
+  addRenderCanvas(canvasEl) {
     if (!isCanvas(canvasEl))
       throw Whoops.invalidOperation(
-        `Called renderToCanvas with ${describeType(canvasEl)}`
+        `Called addRenderCanvas with ${describeType(canvasEl)}`
+      )
+    if (this.frameIndex === -1)
+      throw Whoops.invalidOperation(
+        `Trying to addRenderCanvas to frame not referenced by animation`
       )
 
     const { width, height } = this
     canvasEl.width = width
     canvasEl.height = height
-    canvasEl.getContext('2d').putImageData(this.generateImageData(), 0, 0)
+    canvasEl.setAttribute('data-sprite-ref', this.#dataRef)
+    this.#renderDeferred()
   }
 
-  generateImageData() {
+  #generateImageData() {
     const { palette } = this.#model.animation
     const imageData = new ImageData(this.width, this.height)
     const data = imageData.data
@@ -133,6 +147,29 @@ export class Sprite {
       }
     }
     return imageData
+  }
+
+  #render() {
+    const { animationStore } = Store.context
+    this.#deferredRender = false
+
+    const ref = this.#dataRef
+    const selector = `canvas[data-sprite-ref="${ref}"]`
+    const canvases = [
+      ...Array.from(domQueryAll(selector)),
+      ...Array.from(domQueryAll(selector, animationStore.animationItemsList))
+    ]
+
+    if (!canvases.length) return
+
+    const imageData = this.#generateImageData()
+    canvases.forEach((c) => c.getContext('2d').putImageData(imageData, 0, 0))
+  }
+
+  #renderDeferred() {
+    if (this.#deferredRender || this.frameIndex === -1) return
+    this.#deferredRender = true
+    queueMicrotask(() => this.#render())
   }
 
   applyEdits(edits) {
@@ -154,7 +191,7 @@ export class Sprite {
 
   #write(index, val) {
     this.#model.bytes[index] = val
-    this.animation.markDirty()
+    this.#renderDeferred()
   }
 
   #read(index) {
@@ -171,9 +208,10 @@ export class Sprite {
     this.#write(index, val)
     edits.editIndex(index)
 
-    this.#flood(x + 1, y, val, match, edits),
-      this.#flood(x - 1, y, val, match, edits),
-      this.#flood(x, y + 1, val, match, edits),
-      this.#flood(x, y - 1, val, match, edits)
+    // make recursive calls explicit statements (no comma operator)
+    this.#flood(x + 1, y, val, match, edits)
+    this.#flood(x - 1, y, val, match, edits)
+    this.#flood(x, y + 1, val, match, edits)
+    this.#flood(x, y - 1, val, match, edits)
   }
 }

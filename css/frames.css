@@ -1,0 +1,68 @@
+#framePicker {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  inset: var(--header-height, 3.5rem) 0 auto 0;
+  z-index: 1;
+  background-color: var(--col-background-tint-2);
+  border-radius: 0 0 var(--interface-radius) var(--interface-radius);
+  border: none;
+  padding: 0 var(--body-default-margin);
+
+  button,
+  #frameItems li {
+    display: block;
+    padding: 0.5rem;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: var(--tool-margin) 0;
+    padding: 0.5rem;
+    aspect-ratio: 1;
+    background-color: var(--col-accent);
+    color: var(--col-background);
+    .icon {
+      height: 2rem;
+      aspect-ratio: 1;
+    }
+  }
+
+  #frameItems {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: var(--tool-margin) 2px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;
+    transform: scaleY(-1); /* Get scrollbar on top */
+
+    li {
+      aspect-ratio: 1;
+      display: inline-flex;
+      align-items: center;
+      transform: scaleY(-1);
+      justify-content: center;
+      background-color: var(--col-background);
+      border-radius: var(--button-radius);
+      border: none;
+      cursor: pointer;
+      box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.325);
+
+      .preview {
+        height: 2rem;
+        aspect-ratio: 1;
+        box-sizing: border-box;
+        border: solid 1px var(--col-background-tint-2);
+        canvas {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+}

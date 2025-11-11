@@ -2,6 +2,7 @@
   position: absolute;
   overflow: hidden;
   inset: 0;
+  background-color: var(--col-background-tint-1);
 
   .initializing & {
     #editContainer {

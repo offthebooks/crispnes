@@ -8,7 +8,7 @@ i.icon {
   background: no-repeat center / contain;
 
   &.add {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOUlEQVR42mMAgdWrV/9HBiB+UlLSf4QkQgJTEZJGsAA6nwFJNQzDTCLOBMJuABE4fQEDIA4SRpEEAEE9uiu+QtfiAAAAAElFTkSuQmCC');
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOklEQVR42mOAgSCGTf+RMUwcRcGd/f//X079D1aAoRNNARzDdGLDcAUgXSAMNQGBQXIErSDoSILeBABTe3zOCb0ALQAAAABJRU5ErkJggg==');
   }
 
   &.animate {

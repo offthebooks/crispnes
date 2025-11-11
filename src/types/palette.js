@@ -1,6 +1,6 @@
 import { nesColorPalette } from '../colors.js'
 import { Store } from '../stores/store.js'
-import { domCreate, elementFromTemplate } from '../utils.js'
+import { domCreate, domQueryOne, elementFromTemplate } from '../utils.js'
 import { Color } from './color.js'
 
 export const maxPaletteSize = 256
@@ -11,7 +11,7 @@ const defaultModel = Object.seal({
 })
 
 export class Palette {
-  static itemTemplate = document.getElementById('paletteItem')
+  static itemTemplate = domQueryOne('#paletteItem')
 
   #model
   #selected

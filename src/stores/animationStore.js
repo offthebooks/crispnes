@@ -7,16 +7,10 @@ import {
   domQueryList,
   domQueryOne,
   elementFromTemplate,
-  elementIndex,
-  forElements,
-  removeClass,
   untitledNameUniqueFromStrings
 } from '../utils.js'
 import { Whoops } from '../whoops.js'
 import { Store } from './store.js'
-
-// const animationItemsEl = document.getElementById('animationItems')
-// const animationAddButtonEl = document.getElementById('animationAdd')
 
 const defaultModel = Object.seal({
   selectedAnimation: null,
@@ -26,7 +20,7 @@ const defaultModel = Object.seal({
 })
 
 export class AnimationStore {
-  static editTemplate = document.querySelector('#animationEdit')
+  static editTemplate = domQueryOne('#animationEdit')
 
   #model
   #animationMap
@@ -36,25 +30,9 @@ export class AnimationStore {
     this.#model = { ...defaultModel }
     this.#animationMap = {}
     this.#DOM = {
-      animationItems: domCreate({ tag: 'ol', cls: 'animationItems' })
+      animationItems: domCreate({ tag: 'ol', cls: 'animationItems' }),
+      frameItems: domQueryOne('#frameItems')
     }
-
-    this.#DOM.animationItems.addEventListener('click', ({ target: el }) => {
-      const { viewStore } = Store.context
-      const editBtn = el.closest('button.edit')
-      const itemEl = el.closest('.itemCard')
-      if (!itemEl) return
-
-      const animation = this.animations[elementIndex(itemEl)]
-
-      if (editBtn) {
-        this.presentAnimationEdit(animation)
-        return
-      }
-
-      this.animation = animation
-      viewStore.dismiss()
-    })
   }
 
   async init() {
@@ -69,6 +47,7 @@ export class AnimationStore {
       this.#model.selectedAnimation = animation
       this.#persist()
     }
+
     this.animation.item.classList.add('selected')
   }
 
@@ -86,7 +65,8 @@ export class AnimationStore {
     )
 
     this.#model.selectedAnimation = this.animationForName(selectedAnimation)
-    this.#model.selectedFrame = selectedFrame
+    this.#model.selectedFrame = selectedFrame ?? 0
+    this.refreshFrameItems()
 
     return true
   }
@@ -126,7 +106,21 @@ export class AnimationStore {
     return this.animation.sprite(this.#model.selectedFrame)
   }
 
-  get animationListItems() {
+  get selectedFrameIndex() {
+    return this.#model.selectedFrame
+  }
+
+  set selectedFrameIndex(idx) {
+    if (typeof idx === 'number' && idx >= 0 && idx < this.animation.length) {
+      this.#model.selectedFrame = idx
+      this.refreshFrameItems()
+      this.#persist()
+
+      Store.context.editStore.renderCanvas()
+    }
+  }
+
+  get animationItemsList() {
     this.#DOM.animationItems.replaceChildren(
       ...this.animations.map((a) => a.item)
     )
@@ -152,6 +146,8 @@ export class AnimationStore {
     animation.item.classList.add('selected')
     this.#model.selectedAnimation = animation
     this.frame = 0
+    this.refreshFrameItems()
+
     editStore.renderCanvas()
     editStore.positionContainer()
   }
@@ -200,7 +196,7 @@ export class AnimationStore {
     const redo = () => {
       this.animation = index ? index - 1 : 1
       this.cleanupAnimation(animation)
-      this.animationListItems // refresh items in the list
+      this.animationItemsList // refresh items in the list
     }
 
     const undo = () => {
@@ -215,7 +211,7 @@ export class AnimationStore {
       })
     }
 
-    undoStore.record({ name: 'Delete animation', undo, redo })
+    undoStore.record({ name: 'Delete Animation', undo, redo })
     redo()
   }
 
@@ -284,14 +280,14 @@ export class AnimationStore {
 
   presentAnimationList() {
     const { viewStore } = Store.context
-    const content = this.animationListItems
+    const content = this.animationItemsList
 
     viewStore.pushView({
       title: 'Animations',
       content,
       buttons: [
         {
-          label: 'Add Animation <i class="add icon"</i>',
+          label: '<i class="add icon"></i> Add Animation',
           handler: () => this.presentAnimationEdit(),
           style: ButtonStyle.Primary
         }
@@ -355,6 +351,8 @@ export class AnimationStore {
 
       if (nameValue === '') {
         nameInput.setCustomValidity('Name required')
+      } else if (/['"/\\]/.test(nameValue)) {
+        nameInput.setCustomValidity('Quotes and slashes not allowed')
       } else if (
         nameInput.value !== name &&
         this.animationForName(nameInput.value)
@@ -412,5 +410,13 @@ export class AnimationStore {
 
   animationForName(name) {
     return this.#animationMap[name]
+  }
+
+  get frameItems() {
+    return this.#DOM.frameItems
+  }
+
+  refreshFrameItems() {
+    this.frameItems.replaceChildren(...this.animation.framesItems)
   }
 }

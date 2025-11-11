@@ -1,17 +1,21 @@
 import { DrawTools, Tool } from './consts.js'
 import { GestureInput } from './gestureInput.js'
 import { Store } from './stores/store.js'
-import { dateString, domQueryOne } from './utils.js'
+import { domQueryOne, elementIndex, forElements, removeClass } from './utils.js'
 
 export class Input {
   static init() {
-    const { fileStore, editStore, animationStore, undoStore } = Store.context
+    const { animationStore, editStore, fileStore, undoStore, viewStore } =
+      Store.context
     const editCanvas = domQueryOne('#editor canvas')
-    const editor = document.getElementById('editor')
-    const palette = document.getElementById('palette')
-    const tools = document.getElementById('tools')
-    const menu = document.getElementById('menu')
+    const editor = domQueryOne('#editor')
+    const palette = domQueryOne('#palette')
+    const tools = domQueryOne('#tools')
+    const menu = domQueryOne('#menu')
+    const framePicker = domQueryOne('#framePicker')
+    const preventCallback = (e) => e.preventDefault()
 
+    // Menu
     menu.addEventListener('click', (evt) => {
       const menuItem = evt.target
         .closest('[data-menu-item]')
@@ -32,6 +36,7 @@ export class Input {
       evt.stopPropagation()
     })
 
+    // Tools
     tools.addEventListener('click', ({ target }) => {
       if (!tools.classList.contains('open')) {
         tools.classList.add('open')
@@ -73,6 +78,7 @@ export class Input {
       }
     })
 
+    // Palettes
     palette.addEventListener('click', ({ target }) => {
       const { paletteStore } = Store.context
       const color = target.closest('#paletteColors li')
@@ -82,6 +88,42 @@ export class Input {
       }
     })
 
+    // Animations
+    animationStore.animationItemsList.addEventListener(
+      'click',
+      ({ target: el }) => {
+        const editBtn = el.closest('button.edit')
+        const itemEl = el.closest('.itemCard')
+        if (!itemEl) return
+
+        const animation = animationStore.animations[elementIndex(itemEl)]
+
+        if (editBtn) {
+          animationStore.presentAnimationEdit(animation)
+          return
+        }
+
+        animationStore.animation = animation
+        viewStore.dismiss()
+      }
+    )
+
+    framePicker.addEventListener('click', ({ target }) => {
+      const addButton = target.closest('.addButton')
+      const item = target.closest('.frameItem')
+
+      if (addButton) {
+        const { animation } = animationStore
+        animation.add()
+        return
+      }
+
+      if (item) {
+        animationStore.selectedFrameIndex = elementIndex(item)
+      }
+    })
+
+    // Editor
     const editPosition = ({ target, offsetX, offsetY }) => {
       const { width: clientW, height: clientH } = target.getBoundingClientRect()
       const { width, height } = animationStore.frame
@@ -103,23 +145,6 @@ export class Input {
       pos && editStore.continueEdit(pos)
     })
 
-    const preventCallback = (e) => e.preventDefault()
-    document.addEventListener('gesturestart', preventCallback)
-    document.addEventListener('gesturechange', preventCallback)
-    document.addEventListener('gestureend', preventCallback)
-    document.addEventListener('pointercancel', editStore.cancelEdit())
-    document.addEventListener('touchcancel', editStore.cancelEdit())
-    document.addEventListener('pointerup', () => editStore.recordDraw())
-    document.addEventListener('click', () => menu.removeAttribute('open'))
-    document.addEventListener('keydown', (evt) => {
-      const { undoStore } = Store.context
-      if ((evt.ctrlKey || evt.metaKey) && evt.key === 'z') {
-        evt.preventDefault()
-        if (evt.shiftKey) undoStore.redo()
-        else undoStore.undo()
-      }
-    })
-
     editor.addEventListener('contextmenu', preventCallback)
     GestureInput.captureGestures({
       element: editor,
@@ -132,5 +157,23 @@ export class Input {
         editStore.pan = delta
       }
     })
+
+    // Keypresses (undo shortcuts)
+    document.addEventListener('keydown', (evt) => {
+      const { undoStore } = Store.context
+      if ((evt.ctrlKey || evt.metaKey) && evt.key === 'z') {
+        evt.preventDefault()
+        if (evt.shiftKey) undoStore.redo()
+        else undoStore.undo()
+      }
+    })
+
+    document.addEventListener('gesturestart', preventCallback)
+    document.addEventListener('gesturechange', preventCallback)
+    document.addEventListener('gestureend', preventCallback)
+    document.addEventListener('pointercancel', editStore.cancelEdit())
+    document.addEventListener('touchcancel', editStore.cancelEdit())
+    document.addEventListener('pointerup', () => editStore.recordDraw())
+    document.addEventListener('click', () => menu.removeAttribute('open'))
   }
 }

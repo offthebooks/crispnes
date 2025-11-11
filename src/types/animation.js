@@ -1,5 +1,5 @@
 import { Sprite } from './sprite.js'
-import { elementFromTemplate } from '../utils.js'
+import { domQueryOne, elementFromTemplate } from '../utils.js'
 import { Store } from '../stores/store.js'
 import { Whoops } from '../whoops.js'
 
@@ -11,12 +11,12 @@ const defaultModel = Object.seal({
 })
 
 export class Animation {
-  static itemTemplate = document.querySelector('#animationItem')
+  static itemTemplate = domQueryOne('#animationItem')
+  static frameItemTemplate = domQueryOne('#frameItem')
 
   #model
   #frames
   #DOM
-  #dirty
 
   constructor(model = {}) {
     this.#model = { ...defaultModel, ...model }
@@ -24,7 +24,6 @@ export class Animation {
     this.#model.palette ??= Store.context.paletteStore.palette
     this.#frames = [new Sprite({ animation: this })]
     this.#DOM = { item: null }
-    this.#dirty = true
   }
 
   static fromDataModel = (model, framesData) => {
@@ -52,7 +51,7 @@ export class Animation {
   }
 
   get item() {
-    return this.#dirty ? this.#render().item : this.#DOM.item
+    return this.#DOM.item ?? this.#render().item
   }
 
   get width() {
@@ -84,9 +83,41 @@ export class Animation {
     return this.#frames.map((f) => f.dataModel)
   }
 
+  get framesItems() {
+    const { width, height } = this
+    const { selectedFrameIndex } = Store.context.animationStore
+    return this.#frames.map((f, idx) => {
+      const li = elementFromTemplate(Animation.frameItemTemplate)
+      const canvas = domQueryOne('canvas', li)
+
+      if (idx === selectedFrameIndex) li.classList.add('selected')
+
+      canvas.width = width
+      canvas.height = height
+      f.addRenderCanvas(canvas)
+      return li
+    })
+  }
+
   add() {
-    this.#frames.push(new Sprite({ animation: this }))
-    this.#render()
+    const { animationStore, undoStore } = Store.context
+    const frame = new Sprite({ animation: this })
+    const oldIndex = animationStore.selectedFrameIndex
+    const index = this.length
+
+    const redo = () => {
+      this.#frames.push(frame)
+      animationStore.selectedFrameIndex = index
+      this.#render()
+    }
+    const undo = () => {
+      this.#frames.pop()
+      animationStore.selectedFrameIndex = oldIndex
+      this.#render()
+    }
+
+    undoStore.record({ name: 'Add Frame', undo, redo })
+    redo()
   }
 
   remove(index) {
@@ -96,16 +127,12 @@ export class Animation {
     this.#render()
   }
 
-  markDirty() {
-    this.#dirty = true
-  }
-
   sprite(index) {
     return this.#frames[index]
   }
 
   indexOfFrame(frame) {
-    return this.#frames.indexOf(frame)
+    return this.#frames?.indexOf(frame)
   }
 
   #render() {
@@ -117,8 +144,7 @@ export class Animation {
     item.querySelector('.frameCount').textContent = `${length} frame${s}`
     item.querySelector('.size').textContent = `${width} x ${height} pixels`
     const canvas = item.querySelector('.preview canvas')
-    this.sprite(0).renderToCanvas(canvas)
-    this.#dirty = false
+    this.sprite(0).addRenderCanvas(canvas)
     return this.#DOM
   }
 }
