@@ -46,6 +46,7 @@ button {
 /* Selected items */
 #tools button,
 #paletteColors li,
+#frameItems li,
 .itemCard {
   position: relative;
 

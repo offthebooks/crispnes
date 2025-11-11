@@ -85,7 +85,7 @@ export class Animation {
 
   get framesItems() {
     const { width, height } = this
-    const { animationStore: selectedFrameIndex } = Store.context
+    const { selectedFrameIndex } = Store.context.animationStore
     return this.#frames.map((f, idx) => {
       const li = elementFromTemplate(Animation.frameItemTemplate)
       const canvas = domQueryOne('canvas', li)
@@ -100,8 +100,24 @@ export class Animation {
   }
 
   add() {
-    this.#frames.push(new Sprite({ animation: this }))
-    this.#render()
+    const { animationStore, undoStore } = Store.context
+    const frame = new Sprite({ animation: this })
+    const oldIndex = animationStore.selectedFrameIndex
+    const index = this.length
+
+    const redo = () => {
+      this.#frames.push(frame)
+      animationStore.selectedFrameIndex = index
+      this.#render()
+    }
+    const undo = () => {
+      this.#frames.pop()
+      animationStore.selectedFrameIndex = oldIndex
+      this.#render()
+    }
+
+    undoStore.record({ name: 'Add Frame', undo, redo })
+    redo()
   }
 
   remove(index) {

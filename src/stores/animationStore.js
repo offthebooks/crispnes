@@ -7,7 +7,6 @@ import {
   domQueryList,
   domQueryOne,
   elementFromTemplate,
-  elementIndex,
   untitledNameUniqueFromStrings
 } from '../utils.js'
 import { Whoops } from '../whoops.js'
@@ -34,23 +33,6 @@ export class AnimationStore {
       animationItems: domCreate({ tag: 'ol', cls: 'animationItems' }),
       frameItems: domQueryOne('#frameItems')
     }
-
-    this.#DOM.animationItems.addEventListener('click', ({ target: el }) => {
-      const { viewStore } = Store.context
-      const editBtn = el.closest('button.edit')
-      const itemEl = el.closest('.itemCard')
-      if (!itemEl) return
-
-      const animation = this.animations[elementIndex(itemEl)]
-
-      if (editBtn) {
-        this.presentAnimationEdit(animation)
-        return
-      }
-
-      this.animation = animation
-      viewStore.dismiss()
-    })
   }
 
   async init() {
@@ -65,46 +47,8 @@ export class AnimationStore {
       this.#model.selectedAnimation = animation
       this.#persist()
     }
+
     this.animation.item.classList.add('selected')
-
-    // Initialize frame picker DOM references and render
-    this.#DOM.frameItemsEl = domQueryOne('#frameItems')
-    if (this.#DOM.frameItemsEl) {
-      // initial render
-      this.#DOM.frameItemsEl.replaceChildren(...this.framePickerItems)
-
-      // clicks on the frame picker: select or add
-      this.#DOM.frameItemsEl.addEventListener('click', ({ target }) => {
-        const addBtn = target.closest('#frameItems li.add')
-        const frameLi = target.closest('#frameItems li[data-frame-index]')
-        if (addBtn) {
-          // add new frame and select it
-          const anim = this.animation
-          anim.add()
-          const newIndex = anim.length - 1
-          this.#model.selectedFrame = newIndex
-          // re-render picker and editor canvas
-          this.#DOM.frameItemsEl.replaceChildren(...this.framePickerItems)
-          Store.context.editStore.renderCanvas()
-          this.#persist()
-          return
-        }
-
-        if (frameLi) {
-          const idx = Number(frameLi.getAttribute('data-frame-index'))
-          if (!Number.isNaN(idx) && idx >= 0 && idx < this.animation.length) {
-            this.#model.selectedFrame = idx
-            // update selected class quickly without full rerender
-            for (const li of this.#DOM.frameItemsEl.querySelectorAll('li')) {
-              li.classList.remove('selected')
-            }
-            frameLi.classList.add('selected')
-            Store.context.editStore.renderCanvas()
-            this.#persist()
-          }
-        }
-      })
-    }
   }
 
   #loadFromDataModel(dataModel) {
@@ -122,6 +66,7 @@ export class AnimationStore {
 
     this.#model.selectedAnimation = this.animationForName(selectedAnimation)
     this.#model.selectedFrame = selectedFrame ?? 0
+    this.refreshFrameItems()
 
     return true
   }
@@ -168,10 +113,9 @@ export class AnimationStore {
   set selectedFrameIndex(idx) {
     if (typeof idx === 'number' && idx >= 0 && idx < this.animation.length) {
       this.#model.selectedFrame = idx
+      this.refreshFrameItems()
       this.#persist()
-      if (this.#DOM.frameItemsEl) {
-        this.#DOM.frameItemsEl.replaceChildren(...this.framePickerItems)
-      }
+
       Store.context.editStore.renderCanvas()
     }
   }
@@ -202,10 +146,7 @@ export class AnimationStore {
     animation.item.classList.add('selected')
     this.#model.selectedAnimation = animation
     this.frame = 0
-
-    if (this.#DOM.frameItemsEl) {
-      this.#DOM.frameItemsEl.replaceChildren(...this.framePickerItems)
-    }
+    this.refreshFrameItems()
 
     editStore.renderCanvas()
     editStore.positionContainer()
@@ -270,7 +211,7 @@ export class AnimationStore {
       })
     }
 
-    undoStore.record({ name: 'Delete animation', undo, redo })
+    undoStore.record({ name: 'Delete Animation', undo, redo })
     redo()
   }
 
@@ -346,7 +287,7 @@ export class AnimationStore {
       content,
       buttons: [
         {
-          label: 'Add Animation <i class="add icon"</i>',
+          label: '<i class="add icon"></i> Add Animation',
           handler: () => this.presentAnimationEdit(),
           style: ButtonStyle.Primary
         }
@@ -471,25 +412,11 @@ export class AnimationStore {
     return this.#animationMap[name]
   }
 
-  get framePickerItems() {
-    return [
-      ...this.animation.frameItems,
-      domCreate({
-        tag: 'li',
-        cls: 'add',
-        attrs: { title: 'Add frame' },
-        children: '+'
-      })
-    ]
+  get frameItems() {
+    return this.#DOM.frameItems
   }
 
-  // helper: add a new animation
-  addAnimation() {
-    const animation = new Animation({ width: 16, height: 16 })
-    this.#model.animationList.push(animation)
-    this.#animationMap[animation.name] = animation
-    this.#model.selectedAnimation = animation
-    this.#model.selectedFrame = 0
-    this.#persist()
+  refreshFrameItems() {
+    this.frameItems.replaceChildren(...this.animation.framesItems)
   }
 }
