@@ -109,7 +109,7 @@ export class Input {
     )
 
     framePicker.addEventListener('click', ({ target }) => {
-      const addButton = target.closest('.addButton')
+      const addButton = target.closest('button.add')
       const item = target.closest('.frameItem')
 
       if (addButton) {

@@ -31,7 +31,27 @@
 
     <div id="framePicker">
       <ol id="frameItems"></ol>
-      <button class="addButton"><i class="add icon"></i><span class="tip">Add frame</span></button>
+      <div id="frameActions">
+        <button class="view" disabled>
+          View<span class="tip">View Animation</span>
+        </button>
+        <button class="clone" disabled>
+          Clone<span class="tip">Clone Frame</span>
+        </button>
+        <button class="add">
+          <i class="add icon"></i>&nbsp;New<span class="tip">Add Frame</span>
+        </button>
+        <button class="delete" disabled>
+          <i class="clear icon"></i><span class="tip">Delete Frame</span>
+        </button>
+        <button class="moveBefore" disabled>
+          &lsaquo;<span class="tip">Shift Frame Before</span>
+        </button>
+        Move
+        <button class="moveAfter" disabled>
+          &rsaquo;<span class="tip">Shift Frame After</span>
+        </button>
+      </div>
     </div>
 
     <div id="editor">
@@ -124,7 +144,9 @@
     </template>
 
     <template id="frameItem">
-      <li class="frameItem"><div class="preview checkered"><canvas></canvas></div></li>
+      <li class="frameItem">
+        <div class="preview checkered"><canvas></canvas></div>
+      </li>
     </template>
 
     <!-- Palette templates -->
