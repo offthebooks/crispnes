@@ -30,7 +30,9 @@
 }
 
 button.deleteAnimation,
-button.deleteAnimation:hover {
+button.deleteAnimation:hover,
+button.deleteFrame,
+button.deleteFrame:hover {
   display: flex;
   align-items: center;
   margin-inline: auto;

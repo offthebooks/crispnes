@@ -104,9 +104,10 @@ export class Animation {
   }
 
   add() {
-    const { animationStore, undoStore } = Store.context
+    const { animationStore, dataStore, undoStore } = Store.context
     const frame = new Sprite({ animation: this })
     const oldIndex = animationStore.selectedFrameIndex
+    const oldFramesIndices = this.framesIndices
     const index = this.length
 
     const redo = () => {
@@ -116,6 +117,7 @@ export class Animation {
     }
     const undo = () => {
       this.#frames.pop()
+      dataStore.save({ remove: { frames: oldFramesIndices } })
       animationStore.selectedFrameIndex = oldIndex
       this.#render()
     }
@@ -135,16 +137,18 @@ export class Animation {
         'Frame to delete was not found in animation.'
       )
 
-    const { undoStore, animationStore } = Store.context
+    const { dataStore, undoStore, animationStore } = Store.context
+    const oldFramesIndices = this.framesIndices
     const oldFrames = [...this.#frames]
     const redo = () => {
       this.#frames.splice(index, 1)
+      dataStore.save({ remove: { frames: oldFramesIndices } })
       animationStore.selectedFrameIndex = Math.max(index - 1, 0)
       this.#render()
     }
     const undo = () => {
       this.#frames = [...oldFrames]
-      animationStore.selectedFrameIndex = oldIndex
+      animationStore.selectedFrameIndex = index
       this.#render()
     }
 

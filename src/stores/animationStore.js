@@ -463,7 +463,7 @@ export class AnimationStore {
       deleteBtn.addEventListener('click', () => {
         viewStore.confirm({
           action: 'Delete',
-          message: `Are you sure you want to delete frame ${frameIndex} of ${animation.name}?`,
+          message: `Are you sure you want to delete frame ${frameIndex + 1} of ${animation.name}?`,
           confirmed: () => {
             animation.remove(frame)
             viewStore.dismiss()
@@ -483,7 +483,7 @@ export class AnimationStore {
     })
 
     viewStore.pushView({
-      title: `${animation.name} - Frame ${frameIndex}`,
+      title: `${animation.name} - Frame ${frameIndex + 1}`,
       content: frameForm,
       buttons: [
         {
