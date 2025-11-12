@@ -1,5 +1,5 @@
+@import url('./vars.css');
 @import url('./base.css');
-
 @import url('./icon.css');
 @import url('./header.css');
 @import url('./menu.css');
@@ -9,3 +9,4 @@
 @import url('./editor.css');
 @import url('./view.css');
 @import url('./animation.css');
+/* Preload these inside <head> in index.html */

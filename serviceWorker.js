@@ -1,7 +1,9 @@
 const CACHE_NAME = 'auto-cache'
 
 self.addEventListener('install', () => self.skipWaiting())
-self.addEventListener('activate', (evt) => evt.waitUntil(self.clients.claim()))
+self.addEventListener('activate', (evt) =>
+  evt.waitUntil(self.registration.navigationPreload.enable())
+)
 self.addEventListener('fetch', (evt) => evt.respondWith(handleFetch(evt)))
 
 // Always fetch and cache new files, App is intentionally very lean
