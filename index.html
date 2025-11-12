@@ -41,8 +41,8 @@
         <button class="add">
           <i class="add icon"></i>&nbsp;New<span class="tip">Add Frame</span>
         </button>
-        <button class="delete" disabled>
-          <i class="clear icon"></i><span class="tip">Delete Frame</span>
+        <button class="edit">
+          <i class="edit icon"></i><span class="tip">Edit Frame</span>
         </button>
         <button class="moveBefore" disabled>
           &lsaquo;<span class="tip">Shift Frame Before</span>
@@ -151,6 +151,16 @@
       <li class="frameItem">
         <div class="preview checkered"><canvas></canvas></div>
       </li>
+    </template>
+
+    <template id="frameEdit">
+      <div>
+        <form>
+          <label
+            >Duration (# of frames at 60hz) <input name="duration" type="number" min="1" max="18000" step="1"
+          /></label>
+        </form>
+      </div>
     </template>
 
     <!-- Palette templates -->

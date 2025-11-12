@@ -13,6 +13,7 @@ import { Whoops } from '../whoops.js'
 import { Store } from './store.js'
 
 const editTemplate = domQueryOne('#animationEdit')
+const frameTemplate = domQueryOne('#frameEdit')
 const previewTemplate = domQueryOne('#animationView')
 
 const defaultModel = Object.seal({
@@ -333,7 +334,7 @@ export class AnimationStore {
         deleteBtn.addEventListener('click', () => {
           viewStore.confirm({
             action: 'Delete',
-            message: `Are you sure you want to delete animation: ${animation.name}`,
+            message: `Are you sure you want to delete ${animation.name}?`,
             confirmed: () => {
               this.removeAnimation(animation)
               viewStore.popView()
@@ -440,6 +441,104 @@ export class AnimationStore {
     })
 
     animationLoop()
+  }
+
+  presentFrameEdit() {
+    const { dataStore, undoStore, viewStore } = Store.context
+    const frameForm = elementFromTemplate(frameTemplate)
+    const form = domQueryOne('form', frameForm)
+    const { animation, frame } = this
+    const { duration, frameIndex } = frame
+
+    const durationInput = domQueryOne('[name="duration"]', form)
+    durationInput.value = duration
+
+    if (animation.length > 1) {
+      const deleteBtn = domCreate({
+        tag: 'button',
+        cls: 'deleteFrame',
+        children: 'Delete'
+      })
+      form.after(deleteBtn)
+      deleteBtn.addEventListener('click', () => {
+        viewStore.confirm({
+          action: 'Delete',
+          message: `Are you sure you want to delete frame ${frameIndex} of ${animation.name}?`,
+          confirmed: () => {
+            animation.remove(frame)
+            viewStore.dismiss()
+          }
+        })
+      })
+    }
+
+    form.addEventListener('input', () => {
+      const duration = durationInput.value !== '' && Number(durationInput.value)
+      if (!Number.isFinite(duration)) {
+        durationInput.setCustomValidity('Valid number required')
+      } else {
+        durationInput.value = clamp(duration, 18000, 1)
+        durationInput.setCustomValidity('')
+      }
+    })
+
+    viewStore.pushView({
+      title: `${animation.name} - Frame ${frameIndex}`,
+      content: frameForm,
+      buttons: [
+        {
+          label: 'Apply to All',
+          handler: () => {
+            if (!form.checkValidity()) {
+              form.reportValidity()
+              return
+            }
+
+            const duration = Number(durationInput.value)
+            const oldDurations = animation.framesDurations
+            const redo = () => {
+              for (let i = 0; i < animation.length; ++i) {
+                animation.sprite(i).duration = duration
+              }
+              dataStore.save({ frames: animation.framesData })
+            }
+            const undo = () => {
+              oldDurations.forEach((d, i) => (animation.sprite(i).duration = d))
+              dataStore.save({ frames: animation.framesData })
+            }
+
+            undoStore.record({ name: 'Set Durations', undo, redo })
+            redo()
+            viewStore.dismiss()
+          }
+        },
+        {
+          label: 'Apply',
+          handler: () => {
+            if (!form.checkValidity()) {
+              form.reportValidity()
+              return
+            }
+
+            const duration = Number(durationInput.value)
+            const oldDuration = frame.duration
+            const redo = () => {
+              frame.duration = duration
+              dataStore.save({ frames: [frame.dataModel] })
+            }
+            const undo = () => {
+              frame.duration = oldDuration
+              dataStore.save({ frames: [frame.dataModel] })
+            }
+
+            undoStore.record({ name: 'Set Duration', undo, redo })
+            redo()
+            viewStore.dismiss()
+          },
+          style: ButtonStyle.Primary
+        }
+      ]
+    })
   }
 
   get nextAnimationName() {

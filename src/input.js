@@ -111,6 +111,7 @@ export class Input {
     framePicker.addEventListener('click', ({ target }) => {
       const addButton = target.closest('button.add')
       const viewButton = target.closest('button.view')
+      const editButton = target.closest('button.edit')
       const item = target.closest('.frameItem')
 
       if (viewButton) {
@@ -121,6 +122,10 @@ export class Input {
         const { animation } = animationStore
         animation.add()
         return
+      }
+
+      if (editButton) {
+        animationStore.presentFrameEdit()
       }
 
       if (item) {

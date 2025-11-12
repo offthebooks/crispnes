@@ -83,6 +83,10 @@ export class Animation {
     return this.#frames.map((f) => f.dataModel)
   }
 
+  get framesDurations() {
+    return this.#frames.map((f) => f.duration)
+  }
+
   get framesItems() {
     const { width, height } = this
     const { selectedFrameIndex } = Store.context.animationStore
@@ -120,11 +124,32 @@ export class Animation {
     redo()
   }
 
-  remove(index) {
+  remove(frame) {
+    const index = this.indexOfFrame(frame)
+
     if (this.length <= 1)
       throw Whoops.invalidOperation('Cannot delete last frame of an animation.')
-    this.#frames.splice(index, 1)
-    this.#render()
+
+    if (index === -1)
+      throw Whoops.invalidOperation(
+        'Frame to delete was not found in animation.'
+      )
+
+    const { undoStore, animationStore } = Store.context
+    const oldFrames = [...this.#frames]
+    const redo = () => {
+      this.#frames.splice(index, 1)
+      animationStore.selectedFrameIndex = Math.max(index - 1, 0)
+      this.#render()
+    }
+    const undo = () => {
+      this.#frames = [...oldFrames]
+      animationStore.selectedFrameIndex = oldIndex
+      this.#render()
+    }
+
+    undoStore.record({ name: 'Delete Frame', undo, redo })
+    redo()
   }
 
   sprite(index) {
