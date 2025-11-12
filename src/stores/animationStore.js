@@ -12,6 +12,9 @@ import {
 import { Whoops } from '../whoops.js'
 import { Store } from './store.js'
 
+const editTemplate = domQueryOne('#animationEdit')
+const previewTemplate = domQueryOne('#animationView')
+
 const defaultModel = Object.seal({
   selectedAnimation: null,
   selectedFrame: 0,
@@ -20,8 +23,6 @@ const defaultModel = Object.seal({
 })
 
 export class AnimationStore {
-  static editTemplate = domQueryOne('#animationEdit')
-
   #model
   #animationMap
   #DOM
@@ -298,7 +299,7 @@ export class AnimationStore {
 
   presentAnimationEdit(animation) {
     const { viewStore, paletteStore } = Store.context
-    const editForm = elementFromTemplate(AnimationStore.editTemplate)
+    const editForm = elementFromTemplate(editTemplate)
     const form = domQueryOne('form', editForm)
     const { width, height, palette } = animation ?? this.animation
     const name = animation?.name ?? this.nextAnimationName
@@ -402,6 +403,43 @@ export class AnimationStore {
       content: editForm,
       buttons: [{ ...button, style: ButtonStyle.Primary }]
     })
+  }
+
+  presentAnimationView() {
+    const { viewStore } = Store.context
+    const { animation } = this
+    const content = elementFromTemplate(previewTemplate)
+    const canvas = domQueryOne('canvas', content)
+
+    const state = {
+      nextFrame: Date.now() + (animation.sprite(0).duration * 1000) / 60,
+      index: 0
+    }
+
+    animation.sprite(0).addRenderCanvas(canvas)
+
+    const animationLoop = () => {
+      if (!content.isConnected) return
+
+      const now = Date.now()
+      if (now > state.nextFrame) {
+        const index = (state.index + 1) % animation.length
+        const frame = animation.sprite(index)
+        frame.addRenderCanvas(canvas)
+        state.index = index
+        state.nextFrame = now + (frame.duration * 1000) / 60
+      }
+      requestAnimationFrame(animationLoop)
+    }
+
+    viewStore.pushView({
+      title: animation.name,
+      content,
+      buttons: [],
+      closeLabel: 'Done'
+    })
+
+    animationLoop()
   }
 
   get nextAnimationName() {

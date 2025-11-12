@@ -43,6 +43,10 @@
         font-size: 1.5rem;
       }
 
+      &:has(.animationView) {
+        background-color: var(--col-foreground);
+      }
+
       .itemCard {
         display: flex;
         flex-direction: row;

@@ -110,7 +110,12 @@ export class Input {
 
     framePicker.addEventListener('click', ({ target }) => {
       const addButton = target.closest('button.add')
+      const viewButton = target.closest('button.view')
       const item = target.closest('.frameItem')
+
+      if (viewButton) {
+        animationStore.presentAnimationView()
+      }
 
       if (addButton) {
         const { animation } = animationStore

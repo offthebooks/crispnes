@@ -42,3 +42,13 @@ button.deleteAnimation:hover {
   font-weight: bold;
   font-size: 1rem;
 }
+
+.animationView {
+  position: absolute;
+  inset: 3rem;
+  canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
