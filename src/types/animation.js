@@ -1,5 +1,5 @@
 import { Sprite } from './sprite.js'
-import { domQueryOne, elementFromTemplate } from '../utils.js'
+import { domQueryOne, elementFromTemplate, inBounds } from '../utils.js'
 import { Store } from '../stores/store.js'
 import { Whoops } from '../whoops.js'
 
@@ -103,26 +103,38 @@ export class Animation {
     })
   }
 
-  add() {
+  add(clone) {
     const { animationStore, dataStore, undoStore } = Store.context
-    const frame = new Sprite({ animation: this })
+
+    if (clone?.animation !== this)
+      Whoops.invalidOperation(
+        'Attempting to clone a frame from a different parent animation.'
+      )
+
+    const frame = clone
+      ? new Sprite({
+          animation: this,
+          bytes: clone.bytes,
+          duration: clone.duration
+        })
+      : new Sprite({ animation: this })
     const oldIndex = animationStore.selectedFrameIndex
-    const oldFramesIndices = this.framesIndices
-    const index = this.length
+    const index = clone ? clone.frameIndex + 1 : this.length
 
     const redo = () => {
-      this.#frames.push(frame)
+      this.#frames.splice(index, 0, frame)
       animationStore.selectedFrameIndex = index
       this.#render()
     }
     const undo = () => {
-      this.#frames.pop()
-      dataStore.save({ remove: { frames: oldFramesIndices } })
+      const { framesIndices } = this
+      this.#frames.splice(index, 1)
+      dataStore.save({ remove: { frames: framesIndices } })
       animationStore.selectedFrameIndex = oldIndex
       this.#render()
     }
 
-    undoStore.record({ name: 'Add Frame', undo, redo })
+    undoStore.record({ name: clone ? 'Clone Frame' : 'Add Frame', undo, redo })
     redo()
   }
 
@@ -154,6 +166,42 @@ export class Animation {
 
     undoStore.record({ name: 'Delete Frame', undo, redo })
     redo()
+  }
+
+  moveLeft(idx) {
+    const { undoStore } = Store.context
+    if (idx === 0) return
+    undoStore.record({ name: 'Shift Frame Left', ...this.#swap(idx, idx - 1) })
+  }
+
+  moveRight(idx) {
+    const { undoStore } = Store.context
+    if (idx === this.length - 1) return
+    undoStore.record({ name: 'Shift Frame Right', ...this.#swap(idx, idx + 1) })
+  }
+
+  #swap(oldIdx, newIdx) {
+    if (oldIdx === newIdx) return
+    if (!inBounds(0, this.length, oldIdx, newIdx))
+      throw Whoops.invalidOperation(
+        'Trying to swap with an out of bounds animation frame.'
+      )
+
+    const frames = this.#frames
+    const action = (setIndex) => {
+      const { animationStore } = Store.context
+      const old = frames[oldIdx]
+      frames[oldIdx] = frames[newIdx]
+      frames[newIdx] = old
+      animationStore.selectedFrameIndex = setIndex
+    }
+
+    action(newIdx)
+
+    return {
+      undo: () => action(oldIdx),
+      redo: () => action(newIdx)
+    }
   }
 
   sprite(index) {

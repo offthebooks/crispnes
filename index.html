@@ -1,6 +1,6 @@
 <html>
   <head>
-    <link rel="preload" href="css/vars.css" as="style" />
+    <!-- <link rel="preload" href="css/vars.css" as="style" />
     <link rel="preload" href="css/base.css" as="style" />
     <link rel="preload" href="css/icon.css" as="style" />
     <link rel="preload" href="css/header.css" as="style" />
@@ -10,7 +10,7 @@
     <link rel="preload" href="css/palette.css" as="style" />
     <link rel="preload" href="css/editor.css" as="style" />
     <link rel="preload" href="css/view.css" as="style" />
-    <link rel="preload" href="css/animation.css" as="style" />
+    <link rel="preload" href="css/animation.css" as="style" /> -->
     <link rel="modulepreload" href="src/main.js" />
 
     <title>Crispnes</title>
@@ -45,25 +45,29 @@
     <div id="framePicker">
       <ol id="frameItems"></ol>
       <div id="frameActions">
-        <button class="view">
-          View<span class="tip">View Animation</span>
+        <button class="play">
+          <i class="play icon"></i><span class="label">&nbsp;Play</span><span class="tip"
+            >Play Animation</span
+          >
         </button>
-        <!-- <button class="clone">
-          Clone<span class="tip">Clone Frame</span>
-        </button> -->
+        <button class="clone">
+          <i class="clone icon"></i><span class="label">&nbsp;Clone</span><span class="tip"
+            >Clone Frame</span
+          >
+        </button>
         <button class="add">
-          <i class="add icon"></i>&nbsp;New<span class="tip">Add Frame</span>
+          <i class="add icon"></i><span class="label">&nbsp;Add</span><span class="tip">Add Frame</span>
         </button>
         <button class="edit">
-          <i class="edit icon"></i><span class="tip">Edit Frame</span>
+          <i class="edit icon"></i><span class="label">&nbsp;Edit</span></i><span class="tip">Edit Frame</span>
         </button>
-        <!-- <button class="moveBefore" disabled>
-          &lsaquo;<span class="tip">Shift Frame Before</span>
+        <button class="moveLeft">
+          <i class="left icon"></i><span class="tip">Shift Frame Left</span>
         </button>
-        Move
-        <button class="moveAfter" disabled>
-          &rsaquo;<span class="tip">Shift Frame After</span>
-        </button> -->
+        MOVE
+        <button class="moveRight">
+          <i class="right icon"></i><span class="tip">Shift Frame Right</span>
+        </button>
       </div>
     </div>
 

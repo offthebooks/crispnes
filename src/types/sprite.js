@@ -34,7 +34,7 @@ export class Sprite {
     return {
       animation,
       index,
-      bytes: new Uint8Array(bytes),
+      bytes, // new Uint8Array from getter
       duration
     }
   }

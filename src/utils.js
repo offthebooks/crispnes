@@ -3,6 +3,9 @@ export const clamp = (val, max, min = 0) => {
   return Math.max(Math.min(val, max), min)
 }
 
+export const inBounds = (min, max, ...vals) =>
+  vals.every((v) => v >= min && v < max) // min inclusive, max exclusive
+
 // Object Utils
 export const ensureArray = (maybeArray) => {
   if (maybeArray == null) return []

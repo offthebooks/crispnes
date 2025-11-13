@@ -109,28 +109,47 @@ export class Input {
     )
 
     framePicker.addEventListener('click', ({ target }) => {
-      const addButton = target.closest('button.add')
-      const viewButton = target.closest('button.view')
-      const editButton = target.closest('button.edit')
-      const item = target.closest('.frameItem')
-
-      if (viewButton) {
-        animationStore.presentAnimationView()
-      }
-
-      if (addButton) {
+      if (target.closest('button.add')) {
         const { animation } = animationStore
         animation.add()
         return
       }
 
-      if (editButton) {
+      if (target.closest('button.clone')) {
+        const { animation, frame } = animationStore
+        animation.add(frame)
+        return
+      }
+      if (target.closest('button.edit')) {
         animationStore.presentFrameEdit()
+        return
       }
 
-      if (item) {
-        animationStore.selectedFrameIndex = elementIndex(item)
+      if (target.closest('button.moveLeft')) {
+        const {
+          animation,
+          frame: { frameIndex }
+        } = animationStore
+        animation.moveLeft(frameIndex)
+        return
       }
+
+      if (target.closest('button.moveRight')) {
+        const {
+          animation,
+          frame: { frameIndex }
+        } = animationStore
+        animation.moveRight(frameIndex)
+        return
+      }
+
+      if (target.closest('button.play')) {
+        animationStore.presentAnimationView()
+        return
+      }
+
+      const item = target.closest('.frameItem')
+      if (item) animationStore.selectedFrameIndex = elementIndex(item)
     })
 
     // Editor
