@@ -33,13 +33,14 @@
 
       .preview {
         height: 3rem;
-        padding: 0.5rem;
+        padding: 0.25rem;
         aspect-ratio: 1;
         box-sizing: border-box;
         border-radius: var(--button-radius);
         canvas {
           width: 100%;
           height: 100%;
+          object-fit: contain;
         }
       }
     }
