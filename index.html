@@ -85,41 +85,32 @@
       </div>
     </div>
 
-    <div id="palette">
-      <ol id="paletteColors"></ol>
-    </div>
+    <div id="toolbar">
+      <div id="palette">
+        <ol id="paletteColors"></ol>
+      </div>
 
-    <div id="tools">
-      <button data-tool="animations" class="transparent">
-        <i class="animate icon"></i><span class="tip">Animations</span>
-      </button>
-      <button data-tool="palettes" class="transparent">
-        <i class="palette icon"></i><span class="tip">Palettes</span>
-      </button>
-      <button data-tool="zoomIn" class="transparent">
-        <i class="zoomIn icon"></i><span class="tip">Zoom in</span>
-      </button>
-      <button data-tool="zoomOut" class="transparent">
-        <i class="zoomOut icon"></i><span class="tip">Zoom out</span>
-      </button>
-      <button data-tool="redo" class="inactive transparent">
-        <i class="redo icon"></i><span class="tip"></span>
-      </button>
-      <button data-tool="undo" class="inactive transparent">
-        <i class="undo icon"></i><span class="tip"></span>
-      </button>
-      <button data-tool="move">
-        <i class="move icon"></i><span class="tip">Move tool</span>
-      </button>
-      <button data-tool="draw" class="selected">
-        <i class="draw icon"></i><span class="tip">Draw tool</span>
-      </button>
-      <button data-tool="fill">
-        <i class="fill icon"></i><span class="tip">Fill tool</span>
-      </button>
-      <button data-tool="collapse" class="transparent">
-        <i class="collapse icon"></i><span class="tip">Collapse tools</span>
-      </button>
+      <div id="tools">
+        <button data-tool="draw" class="selected">
+          <i class="draw icon"></i><span class="tip">Draw tool</span>
+        </button>
+        <button data-tool="fill">
+          <i class="fill icon"></i><span class="tip">Fill tool</span>
+        </button>
+        <div class="spacer"></div>
+        <button data-tool="redo" class="inactive transparent">
+          <i class="redo icon"></i><span class="tip"></span>
+        </button>
+        <button data-tool="undo" class="inactive transparent">
+          <i class="undo icon"></i><span class="tip"></span>
+        </button>
+        <button data-tool="zoomIn" class="transparent">
+          <i class="zoomIn icon"></i><span class="tip">Zoom in</span>
+        </button>
+        <button data-tool="zoomOut" class="transparent">
+          <i class="zoomOut icon"></i><span class="tip">Zoom out</span>
+        </button>
+      </div>
     </div>
 
     <div id="viewContainer" class="offDown">

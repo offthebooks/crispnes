@@ -93,7 +93,7 @@ button {
     position: fixed;
     text-align: center;
     display: none;
-    bottom: calc(4rem + env(safe-area-inset-bottom));
+    bottom: calc(5.55rem + 2px + env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%);
     padding: 0.5rem 1rem;

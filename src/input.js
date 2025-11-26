@@ -44,25 +44,13 @@ export class Input {
 
     // Tools
     tools.addEventListener('click', ({ target }) => {
-      if (!tools.classList.contains('open')) {
-        tools.classList.add('open')
-        return
-      }
-
       const toolEl = target.closest('[data-tool]')
       const tool = toolEl?.getAttribute('data-tool')
 
       if (DrawTools.has(tool)) {
         editStore.tool = tool
-        tools.classList.remove('open')
       } else {
         switch (tool) {
-          case Tool.Animations:
-            animationStore.presentAnimationList()
-            break
-          case Tool.Palettes:
-            // Show Palettes list modal
-            break
           case Tool.Redo:
             undoStore.redo()
             break
@@ -74,9 +62,6 @@ export class Input {
             break
           case Tool.ZoomOut:
             editStore.zoomOut()
-            break
-          case Tool.Collapse:
-            tools.classList.remove('open')
             break
           default:
             break
