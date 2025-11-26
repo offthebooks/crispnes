@@ -1,0 +1,135 @@
+#viewContainer {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  padding-bottom: env(safe-area-inset-bottom);
+  background-color: var(--col-background);
+
+  transition: transform var(--interface-duration) ease;
+  transform: translateX(0);
+  &.offDown {
+    transform: translateY(100%);
+  }
+
+  .view {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    inset: 0;
+
+    .title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin: 0;
+      height: var(--header-height);
+      color: var(--col-background);
+      background-color: var(--col-accent);
+    }
+
+    .content {
+      position: relative;
+      padding: var(--body-default-margin);
+      overflow: hidden auto;
+      flex-grow: 1;
+
+      .confirmMessage {
+        position: absolute;
+        display: grid;
+        place-self: center;
+        inset: 0;
+        margin: var(--body-default-margin);
+        font-size: 1.5rem;
+      }
+
+      .itemCard {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: var(--tool-gap);
+        padding: var(--body-default-margin);
+        border-radius: var(--interface-radius);
+        background-color: var(--col-background-tint-1);
+
+        &.selected {
+          pointer-events: none;
+
+          button {
+            pointer-events: all;
+          }
+        }
+
+        &:hover:not(:has(button:hover)) {
+          /* Only enact state if not also hovering a child button */
+          cursor: pointer;
+          background-color: var(--col-highlight);
+        }
+
+        &.selected::before {
+          /* Adjust border radius from default selected items */
+          border-radius: calc(var(--interface-radius) + 2px);
+        }
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--body-default-margin);
+
+        label {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          gap: var(--tool-gap);
+        }
+        input,
+        select {
+          font-size: 1rem;
+        }
+      }
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      flex-shrink: 0;
+      padding: var(--tool-margin);
+      padding-bottom: calc(var(--tool-margin) + env(safe-area-inset-bottom));
+      background-color: var(--col-background-tint-2);
+
+      button {
+        flex-grow: 1;
+        height: 2.5rem;
+        background-color: var(--col-background);
+        font-size: 1rem;
+
+        i.icon {
+          margin-bottom: -0.1rem;
+        }
+
+        &.primary {
+          font-weight: bolder;
+          color: var(--col-background);
+          background-color: var(--col-accent);
+        }
+
+        &.danger {
+          color: var(--col-background);
+          background-color: var(--col-danger);
+        }
+      }
+    }
+
+    transition: transform var(--interface-duration) ease;
+    transform: translateX(0);
+    &.offLeft {
+      transform: translateX(-100%);
+    }
+    &.offRight {
+      transform: translateX(100%);
+    }
+  }
+}

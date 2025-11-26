@@ -1,0 +1,64 @@
+#tools {
+  position: fixed;
+  border-radius: var(--interface-radius) var(--interface-radius) 0 0;
+  background-color: var(--col-background-tint-2);
+  padding: var(--tool-margin);
+  padding-right: var(--body-default-margin);
+  padding-bottom: calc(var(--tool-margin) + env(safe-area-inset-bottom));
+  inset: auto 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: border-radius var(--interface-duration);
+
+  &.open {
+    border-radius: var(--interface-radius) 0 0 0;
+  }
+
+  button {
+    position: relative;
+    padding: 0.5rem;
+    background-color: var(--col-background);
+    border-radius: var(--button-radius);
+    border: none;
+    cursor: pointer;
+
+    /* &[data-tool='animations'], */
+    &[data-tool='palettes'],
+    &[data-tool='move'] {
+      display: none;
+    }
+
+    /* Animation */
+    transition: margin var(--interface-duration);
+    transition-timing-function: var(--anim-bounce);
+    pointer-events: none;
+    margin-bottom: -3rem;
+    visibility: hidden;
+
+    &.transparent {
+      background-color: transparent;
+    }
+
+    &.selected,
+    .open & {
+      pointer-events: all;
+      margin-bottom: 0;
+      visibility: visible;
+    }
+
+    &:hover {
+      background-color: var(--col-highlight);
+    }
+
+    &.inactive {
+      pointer-events: none;
+    }
+
+    i.icon {
+      margin: 0;
+      height: 1.5rem;
+      aspect-ratio: 1;
+    }
+  }
+}

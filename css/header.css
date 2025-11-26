@@ -1,0 +1,25 @@
+header {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  height: var(--header-height);
+  background-color: var(--col-accent);
+
+  body.editor & h1.editor {
+    display: block;
+  }
+
+  body.animation & h1.animation {
+    display: block;
+  }
+
+  h1 {
+    display: none;
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--col-background);
+  }
+}

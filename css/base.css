@@ -1,0 +1,144 @@
+@import url('./vars.css');
+
+:root {
+  box-sizing: border-box;
+  font-size: 16px;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+  touch-action: pinch-zoom;
+  image-rendering: pixelated;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  font-family: system-ui, Helvetica, sans-serif;
+  background-color: var(--col-accent);
+}
+
+button {
+  padding: 0.5rem;
+  background-color: var(--col-background);
+  border-radius: var(--button-radius);
+  border: none;
+  cursor: pointer;
+
+  &:not(.inactive):hover {
+    background-color: var(--col-highlight);
+  }
+
+  &.inactive {
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  i.icon {
+    margin: 0;
+    height: 1rem;
+    aspect-ratio: 1;
+  }
+}
+
+/* Selected items */
+#tools button,
+#paletteColors li,
+#frameItems li,
+.itemCard {
+  position: relative;
+
+  &.selected::before {
+    pointer-events: none;
+    border-radius: calc(var(--button-radius) + 2px);
+    box-shadow:
+      inset 0 0 2px var(--col-highlight),
+      inset 0 0 2px var(--col-highlight);
+    position: absolute;
+    content: ' ';
+    width: 100%;
+    height: 100%;
+    border: solid 2px var(--col-selection);
+    top: -2px;
+    left: -2px;
+  }
+}
+
+.checkered {
+  --checkered1: #ffffff22;
+  --checkered2: #00000022;
+  background-image: conic-gradient(
+    var(--checkered1) 25%,
+    var(--checkered2) 25%,
+    var(--checkered2) 50%,
+    var(--checkered1) 50%,
+    var(--checkered1) 75%,
+    var(--checkered2) 75%
+  );
+  background-size: 8px 8px;
+}
+
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Status bar tips */
+li,
+button {
+  span.tip {
+    position: fixed;
+    text-align: center;
+    display: none;
+    bottom: calc(4rem + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem 1rem;
+    border-radius: var(--interface-radius) var(--interface-radius) 0 0;
+    background-color: var(--col-background-tint-2);
+    color: var(--col-foreground-tint-2);
+  }
+
+  /* Show tool tip if:
+      - I'm not .inactive
+      - I'm hovered
+      - I don't have a descendant showing a tool tip */
+  &:not(.inactive):hover:not(:has(li:hover > span.tip, button:hover > span.tip))
+    > span.tip {
+    display: block;
+    z-index: 1;
+    font-size: 1rem;
+    font-weight: normal;
+  }
+}
+
+:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+label:has(input:invalid),
+input:invalid {
+  color: var(--col-danger);
+}
+label:has(input:invalid)::before {
+  content: '!';
+  display: inline-block;
+  position: absolute;
+  margin-left: -0.5rem;
+}
+
+details > summary {
+  box-sizing: border-box;
+  list-style: none;
+
+  &::marker,
+  &::-webkit-details-marker {
+    display: none;
+  }
+}
+
+/*@media (max-width: 500px) or (max-height: 500px)*/

@@ -1,0 +1,39 @@
+@import url('./vars.css');
+
+#menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+
+  summary {
+    width: 2rem;
+    height: 2rem;
+    margin: calc((var(--header-height) - 2rem) / 2);
+    font-size: 0;
+    background: var(--col-background-tint-1) no-repeat center / 1rem
+      url('../img/menu8x8.png');
+    border-radius: var(--button-radius);
+    cursor: pointer;
+  }
+
+  #menuItems {
+    overflow: scroll;
+    background-color: var(--col-background);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+    border-radius: var(--button-radius);
+    border: none;
+
+    li {
+      font-size: 1.15rem;
+      padding: 0.5rem;
+      i.icon {
+        margin-right: 1em;
+      }
+      &:hover {
+        background-color: var(--col-highlight);
+        cursor: pointer;
+      }
+    }
+  }
+}

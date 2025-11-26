@@ -1,0 +1,25 @@
+#editor {
+  position: absolute;
+  overflow: hidden;
+  inset: 0;
+  background-color: var(--col-background-tint-1);
+
+  .initializing & {
+    #editContainer {
+      display: none;
+    }
+  }
+
+  #editContainer {
+    position: relative;
+    top: round(down, 50%, 1px);
+    left: round(down, 50%, 1px);
+    margin: auto;
+    border: 2px solid var(--col-background-tint-2);
+
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}

@@ -1,0 +1,24 @@
+:root {
+  --col-background: #fff;
+  --col-background-tint-1: #ddd;
+  --col-background-tint-2: #bbb;
+  --col-accent: #5200b2;
+  --col-accent-translucent: rgba(82, 0, 178, 0.5);
+  --col-foreground: #000;
+  --col-foreground-tint-1: #222;
+  --col-foreground-tint-2: #444;
+  --col-highlight: #c3ffe9;
+  --col-selection: #8a13ff;
+  --col-danger: #d55;
+
+  --pad-panel: 16px 8px;
+  --anim-bounce: cubic-bezier(0, -0.6, 0.6, 1.5);
+
+  --header-height: 3.75rem;
+  --body-default-margin: 1rem;
+  --button-radius: 0.35rem;
+  --interface-radius: 1rem;
+  --interface-duration: 150ms;
+  --tool-margin: 0.75rem;
+  --tool-gap: 0.5rem;
+}

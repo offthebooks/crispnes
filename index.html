@@ -1,0 +1,253 @@
+<html>
+  <head>
+    <!-- <link rel="preload" href="css/vars.css" as="style" />
+    <link rel="preload" href="css/base.css" as="style" />
+    <link rel="preload" href="css/icon.css" as="style" />
+    <link rel="preload" href="css/header.css" as="style" />
+    <link rel="preload" href="css/menu.css" as="style" />
+    <link rel="preload" href="css/frames.css" as="style" />
+    <link rel="preload" href="css/tools.css" as="style" />
+    <link rel="preload" href="css/palette.css" as="style" />
+    <link rel="preload" href="css/editor.css" as="style" />
+    <link rel="preload" href="css/view.css" as="style" />
+    <link rel="preload" href="css/animation.css" as="style" /> -->
+    <link rel="modulepreload" href="src/main.js" />
+
+    <title>Crispnes</title>
+    <meta
+      name="description"
+      content="Palette-Based Pixel Art and Animation Editor" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta property="og:title" content="Crispnes" />
+    <meta property="og:url" content="https://offthebooks.games/crispnes" />
+    <meta property="og:image" content="img/icon.png" />
+    <link rel="icon" href="./favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="img/icon.png" />
+    <link rel="manifest" href="./app.webmanifest" />
+    <link href="css/main.css" rel="stylesheet" />
+  </head>
+
+  <body class="editor initializing">
+    <header>
+      <h1 class="editor"><i class="draw icon"></i>Crispnes &alpha;</h1>
+    </header>
+
+    <details id="menu">
+      <summary><i class="menu icon"></i>Menu</summary>
+      <ol id="menuItems">
+        <li data-menu-item="animations"><i class="icon animate"></i>Animations</li>
+        <li data-menu-item="save"><i class="icon save"></i>Save Frame</li>
+        <li data-menu-item="clear"><i class="icon clear"></i>Clear Frame</li>
+      </ol>
+    </details>
+
+    <div id="framePicker">
+      <ol id="frameItems"></ol>
+      <div id="frameActions">
+        <button class="play">
+          <i class="play icon"></i><span class="label">&nbsp;Play</span><span class="tip"
+            >Play Animation</span
+          >
+        </button>
+        <button class="clone">
+          <i class="clone icon"></i><span class="label">&nbsp;Clone</span><span class="tip"
+            >Clone Frame</span
+          >
+        </button>
+        <button class="add">
+          <i class="add icon"></i><span class="label">&nbsp;Add</span><span class="tip">Add Frame</span>
+        </button>
+        <button class="edit">
+          <i class="edit icon"></i><span class="label">&nbsp;Edit</span></i><span class="tip">Edit Frame</span>
+        </button>
+        <button class="moveLeft">
+          <i class="left icon"></i><span class="tip">Shift Frame Left</span>
+        </button>
+        MOVE
+        <button class="moveRight">
+          <i class="right icon"></i><span class="tip">Shift Frame Right</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="editor">
+      <div id="editContainer" class="checkered">
+        <canvas></canvas>
+      </div>
+    </div>
+
+    <div id="palette">
+      <ol id="paletteColors"></ol>
+    </div>
+
+    <div id="tools">
+      <button data-tool="animations" class="transparent">
+        <i class="animate icon"></i><span class="tip">Animations</span>
+      </button>
+      <button data-tool="palettes" class="transparent">
+        <i class="palette icon"></i><span class="tip">Palettes</span>
+      </button>
+      <button data-tool="zoomIn" class="transparent">
+        <i class="zoomIn icon"></i><span class="tip">Zoom in</span>
+      </button>
+      <button data-tool="zoomOut" class="transparent">
+        <i class="zoomOut icon"></i><span class="tip">Zoom out</span>
+      </button>
+      <button data-tool="redo" class="inactive transparent">
+        <i class="redo icon"></i><span class="tip"></span>
+      </button>
+      <button data-tool="undo" class="inactive transparent">
+        <i class="undo icon"></i><span class="tip"></span>
+      </button>
+      <button data-tool="move">
+        <i class="move icon"></i><span class="tip">Move tool</span>
+      </button>
+      <button data-tool="draw" class="selected">
+        <i class="draw icon"></i><span class="tip">Draw tool</span>
+      </button>
+      <button data-tool="fill">
+        <i class="fill icon"></i><span class="tip">Fill tool</span>
+      </button>
+      <button data-tool="collapse" class="transparent">
+        <i class="collapse icon"></i><span class="tip">Collapse tools</span>
+      </button>
+    </div>
+
+    <div id="viewContainer" class="offDown">
+      <template>
+        <div class="view">
+          <h2 class="title"></h2>
+          <div class="content"></div>
+          <div class="buttons"></div>
+        </div>
+      </template>
+    </div>
+
+    <!-- Animation templates -->
+    <template id="animationItem">
+      <!-- Children of #viewContainer > .view > .content > ol.animationItems -->
+      <li class="itemCard">
+        <span class="tip">Select animation</span>
+        <ol class="info">
+          <li class="name"></li>
+          <li class="frameCount"></li>
+          <li class="size"></li>
+        </ol>
+        <div class="spacer"></div>
+        <div class="preview checkered"><canvas></canvas></div>
+        <button class="edit">
+          <i class="edit icon"></i><span class="tip">Edit info</span>
+        </button>
+      </li>
+    </template>
+
+    <template id="animationEdit">
+      <div>
+        <form>
+          <label>Name <input name="name" type="text" /></label>
+          <label
+            >Width
+            <input
+              name="width"
+              type="number"
+              inputmode="numeric"
+              pattern="[0-9]+"
+              min="1"
+              max="256"
+              step="1"
+              autocomplete="off" />
+          </label>
+          <label
+            >Height
+            <input
+              name="height"
+              type="number"
+              inputmode="numeric"
+              pattern="[0-9]+"
+              min="1"
+              max="256"
+              step="1"
+              autocomplete="off"
+          /></label>
+          <label>
+            Palette
+            <select name="palette"></select>
+          </label>
+        </form>
+      </div>
+    </template>
+
+    <template id="animationView">
+      <div class="animationView checkered"><canvas></canvas></div>
+    </template>
+
+    <template id="frameItem">
+      <li class="frameItem">
+        <div class="preview checkered"><canvas></canvas></div>
+      </li>
+    </template>
+
+    <template id="frameEdit">
+      <div>
+        <form>
+          <label
+            >Duration (# of frames at 60hz)<input
+              name="duration"
+              type="number"
+              inputmode="numeric"
+              pattern="[0-9]+"
+              min="1"
+              max="18000"
+              step="1"
+              autocomplete="off" />
+          </label>
+        </form>
+      </div>
+    </template>
+
+    <!-- Palette templates -->
+    <template id="palettePicker">
+      <ol id="paletteItems"></ol>
+    </template>
+
+    <template id="paletteItem">
+      <li>
+        <div class="name"></div>
+        <div class="size"></div>
+        <div class="colors"></div>
+      </li>
+    </template>
+
+    <template id="paletteDetail">
+      <div class="view">
+        <h2>Edit Palette</h2>
+        <form>
+          <label>Name <input type="text" name="name" /></label>
+          <label>Palette <input type="text" name="palette" /></label>
+        </form>
+      </div>
+    </template>
+
+    <template id="saveFrame">
+      <div>
+        <form>
+          <label>Filename <input name="name" type="text" /></label>
+          <label
+            >Scale
+            <input name="scale" type="number" value="20" min="1" step="1"
+          /></label>
+          <label
+            >Output Dimensions
+            <div name="dimensions"></div
+          ></label>
+        </form>
+      </div>
+    </template>
+
+    <a id="saveLink" style="display: none"></a>
+    <input type="file" style="display: none" />
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>

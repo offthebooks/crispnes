@@ -1,0 +1,95 @@
+#framePicker {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  inset: var(--header-height, 3.5rem) 0 auto 0;
+  z-index: 1;
+  background-color: var(--col-background-tint-2);
+  border-radius: 0 0 var(--interface-radius) var(--interface-radius);
+  border: none;
+  padding: 0 var(--body-default-margin);
+
+  #frameItems {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: var(--tool-margin) 2px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;
+    transform: scaleY(-1); /* Get scrollbar on top */
+
+    li {
+      aspect-ratio: 1;
+      display: inline-flex;
+      align-items: center;
+      transform: scaleY(-1);
+      justify-content: center;
+      background-color: var(--col-background);
+      border-radius: var(--button-radius);
+      border: solid 1px var(--col-background);
+      cursor: pointer;
+
+      .preview {
+        height: 3rem;
+        padding: 0.25rem;
+        aspect-ratio: 1;
+        box-sizing: border-box;
+        border-radius: var(--button-radius);
+        canvas {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+      }
+    }
+  }
+
+  #frameActions {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    margin: 0 2px var(--tool-margin) 2px;
+    align-items: center;
+
+    &,
+    button {
+      font-size: 1rem;
+      font-variant-caps: all-small-caps;
+      font-weight: normal;
+      color: var(--col-foreground-tint-);
+      .tip {
+        font-size: unset;
+        font-variant-caps: normal;
+      }
+    }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      height: 2rem;
+      flex: 3;
+      background-color: var(--col-background-tint-1);
+      box-shadow: inset 0 0 2px rgba(255, 255, 255, 1);
+
+      &:hover {
+        background-color: var(--col-highlight);
+      }
+
+      &.moveLeft,
+      &.moveRight {
+        flex: 1;
+        aspect-ratio: 1;
+      }
+
+      @media (max-width: 768px) {
+        .label {
+          display: none;
+        }
+      }
+    }
+  }
+}
