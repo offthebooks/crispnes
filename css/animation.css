@@ -63,3 +63,10 @@ button.deleteFrame:hover {
     object-fit: contain;
   }
 }
+
+.exportPreview {
+  canvas {
+    width: 100%;
+    object-fit: contain;
+  }
+}

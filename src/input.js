@@ -25,6 +25,9 @@ export class Input {
         case 'animations':
           animationStore.presentAnimationList()
           break
+        case 'exportSheet':
+          fileStore.exportSpriteSheetDialog()
+          break
         case 'save':
           fileStore.saveFrameDialog(editCanvas)
           break

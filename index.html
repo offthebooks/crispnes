@@ -1,6 +1,6 @@
 <html>
   <head>
-    <!-- <link rel="preload" href="css/vars.css" as="style" />
+    <link rel="preload" href="css/vars.css" as="style" />
     <link rel="preload" href="css/base.css" as="style" />
     <link rel="preload" href="css/icon.css" as="style" />
     <link rel="preload" href="css/header.css" as="style" />
@@ -10,7 +10,7 @@
     <link rel="preload" href="css/palette.css" as="style" />
     <link rel="preload" href="css/editor.css" as="style" />
     <link rel="preload" href="css/view.css" as="style" />
-    <link rel="preload" href="css/animation.css" as="style" /> -->
+    <link rel="preload" href="css/animation.css" as="style" />
     <link rel="modulepreload" href="src/main.js" />
 
     <title>Crispnes</title>
@@ -38,7 +38,8 @@
       <summary><i class="menu icon"></i>Menu</summary>
       <ol id="menuItems">
         <li data-menu-item="animations"><i class="icon animate"></i>Animations</li>
-        <li data-menu-item="save"><i class="icon save"></i>Save Frame</li>
+        <li data-menu-item="save"><i class="icon save"></i>Export Frame (.png)</li>
+        <li data-menu-item="exportSheet"><i class="icon save"></i>Export Sprite Sheet (.png)</li>
         <li data-menu-item="clear"><i class="icon clear"></i>Clear Frame</li>
       </ol>
     </details>
@@ -242,6 +243,24 @@
             >Output Dimensions
             <div name="dimensions"></div
           ></label>
+        </form>
+      </div>
+    </template>
+
+    <template id="exportSheet">
+      <div>
+        <form>
+          <label>Filename <input name="name" type="text" /></label>
+          <label
+            >Padding
+            <input name="padding" type="number" value="0" min="0" step="1"
+          /></label>
+          <label
+            >Scale
+            <input name="scale" type="number" value="20" min="1" step="1"
+          /></label>
+          <label>Preview:</label>
+          <div class="exportPreview"><canvas class="checkered"></canvas></div>
         </form>
       </div>
     </template>

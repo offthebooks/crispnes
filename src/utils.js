@@ -73,7 +73,7 @@ export const elementFromTemplate = (templateEl, rootClass) => {
 export const domQueryOne = (selector, scope = document) =>
   scope.querySelector(selector)
 export const domQueryAll = (selector, scope = document) =>
-  scope.querySelectorAll(selector)
+  Array.from(scope.querySelectorAll(selector))
 export const domQueryList = (selectors, scope = document) =>
   selectors.map((s) => domQueryOne(s, scope))
 

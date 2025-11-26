@@ -2,6 +2,7 @@ import { ButtonStyle } from '../consts.js'
 import {
   clamp,
   domCreate,
+  domQueryAll,
   domQueryList,
   domQueryOne,
   elementFromTemplate
@@ -11,6 +12,7 @@ import { Store } from './store.js'
 const fileInput = domQueryOne('input[type=file]')
 const saveLink = domQueryOne('#saveLink')
 const saveTemplate = domQueryOne('#saveFrame')
+const exportSheetTemplate = domQueryOne('#exportSheet')
 
 export class FileStore {
   #fileHandler
@@ -94,6 +96,86 @@ export class FileStore {
               canvas,
               scaleInput.value || 1
             )
+            viewStore.dismiss()
+          }
+        }
+      ]
+    })
+  }
+
+  exportSpriteSheetDialog() {
+    const {
+      viewStore,
+      animationStore: { animation }
+    } = Store.context
+    const exportForm = elementFromTemplate(exportSheetTemplate)
+    const form = domQueryOne('form', exportForm)
+    const canvas = domQueryOne('canvas', exportForm)
+    const frames = domQueryAll('#frameItems canvas')
+    const maxScale = 100
+    const { name, width, height, length } = animation
+    const [nameInput, paddingInput, scaleInput] = domQueryList(
+      ['[name="name"]', '[name="padding"]', '[name="scale"]'],
+      form
+    )
+
+    const updatePreview = () => {
+      const padding = isNaN(paddingInput.valueAsNumber)
+        ? 0
+        : paddingInput.valueAsNumber
+      const scale = isNaN(scaleInput.valueAsNumber)
+        ? 1
+        : scaleInput.valueAsNumber
+      const sw = width * scale
+      const sh = height * scale
+      const sp = padding * scale
+      const pw = sw + 2 * sp
+      const ph = sh + 2 * sp
+
+      canvas.width = pw * length
+      canvas.height = ph
+      const ctx = canvas.getContext('2d')
+      ctx.imageSmoothingEnabled = false
+
+      frames.forEach((c, idx) => {
+        const top = sp
+        const left = pw * idx + sp
+        ctx.drawImage(c, left, top, sw, sh)
+      })
+    }
+
+    nameInput.value = name
+    scaleInput.value = 1
+    updatePreview()
+
+    form.addEventListener('input', () => {
+      const nameValue = nameInput.value.trim()
+      if (scaleInput.value !== '')
+        scaleInput.value = clamp(scaleInput.value, maxScale, 1)
+
+      if (nameValue === '') {
+        nameInput.setCustomValidity('Filename required')
+      } else {
+        nameInput.setCustomValidity('')
+      }
+
+      updatePreview()
+    })
+
+    const button = viewStore.pushView({
+      title: 'Export Sprite Sheet',
+      content: exportForm,
+      buttons: [
+        {
+          label: 'Export',
+          style: ButtonStyle.Primary,
+          handler: () => {
+            if (!form.checkValidity()) {
+              form.reportValidity()
+              return
+            }
+
+            this.saveCanvasImage(nameInput.value.trim(), canvas)
             viewStore.dismiss()
           }
         }
