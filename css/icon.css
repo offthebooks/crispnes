@@ -35,6 +35,10 @@ i.icon {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAPElEQVR42mNYvXr1f3TMAAQg+tc8hv9gBhpAVoyhAKQLhCGSUKOQJeEYBBAmYEpiKoA5CglgdQN2BfgwAMqozIsRcmUyAAAAAElFTkSuQmCC');
   }
 
+  &.erase {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAN0lEQVR42mNABv/3fPkPwyA+hiQ6xiOJwGBJ/ApizuOUBMpBFAAxdkkYQCjClERRBMNJSUlwDAD+yan9FDYfmAAAAABJRU5ErkJggg==');
+  }
+
   &.fill {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOUlEQVR42mNABklJSf8Z0ACGAqyKLqf+/w/EYMnVq1eDaVySMIxQhCaJoQisAGo/fgVQRditwOcTALFMZtxVC6r7AAAAAElFTkSuQmCC');
   }

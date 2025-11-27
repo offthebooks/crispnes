@@ -134,7 +134,7 @@ export class Animation {
       this.#render()
     }
 
-    undoStore.record({ name: clone ? 'Clone Frame' : 'Add Frame', undo, redo })
+    undoStore.record({ name: clone ? 'clone frame' : 'add frame', undo, redo })
     redo()
   }
 
@@ -164,20 +164,20 @@ export class Animation {
       this.#render()
     }
 
-    undoStore.record({ name: 'Delete Frame', undo, redo })
+    undoStore.record({ name: 'delete frame', undo, redo })
     redo()
   }
 
   moveLeft(idx) {
     const { undoStore } = Store.context
     if (idx === 0) return
-    undoStore.record({ name: 'Shift Frame Left', ...this.#swap(idx, idx - 1) })
+    undoStore.record({ name: 'shift frame left', ...this.#swap(idx, idx - 1) })
   }
 
   moveRight(idx) {
     const { undoStore } = Store.context
     if (idx === this.length - 1) return
-    undoStore.record({ name: 'Shift Frame Right', ...this.#swap(idx, idx + 1) })
+    undoStore.record({ name: 'shift frame right', ...this.#swap(idx, idx + 1) })
   }
 
   #swap(oldIdx, newIdx) {

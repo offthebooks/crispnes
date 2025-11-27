@@ -154,13 +154,13 @@ export class Input {
     }
 
     editCanvas.addEventListener('pointerdown', (evt) => {
-      if (![Tool.Draw, Tool.Fill].includes(editStore.tool)) return
+      if (!DrawTools.has(editStore.tool)) return
       const pos = editPosition(evt)
       pos && editStore.editAt(pos)
     })
 
     editCanvas.addEventListener('pointermove', (evt) => {
-      if (editStore.tool !== Tool.Draw) return
+      if (![Tool.Draw, Tool.Erase].includes(editStore.tool)) return
       const pos = editPosition(evt)
       pos && editStore.continueEdit(pos)
     })

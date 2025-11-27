@@ -57,6 +57,15 @@ export class EditStore {
         this.#drawEdits.editIndex(frame.indexAt(x, y), { before })
         break
       }
+      case Tool.Erase: {
+        const before = frame.read(x, y)
+        this.#drawEdits = new EditBuffer({ after: 0 })
+        if (before !== 0) {
+          frame.draw(x, y, 0)
+          this.#drawEdits.editIndex(frame.indexAt(x, y), { before })
+        }
+        break
+      }
       case Tool.Fill: {
         this.#fillEdits = frame.fill(x, y, paletteColor)
         break
@@ -195,7 +204,7 @@ export class EditStore {
     const { beforeValues, afterValues } = this.#drawEdits
 
     undoStore.record({
-      name: 'Draw',
+      name: this.tool === Tool.Draw ? 'draw' : 'erase',
       undo: () => this.#applyEdits({ frame, edits: beforeValues }),
       redo: () => this.#applyEdits({ frame, edits: afterValues })
     })

@@ -1,11 +1,8 @@
 // Enums
 export const Tool = Object.freeze({
-  Animations: 'animations',
-  Collapse: 'collapse',
   Draw: 'draw',
+  Erase: 'erase',
   Fill: 'fill',
-  Move: 'move',
-  Palettes: 'palettes',
   Redo: 'redo',
   Undo: 'undo',
   ZoomIn: 'zoomIn',
@@ -20,5 +17,5 @@ export const ButtonStyle = Object.freeze({
 
 // Sets
 export const DrawTools = Object.freeze(
-  new Set([Tool.Draw, Tool.Fill, Tool.Move])
+  new Set([Tool.Draw, Tool.Erase, Tool.Fill])
 )

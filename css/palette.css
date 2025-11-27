@@ -2,7 +2,6 @@
   #paletteColors {
     display: flex;
     flex-direction: row;
-    gap: 0.25rem;
     padding-inline: 2px;
     padding-block: var(--tool-margin);
     margin-bottom: 2px;
@@ -14,7 +13,7 @@
       /* Match height of li, so bar doesn't pop in */
       content: ' ';
       display: block;
-      margin-left: calc(2px - 0.25rem);
+      margin-left: 2px;
       height: 1.5rem;
     }
 
@@ -23,14 +22,14 @@
       height: 1.5rem;
       aspect-ratio: 3/2;
       background-color: var(--col-background);
-      border-radius: 0.2rem;
       border: none;
       cursor: pointer;
       &:not(.selected) {
         box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.325);
       }
       &::before {
-        border-radius: calc(2px + 0.2rem);
+        border-radius: 0.35rem;
+        z-index: 1;
       }
     }
   }
