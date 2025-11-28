@@ -16,7 +16,7 @@ i.icon {
   }
 
   &.clear {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAALklEQVR42mPAB+aGMPzHKwnCVJT8NY/h//+rs/BLAmkQxlQAkwTSYIyhG1MSAQDo/zmdXtD/9gAAAABJRU5ErkJggg==');
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAL0lEQVR42mPAB+aGMPzHK/lrHlAB9SRBgngl/1+dBZbE6jCYJJAGY3TdMEmsxgMAkZU5PyThYPQAAAAASUVORK5CYII=');
   }
 
   &.clone {
