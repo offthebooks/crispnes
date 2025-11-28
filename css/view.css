@@ -52,14 +52,6 @@
         border-radius: var(--interface-radius);
         background-color: var(--col-background-tint-1);
 
-        &.selected {
-          pointer-events: none;
-
-          button {
-            pointer-events: all;
-          }
-        }
-
         &:hover:not(:has(button:hover)) {
           /* Only enact state if not also hovering a child button */
           cursor: pointer;

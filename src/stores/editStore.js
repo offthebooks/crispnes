@@ -116,7 +116,7 @@ export class EditStore {
       this.renderCanvas()
     }
     undoStore.record({
-      name: 'Clear',
+      name: 'clear',
       undo: () => setBytes(bytes),
       redo: () => setBytes(null)
     })
@@ -221,7 +221,7 @@ export class EditStore {
     const { beforeValues, afterValues } = this.#fillEdits
 
     undoStore.record({
-      name: 'Fill',
+      name: 'fill',
       undo: () => this.#applyEdits({ frame, edits: beforeValues }),
       redo: () => this.#applyEdits({ frame, edits: afterValues })
     })

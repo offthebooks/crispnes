@@ -178,7 +178,7 @@ export class AnimationStore {
       this.cleanupAnimation(animation)
     }
 
-    undoStore.record({ name: 'Create Animation', undo, redo })
+    undoStore.record({ name: 'create animation', undo, redo })
     redo()
   }
 
@@ -207,7 +207,7 @@ export class AnimationStore {
       })
     }
 
-    undoStore.record({ name: 'Delete Animation', undo, redo })
+    undoStore.record({ name: 'delete animation', undo, redo })
     redo()
   }
 
@@ -271,7 +271,7 @@ export class AnimationStore {
         frames: framesIndices
       })
 
-    undoStore.record({ name: 'Edit Animation', undo, redo })
+    undoStore.record({ name: 'edit animation', undo, redo })
     redo()
   }
 
@@ -504,7 +504,7 @@ export class AnimationStore {
               dataStore.save({ frames: animation.framesData })
             }
 
-            undoStore.record({ name: 'Set Durations', undo, redo })
+            undoStore.record({ name: 'set durations', undo, redo })
             redo()
             viewStore.dismiss()
           }
@@ -528,7 +528,7 @@ export class AnimationStore {
               dataStore.save({ frames: [frame.dataModel] })
             }
 
-            undoStore.record({ name: 'Set Duration', undo, redo })
+            undoStore.record({ name: 'set duration', undo, redo })
             redo()
             viewStore.dismiss()
           },

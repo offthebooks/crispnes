@@ -31,8 +31,6 @@ export class Input {
         case 'save':
           fileStore.saveFrameDialog(editCanvas)
           break
-        case 'clear':
-          editStore.clear()
         default:
           break
       }
@@ -51,6 +49,9 @@ export class Input {
         editStore.tool = tool
       } else {
         switch (tool) {
+          case Tool.Clear:
+            editStore.clear()
+            break
           case Tool.Redo:
             undoStore.redo()
             break

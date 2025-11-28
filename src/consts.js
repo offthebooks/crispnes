@@ -1,5 +1,6 @@
 // Enums
 export const Tool = Object.freeze({
+  Clear: 'clear',
   Draw: 'draw',
   Erase: 'erase',
   Fill: 'fill',

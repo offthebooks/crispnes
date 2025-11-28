@@ -16,7 +16,7 @@ i.icon {
   }
 
   &.clear {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAMUlEQVR42mMAgaSkpP/YMFxy9erVYAwEyDSqIiCGCaJIwhQg6yZPAbobSFSA6VWEJADGW4VRopSe/QAAAABJRU5ErkJggg==');
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAALklEQVR42mPAB+aGMPzHKwnCVJT8NY/h//+rs/BLAmkQxlQAkwTSYIyhG1MSAQDo/zmdXtD/9gAAAABJRU5ErkJggg==');
   }
 
   &.clone {
@@ -25,6 +25,10 @@ i.icon {
 
   &.collapse {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAL0lEQVR42mOgHHQJ/f+PjC+nomKwgiCGTTCMoRhiCkIRqiQcIBQhJLEBmCRJngAA1iJKLys997MAAAAASUVORK5CYII=');
+  }
+
+  &.delete {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAMUlEQVR42mMAgaSkpP/YMFxy9erVYAwEyDSqIiCGCaJIwhQg6yZPAbobSFSA6VWEJADGW4VRopSe/QAAAABJRU5ErkJggg==');
   }
 
   &.draw {
