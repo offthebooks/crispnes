@@ -1,14 +1,18 @@
 #viewContainer {
   position: fixed;
-  inset: 0;
-  z-index: 2;
-  padding-bottom: env(safe-area-inset-bottom);
-  background-color: var(--col-background);
+  width: 100%;
+  height: calc(100% - env(safe-area-inset-bottom));
+  max-width: unset;
+  max-height: unset;
+  border: none;
+  margin: 0;
+  padding: 0 0 env(safe-area-inset-bottom) 0;
+  background-color: var(--col-accent);
 
   transition: transform var(--interface-duration) ease;
   transform: translateX(0);
   &.offDown {
-    transform: translateY(100%);
+    transform: translateY(100vh);
   }
 
   .view {
@@ -16,6 +20,7 @@
     flex-direction: column;
     position: absolute;
     inset: 0;
+    background-color: var(--col-background);
 
     .title {
       display: flex;
@@ -122,6 +127,24 @@
     }
     &.offRight {
       transform: translateX(100%);
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  #viewContainer {
+    position: fixed;
+    margin: auto;
+    width: 90vw;
+    height: 90vh;
+    max-width: 60rem;
+    max-height: 60rem;
+    min-height: 20rem;
+    box-shadow: 0 0.5rem 2rem var(--col-backdrop);
+    border-radius: var(--interface-radius);
+
+    &::backdrop {
+      background-color: var(--col-backdrop);
     }
   }
 }

@@ -6,19 +6,26 @@
   inset: var(--header-height, 3.5rem) 0 auto 0;
   z-index: 1;
   background-color: var(--col-background-tint-2);
-  border-radius: 0 0 var(--interface-radius) var(--interface-radius);
   border: none;
-  padding: 0 var(--body-default-margin);
+  padding: 0;
 
   #frameItems {
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
-    padding: var(--tool-margin) 2px;
+    padding: var(--tool-margin) var(--body-default-margin);
     overflow-x: auto;
     scrollbar-width: thin;
     scrollbar-gutter: stable;
     transform: scaleY(-1); /* Get scrollbar on top */
+
+    &::before {
+      /* Match height of li, so bar doesn't pop in */
+      content: ' ';
+      display: block;
+      margin-left: -0.5rem;
+      height: calc(3rem + 2px);
+    }
 
     li {
       aspect-ratio: 1;
@@ -50,7 +57,8 @@
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
-    margin: 0 2px var(--tool-margin) 2px;
+    margin-bottom: var(--tool-margin);
+    padding-inline: var(--body-default-margin);
     align-items: center;
 
     &,

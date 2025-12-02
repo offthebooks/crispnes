@@ -2,8 +2,7 @@
   #paletteColors {
     display: flex;
     flex-direction: row;
-    padding-inline: 2px;
-    padding-block: var(--tool-margin);
+    padding: var(--tool-margin) var(--body-default-margin);
     margin-bottom: 2px;
     overflow-x: auto;
     scrollbar-width: thin;

@@ -44,7 +44,7 @@ i.icon {
   }
 
   &.fill {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOUlEQVR42mNABklJSf8Z0ACGAqyKLqf+/w/EYMnVq1eDaVySMIxQhCaJoQisAGo/fgVQRditwOcTALFMZtxVC6r7AAAAAElFTkSuQmCC');
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAQUlEQVR42l2OgQUAQQwEU2v46lLOF5S3GD6zDGd3uNQ/3b2hHEaYmSu9z25gDHl7ZDhiBJVgwRLfRPCRUAmCJboP2XF3KUsT+lAAAAAASUVORK5CYII=');
   }
 
   &.left {

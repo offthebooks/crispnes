@@ -7,6 +7,7 @@
   --col-foreground: #000;
   --col-foreground-tint-1: #222;
   --col-foreground-tint-2: #444;
+  --col-backdrop: rgba(33, 0, 70, 0.6);
   --col-highlight: #c3ffe9;
   --col-selection: #8a13ff;
   --col-danger: #d55;

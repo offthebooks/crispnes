@@ -13,6 +13,7 @@ export class Input {
     const tools = domQueryOne('#tools')
     const menu = domQueryOne('#menu')
     const framePicker = domQueryOne('#framePicker')
+    const viewContainer = domQueryOne('#viewContainer')
     const preventCallback = (e) => e.preventDefault()
 
     // Menu
@@ -177,6 +178,12 @@ export class Input {
         editStore.cancelEdit()
         editStore.pan = delta
       }
+    })
+
+    // Views
+    viewContainer.addEventListener('cancel', (evt) => {
+      evt.preventDefault()
+      viewStore.dismiss()
     })
 
     // Keypresses (undo shortcuts)

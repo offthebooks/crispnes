@@ -27,8 +27,11 @@ export class ViewStore {
       )
 
     if (this.#stack.length === 0) {
-      viewContainerEl.appendChild(view)
-      viewContainerEl.classList.remove('offDown')
+      viewContainerEl.showModal()
+      requestAnimationFrame(() => {
+        viewContainerEl.appendChild(view)
+        viewContainerEl.classList.remove('offDown')
+      })
     } else {
       const current = this.#stack.at(-1)
 
@@ -45,18 +48,13 @@ export class ViewStore {
   }
 
   popView = () => {
-    if (this.#stack.length === 0) return
-    const leaving = this.#stack.pop()
+    if (this.#stack.length <= 1) return this.dismiss()
 
-    if (this.#stack.length === 0) {
-      viewContainerEl.classList.add('offDown')
-      listenOnce(viewContainerEl, 'transitionend', () => leaving.remove())
-    } else {
-      const previous = this.#stack.at(-1)
-      previous.classList.remove('offLeft')
-      leaving.classList.add('offRight')
-      listenOnce(leaving, 'transitionend', () => leaving.remove())
-    }
+    const leaving = this.#stack.pop()
+    const previous = this.#stack.at(-1)
+    previous.classList.remove('offLeft')
+    leaving.classList.add('offRight')
+    listenOnce(leaving, 'transitionend', () => leaving.remove())
   }
 
   confirm = ({ action, message, confirmed, style = ButtonStyle.Danger }) => {
@@ -83,6 +81,7 @@ export class ViewStore {
     this.#stack = []
     viewContainerEl.classList.add('offDown')
     listenOnce(viewContainerEl, 'transitionend', () => {
+      viewContainerEl.close()
       leaving.remove()
     })
   }
