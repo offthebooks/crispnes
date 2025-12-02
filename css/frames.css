@@ -28,6 +28,7 @@
     }
 
     li {
+      height: 3rem;
       aspect-ratio: 1;
       display: inline-flex;
       align-items: center;
@@ -39,9 +40,9 @@
       cursor: pointer;
 
       .preview {
-        height: 3rem;
+        height: 100%;
+        width: 100%;
         padding: 0.25rem;
-        aspect-ratio: 1;
         box-sizing: border-box;
         border-radius: var(--button-radius);
         canvas {
