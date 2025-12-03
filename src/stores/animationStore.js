@@ -401,6 +401,8 @@ export class AnimationStore {
       content: editForm,
       buttons: [{ ...button, style: ButtonStyle.Primary }]
     })
+
+    nameInput.select()
   }
 
   presentAnimationView() {
@@ -535,6 +537,8 @@ export class AnimationStore {
         }
       ]
     })
+
+    durationInput.select()
   }
 
   get nextAnimationName() {

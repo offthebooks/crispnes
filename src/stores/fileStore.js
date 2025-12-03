@@ -78,7 +78,7 @@ export class FileStore {
       updateDimensions()
     })
 
-    const button = viewStore.pushView({
+    viewStore.pushView({
       title: 'Save Frame',
       content: saveForm,
       buttons: [
@@ -101,6 +101,8 @@ export class FileStore {
         }
       ]
     })
+
+    nameInput.select()
   }
 
   exportSpriteSheetDialog() {
@@ -128,9 +130,8 @@ export class FileStore {
         : scaleInput.valueAsNumber
       const sw = width * scale
       const sh = height * scale
-      const sp = padding * scale
-      const pw = sw + 2 * sp
-      const ph = sh + 2 * sp
+      const pw = sw + 2 * padding
+      const ph = sh + 2 * padding
 
       canvas.width = pw * length
       canvas.height = ph
@@ -138,8 +139,8 @@ export class FileStore {
       ctx.imageSmoothingEnabled = false
 
       frames.forEach((c, idx) => {
-        const top = sp
-        const left = pw * idx + sp
+        const top = padding
+        const left = pw * idx + padding
         ctx.drawImage(c, left, top, sw, sh)
       })
     }
@@ -162,7 +163,7 @@ export class FileStore {
       updatePreview()
     })
 
-    const button = viewStore.pushView({
+    viewStore.pushView({
       title: 'Export Sprite Sheet',
       content: exportForm,
       buttons: [
@@ -181,6 +182,8 @@ export class FileStore {
         }
       ]
     })
+
+    nameInput.select()
   }
 
   saveCanvasImage(filename, canvas) {

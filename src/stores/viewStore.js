@@ -36,12 +36,14 @@ export class ViewStore {
       )
 
     if (!current) {
+      viewContainerEl.appendChild(view)
       viewContainerEl.showModal()
       requestAnimationFrame(() => {
         viewContainerEl.classList.remove('offDown')
       })
     } else {
       view.classList.add('offRight')
+      viewContainerEl.appendChild(view)
 
       requestAnimationFrame(() => {
         current.classList.add('offLeft')
@@ -49,7 +51,6 @@ export class ViewStore {
       })
     }
 
-    viewContainerEl.appendChild(view)
     this.#stack.push(view)
   }
 

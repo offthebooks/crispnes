@@ -147,7 +147,7 @@
 
     <template id="animationEdit">
       <div>
-        <form>
+        <form autocomplete="off">
           <label>Name <input name="name" type="text" /></label>
           <label
             >Width
@@ -158,8 +158,7 @@
               pattern="[0-9]+"
               min="1"
               max="256"
-              step="1"
-              autocomplete="off" />
+              step="1" />
           </label>
           <label
             >Height
@@ -170,9 +169,8 @@
               pattern="[0-9]+"
               min="1"
               max="256"
-              step="1"
-              autocomplete="off"
-          /></label>
+              step="1" />
+          </label>
           <label>
             Palette
             <select name="palette"></select>
@@ -193,7 +191,7 @@
 
     <template id="frameEdit">
       <div>
-        <form>
+        <form autocomplete="off">
           <label
             >Duration (# of frames at 60hz)<input
               name="duration"
@@ -202,8 +200,7 @@
               pattern="[0-9]+"
               min="1"
               max="18000"
-              step="1"
-              autocomplete="off" />
+              step="1" />
           </label>
         </form>
       </div>
@@ -225,7 +222,7 @@
     <template id="paletteDetail">
       <div class="view">
         <h2>Edit Palette</h2>
-        <form>
+        <form autocomplete="off">
           <label>Name <input type="text" name="name" /></label>
           <label>Palette <input type="text" name="palette" /></label>
         </form>
@@ -234,7 +231,7 @@
 
     <template id="saveFrame">
       <div>
-        <form>
+        <form autocomplete="off">
           <label>Filename <input name="name" type="text" /></label>
           <label
             >Scale<input
@@ -244,8 +241,7 @@
               inputmode="numeric"
               pattern="[0-9]+"
               min="1"
-              step="1"
-              autocomplete="off" />
+              step="1" />
           </label>
           <label
             >Output Dimensions
@@ -257,20 +253,8 @@
 
     <template id="exportSheet">
       <div>
-        <form>
+        <form autocomplete="off">
           <label>Filename <input name="name" type="text" /></label>
-          <label
-            >Padding<input
-              name="padding"
-              type="number"
-              value="0"
-              inputmode="numeric"
-              pattern="[0-9]+"
-              min="0"
-              step="1"
-              autocomplete="off" />
-          </label>
-
           <label
             >Scale<input
               name="scale"
@@ -279,10 +263,18 @@
               inputmode="numeric"
               pattern="[0-9]+"
               min="1"
-              step="1"
-              autocomplete="off" />
+              step="1" />
           </label>
-
+          <label
+            >Padding<input
+              name="padding"
+              type="number"
+              value="0"
+              inputmode="numeric"
+              pattern="[0-9]+"
+              min="0"
+              step="1" />
+          </label>
           <label>Preview:</label>
           <div class="exportPreview"><canvas class="checkered"></canvas></div>
         </form>
