@@ -20,7 +20,13 @@ export class ViewStore {
     return this.length ? this.#stack.at(-1) : null
   }
 
-  pushView = ({ title, content, buttons, closeLabel = 'Cancel' }) => {
+  pushView = ({
+    title,
+    content,
+    buttons,
+    closeLabel = 'Cancel',
+    afterPresent = null // () => {}
+  }) => {
     const view = elementFromTemplate(viewTemplate)
     const { current } = this
 
@@ -40,6 +46,7 @@ export class ViewStore {
       viewContainerEl.showModal()
       requestAnimationFrame(() => {
         viewContainerEl.classList.remove('offDown')
+        afterPresent?.()
       })
     } else {
       view.classList.add('offRight')
@@ -48,6 +55,7 @@ export class ViewStore {
       requestAnimationFrame(() => {
         current.classList.add('offLeft')
         view.classList.remove('offRight')
+        afterPresent?.()
       })
     }
 

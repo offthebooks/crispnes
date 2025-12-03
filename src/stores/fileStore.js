@@ -99,10 +99,9 @@ export class FileStore {
             viewStore.dismiss()
           }
         }
-      ]
+      ],
+      afterPresent: () => nameInput.select()
     })
-
-    nameInput.select()
   }
 
   exportSpriteSheetDialog() {
@@ -180,10 +179,9 @@ export class FileStore {
             viewStore.dismiss()
           }
         }
-      ]
+      ],
+      afterPresent: () => nameInput.select()
     })
-
-    nameInput.select()
   }
 
   saveCanvasImage(filename, canvas) {
