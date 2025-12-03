@@ -399,8 +399,7 @@ export class AnimationStore {
     viewStore.pushView({
       title: animation ? 'Edit Animation' : 'Create Animation',
       content: editForm,
-      buttons: [{ ...button, style: ButtonStyle.Primary }],
-      afterPresent: () => nameInput.select()
+      buttons: [{ ...button, style: ButtonStyle.Primary }]
     })
   }
 
@@ -534,8 +533,7 @@ export class AnimationStore {
           },
           style: ButtonStyle.Primary
         }
-      ],
-      afterPresent: () => durationInput.select()
+      ]
     })
   }
 
