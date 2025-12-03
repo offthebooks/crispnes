@@ -12,8 +12,17 @@ const viewTemplate = domQueryOne('template', viewContainerEl)
 export class ViewStore {
   #stack = []
 
+  get length() {
+    return this.#stack.length
+  }
+
+  get current() {
+    return this.length ? this.#stack.at(-1) : null
+  }
+
   pushView = ({ title, content, buttons, closeLabel = 'Cancel' }) => {
     const view = elementFromTemplate(viewTemplate)
+    const { current } = this
 
     view.querySelector('.title').replaceChildren(title)
     view.querySelector('.content').replaceChildren(content)
@@ -26,17 +35,13 @@ export class ViewStore {
         ])
       )
 
-    if (this.#stack.length === 0) {
+    if (!current) {
       viewContainerEl.showModal()
       requestAnimationFrame(() => {
-        viewContainerEl.appendChild(view)
         viewContainerEl.classList.remove('offDown')
       })
     } else {
-      const current = this.#stack.at(-1)
-
       view.classList.add('offRight')
-      viewContainerEl.appendChild(view)
 
       requestAnimationFrame(() => {
         current.classList.add('offLeft')
@@ -44,14 +49,15 @@ export class ViewStore {
       })
     }
 
+    viewContainerEl.appendChild(view)
     this.#stack.push(view)
   }
 
   popView = () => {
-    if (this.#stack.length <= 1) return this.dismiss()
+    if (this.length <= 1) return this.dismiss()
 
     const leaving = this.#stack.pop()
-    const previous = this.#stack.at(-1)
+    const previous = this.current
     previous.classList.remove('offLeft')
     leaving.classList.add('offRight')
     listenOnce(leaving, 'transitionend', () => leaving.remove())
@@ -75,7 +81,7 @@ export class ViewStore {
   }
 
   dismiss = () => {
-    if (this.#stack.length === 0) return
+    if (this.length === 0) return
     const leaving = this.#stack.pop()
     this.#stack.forEach((view) => view.remove())
     this.#stack = []

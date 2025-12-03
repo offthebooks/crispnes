@@ -417,18 +417,16 @@ export class AnimationStore {
     animation.sprite(0).addRenderCanvas(canvas)
 
     const animationLoop = () => {
+      if (!content.isConnected) return
       const now = Date.now()
-      if (now > state.nextFrame) {
+      if (now >= state.nextFrame) {
         const index = (state.index + 1) % animation.length
         const frame = animation.sprite(index)
         frame.addRenderCanvas(canvas)
         state.index = index
-        state.nextFrame = now + (frame.duration * 1000) / 60
+        state.nextFrame = now + Math.floor((frame.duration * 1000) / 60) - 1
       }
-      requestAnimationFrame(() => {
-        if (!content.isConnected) return
-        animationLoop()
-      })
+      requestAnimationFrame(animationLoop)
     }
 
     viewStore.pushView({
