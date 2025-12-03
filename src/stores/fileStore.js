@@ -99,7 +99,8 @@ export class FileStore {
             viewStore.dismiss()
           }
         }
-      ]
+      ],
+      afterPresent: () => nameInput.select()
     })
   }
 
@@ -178,7 +179,8 @@ export class FileStore {
             viewStore.dismiss()
           }
         }
-      ]
+      ],
+      afterPresent: () => nameInput.select()
     })
   }
 
