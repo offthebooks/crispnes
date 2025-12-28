@@ -75,6 +75,36 @@ export class Sprite {
     this.#model.duration = d
   }
 
+  transformedBytes({ scale = 1, padding = 0 }) {
+    const src = this.bytes
+    const srcW = this.width
+    const srcH = this.height
+
+    const width = srcW * scale + 2 * padding
+    const height = srcH * scale + 2 * padding
+    const bytes = new Uint8Array(width * height)
+    const scaledRow = new Uint8Array(srcW * scale)
+
+    for (let y = 0; y < srcH; y++) {
+      let p = 0
+      const start = y * srcW
+      const end = start + srcW
+      for (let i = start; i < end; ++i) {
+        for (let s = 0; s < scale; s++) {
+          scaledRow[p++] = src[i]
+        }
+      }
+
+      let offset = (padding + y * scale) * width + padding
+      for (let sy = 0; sy < scale; sy++) {
+        bytes.set(scaledRow, offset)
+        offset += width
+      }
+    }
+
+    return { bytes, width, height }
+  }
+
   setBytes(bytes) {
     if (bytes.length !== this.#model.bytes.length) {
       console.error('Could not set bytes, array length mismatch.')

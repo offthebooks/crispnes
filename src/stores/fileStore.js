@@ -1,4 +1,5 @@
 import { ButtonStyle } from '../consts.js'
+import { encodeGif } from '../gif.js'
 import {
   clamp,
   domCreate,
@@ -28,11 +29,9 @@ export class FileStore {
     fileInput.click()
   }
 
-  saveFile(filename, bytes) {
+  saveFile(filename, bytes, type = 'application/octet-stream') {
     saveLink.setAttribute('download', filename)
-    const blob = new Blob([bytes], {
-      type: 'application/octet-stream'
-    })
+    const blob = new Blob([bytes], { type })
 
     saveLink.href = URL.createObjectURL(blob)
     saveLink.click()
@@ -176,6 +175,86 @@ export class FileStore {
             }
 
             this.saveCanvasImage(nameInput.value.trim(), canvas)
+            viewStore.dismiss()
+          }
+        }
+      ],
+      afterPresent: () => nameInput.select()
+    })
+  }
+
+  exportGIFDialog() {
+    const {
+      viewStore,
+      animationStore: { animation }
+    } = Store.context
+    const saveForm = elementFromTemplate(saveTemplate)
+    const form = domQueryOne('form', saveForm)
+    const { name, width, height } = animation
+    const dimension = Math.max(width, height)
+    const defaultScale = Math.min(20, Math.floor(800 / dimension))
+    const maxScale = Math.floor(2400 / dimension)
+
+    const [nameInput, scaleInput, dimensionsDisplay] = domQueryList(
+      ['[name="name"]', '[name="scale"]', '[name="dimensions"]'],
+      form
+    )
+
+    const updateDimensions = () => {
+      const scale = scaleInput.value || 1
+      dimensionsDisplay.textContent = `${width * scale} x ${height * scale} pixels`
+    }
+
+    nameInput.value = name
+    scaleInput.value = defaultScale
+    updateDimensions()
+
+    form.addEventListener('input', () => {
+      const nameValue = nameInput.value.trim()
+      if (scaleInput.value !== '')
+        scaleInput.value = clamp(scaleInput.value, maxScale, 1)
+
+      if (nameValue === '') {
+        nameInput.setCustomValidity('Filename required')
+      } else {
+        nameInput.setCustomValidity('')
+      }
+
+      updateDimensions()
+    })
+
+    viewStore.pushView({
+      title: 'Save GIF',
+      content: saveForm,
+      buttons: [
+        {
+          label: 'Save GIF',
+          style: ButtonStyle.Primary,
+          handler: () => {
+            if (!form.checkValidity()) {
+              form.reportValidity()
+              return
+            }
+
+            const scale = isNaN(scaleInput.valueAsNumber)
+              ? 1
+              : scaleInput.valueAsNumber
+
+            console.log({
+              width: animation.width,
+              height: animation.height,
+              scale
+            })
+
+            const { palette } = animation
+            const frames = animation.frames.map((f) => ({
+              ...f.transformedBytes({ scale, padding: 0 }),
+              duration: f.duration
+            }))
+            console.log(frames)
+            const { width, height } = frames[0]
+            const gif = encodeGif({ width, height, frames, palette })
+            this.saveFile(nameInput.value.trim(), gif, 'image/gif')
             viewStore.dismiss()
           }
         }

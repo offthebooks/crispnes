@@ -24,6 +24,19 @@ export const stripNullish = (arrayOrObject) => {
   )
 }
 
+export const concatByteArrays = (byteArrays) => {
+  const byteCount = byteArrays.reduce((sum, { length }) => sum + length, 0)
+  const bytes = new Uint8Array(byteCount)
+
+  let i = 0
+  for (const a of byteArrays) {
+    bytes.set(a, i)
+    i += a.length
+  }
+
+  return bytes
+}
+
 // String Utils
 export const byteString = (byte) => {
   return (256 + byte).toString(2).substring(1)
@@ -32,6 +45,9 @@ export const byteString = (byte) => {
 export const hexStringForByte = (byte) => {
   return (256 + byte).toString(16).substring(1)
 }
+
+export const asciiForString = (str) =>
+  Uint8Array.from(str, (c) => c.charCodeAt(0))
 
 export const dateString = () => {
   const iso = new Date().toISOString()
