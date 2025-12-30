@@ -160,6 +160,9 @@ export const focusElement = (el) => {
   })
 }
 
+export const numInputValueWithDefault = ({ valueAsNumber: val }, fallback) =>
+  isNaN(val) ? fallback : val
+
 // Storage Utils
 export const dataFromStorageWithKeys = (keys) => {
   const data = {}

@@ -76,7 +76,7 @@ const encodeGraphicControlExtension = (frameCount) => {
   bytes[3] = packed
   view.setUint16(4, delay, true)
   bytes[6] = 0 // Index 0 is transparent index
-  bytes[7] = 0x00
+  bytes[7] = 0
 
   return bytes
 }
@@ -90,7 +90,7 @@ const encodeImageDescriptor = (width, height) => {
   view.setUint16(3, 0, true)
   view.setUint16(5, width, true)
   view.setUint16(7, height, true)
-  bytes[9] = 0x00
+  bytes[9] = 0
 
   return bytes
 }
@@ -121,79 +121,59 @@ const encodeImageData = (pixels) => {
 }
 
 const lzwEncode = (indices, minCodeSize) => {
+  const tableFullCode = 4096
   const clearCode = 1 << minCodeSize
   const endCode = clearCode + 1
-
   let nextCode = endCode + 1
   let codeSize = minCodeSize + 1
-  const maxCode = 1 << 12 // GIF LZW max is 12 bits
-
-  const dict = new Map()
-
-  const resetDictionary = () => {
-    dict.clear()
-    for (let i = 0; i < clearCode; i++) {
-      dict.set(String(i), i)
-    }
-    nextCode = endCode + 1
-    codeSize = minCodeSize + 1
-  }
-
-  resetDictionary()
 
   const bytes = []
-  let bitBuffer = 0
-  let bitCount = 0
+  let bits = 0
+  let curShift = 0
 
   const writeCode = (code) => {
-    bitBuffer |= code << bitCount
-    bitCount += codeSize
-
-    while (bitCount >= 8) {
-      bytes.push(bitBuffer & 0xff)
-      bitBuffer >>= 8
-      bitCount -= 8
+    bits |= code << curShift
+    curShift += codeSize
+    while (curShift >= 8) {
+      bytes.push(bits & 0xff)
+      bits >>>= 8
+      curShift -= 8
     }
   }
 
-  const flushBits = () => {
-    if (bitCount > 0) {
-      bytes.push(bitBuffer & 0xff)
-      bitBuffer = 0
-      bitCount = 0
-    }
-  }
+  let phraseCode = indices[0]
+  let codeTable = {}
 
   writeCode(clearCode)
-  let current = String(indices[0])
 
   for (let i = 1; i < indices.length; i++) {
-    const k = indices[i]
-    const combined = current + ',' + k
+    const idx = indices[i]
+    const curKey = (phraseCode << 8) | idx
+    const curCode = codeTable[curKey]
 
-    if (dict.has(combined)) {
-      current = combined
-    } else {
-      writeCode(dict.get(current))
+    if (curCode === undefined) {
+      writeCode(phraseCode)
 
-      if (nextCode < maxCode) {
-        dict.set(combined, nextCode++)
-        if (nextCode === 1 << codeSize && codeSize < 12) {
-          codeSize++
-        }
-      } else {
-        // Dictionary is full
+      if (nextCode === tableFullCode) {
         writeCode(clearCode)
-        resetDictionary()
+        nextCode = endCode + 1
+        codeSize = minCodeSize + 1
+        codeTable = {}
+      } else {
+        if (nextCode >= 1 << codeSize && codeSize < 12) codeSize++
+        codeTable[curKey] = nextCode++
       }
 
-      current = String(k)
+      phraseCode = idx
+    } else {
+      phraseCode = curCode
     }
   }
 
-  writeCode(dict.get(current))
+  writeCode(phraseCode)
   writeCode(endCode)
-  flushBits()
+
+  if (curShift > 0) bytes.push(bits & 0xff)
 
   return Uint8Array.from(bytes)
 }
