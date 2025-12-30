@@ -29,6 +29,9 @@ export class Input {
         case 'exportSheet':
           fileStore.exportSpriteSheetDialog()
           break
+        case 'gif':
+          fileStore.exportGIFDialog()
+          break
         case 'save':
           fileStore.saveFrameDialog(editCanvas)
           break

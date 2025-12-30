@@ -1,21 +1,21 @@
 {
   "name": "crispnes",
-  "description": "NES Sprite and Background Editor",
+  "description": "Palette-Based Pixel Art and Animation Editor",
   "scripts": {
     "server": "npx http-server -a localhost -p 4242 -d false -c-1 -o"
   },
   "keywords": [
-    "nes",
-    "famicom",
     "pixel editor",
     "pixel art",
     "sprites",
     "tilesets",
     "graphics",
     "video games",
-    "animation"
+    "animation",
+    "nes",
+    "famicom"
   ],
-  "author": "Chuck Skoda",
+  "author": "Off The Books Games",
   "devDependencies": {
     "prettier": "^3.1.1"
   }

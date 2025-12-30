@@ -43,8 +43,17 @@
         <li data-menu-item="save">
           <i class="icon save"></i>Export Frame (.png)
         </li>
+        <li data-menu-item="gif">
+          <i class="icon save"></i>Export Animation (.gif)
+        </li>
         <li data-menu-item="exportSheet">
           <i class="icon save"></i>Export Sprite Sheet (.png)
+        </li>
+        <li data-menu-item="madeBy">
+          <i class="icon offTheBooks"></i
+          ><a href="https://offthebooks.games" target="_blank"
+            >Made by <em>Off The Books</em></a
+          >
         </li>
       </ol>
     </details>
@@ -241,6 +250,16 @@
               inputmode="numeric"
               pattern="[0-9]+"
               min="1"
+              step="1" />
+          </label>
+          <label
+            >Padding<input
+              name="padding"
+              type="number"
+              value="0"
+              inputmode="numeric"
+              pattern="[0-9]+"
+              min="0"
               step="1" />
           </label>
           <label

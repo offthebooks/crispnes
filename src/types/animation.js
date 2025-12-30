@@ -204,6 +204,10 @@ export class Animation {
     }
   }
 
+  get frames() {
+    return [...this.#frames]
+  }
+
   sprite(index) {
     return this.#frames[index]
   }

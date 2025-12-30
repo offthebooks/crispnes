@@ -1,11 +1,13 @@
 import { ButtonStyle } from '../consts.js'
+import { encodeGif } from '../gif.js'
 import {
   clamp,
   domCreate,
   domQueryAll,
   domQueryList,
   domQueryOne,
-  elementFromTemplate
+  elementFromTemplate,
+  numInputValueWithDefault
 } from '../utils.js'
 import { Store } from './store.js'
 
@@ -28,11 +30,9 @@ export class FileStore {
     fileInput.click()
   }
 
-  saveFile(filename, bytes) {
+  saveFile(filename, bytes, type = 'application/octet-stream') {
     saveLink.setAttribute('download', filename)
-    const blob = new Blob([bytes], {
-      type: 'application/octet-stream'
-    })
+    const blob = new Blob([bytes], { type })
 
     saveLink.href = URL.createObjectURL(blob)
     saveLink.click()
@@ -49,15 +49,18 @@ export class FileStore {
     const dimension = Math.max(width, height)
     const defaultScale = Math.min(20, Math.floor(960 / dimension))
     const maxScale = Math.floor(3840 / dimension)
-
-    const [nameInput, scaleInput, dimensionsDisplay] = domQueryList(
-      ['[name="name"]', '[name="scale"]', '[name="dimensions"]'],
-      form
-    )
+    const [nameInput, paddingInput, scaleInput, dimensionsDisplay] =
+      domQueryList(
+        ['name', 'padding', 'scale', 'dimensions'].map((n) => `[name="${n}"]`),
+        form
+      )
 
     const updateDimensions = () => {
-      const scale = scaleInput.value || 1
-      dimensionsDisplay.textContent = `${width * scale} x ${height * scale} pixels`
+      const scale = numInputValueWithDefault(scaleInput, 1)
+      const padding = 2 * numInputValueWithDefault(paddingInput, 0)
+      const dw = width * scale + padding
+      const dh = height * scale + padding
+      dimensionsDisplay.textContent = `${dw} x ${dh} pixels`
     }
 
     nameInput.value = name
@@ -91,10 +94,11 @@ export class FileStore {
               return
             }
 
-            this.saveUpscaledCanvasImage(
+            this.saveTransformedCanvasImage(
               nameInput.value.trim(),
               canvas,
-              scaleInput.value || 1
+              numInputValueWithDefault(scaleInput, 1),
+              numInputValueWithDefault(paddingInput, 0)
             )
             viewStore.dismiss()
           }
@@ -116,7 +120,7 @@ export class FileStore {
     const maxScale = 100
     const { name, width, height, length } = animation
     const [nameInput, paddingInput, scaleInput] = domQueryList(
-      ['[name="name"]', '[name="padding"]', '[name="scale"]'],
+      ['name', 'padding', 'scale'].map((n) => `[name="${n}"]`),
       form
     )
 
@@ -184,6 +188,81 @@ export class FileStore {
     })
   }
 
+  exportGIFDialog() {
+    const {
+      viewStore,
+      animationStore: { animation }
+    } = Store.context
+    const saveForm = elementFromTemplate(saveTemplate)
+    const form = domQueryOne('form', saveForm)
+    const { name, width, height } = animation
+    const dimension = Math.max(width, height)
+    const maxScale = Math.floor(2400 / dimension)
+
+    const [nameInput, paddingInput, scaleInput, dimensionsDisplay] =
+      domQueryList(
+        ['name', 'padding', 'scale', 'dimensions'].map((n) => `[name="${n}"]`),
+        form
+      )
+
+    const updateDimensions = () => {
+      const scale = numInputValueWithDefault(scaleInput, 1)
+      const padding = 2 * numInputValueWithDefault(paddingInput, 0)
+      const dw = width * scale + padding
+      const dh = height * scale + padding
+      dimensionsDisplay.textContent = `${dw} x ${dh} pixels`
+    }
+
+    nameInput.value = name
+    scaleInput.value = 1
+    updateDimensions()
+
+    form.addEventListener('input', () => {
+      const nameValue = nameInput.value.trim()
+      if (scaleInput.value !== '')
+        scaleInput.value = clamp(scaleInput.value, maxScale, 1)
+
+      if (nameValue === '') {
+        nameInput.setCustomValidity('Filename required')
+      } else {
+        nameInput.setCustomValidity('')
+      }
+
+      updateDimensions()
+    })
+
+    viewStore.pushView({
+      title: 'Save GIF',
+      content: saveForm,
+      buttons: [
+        {
+          label: 'Save GIF',
+          style: ButtonStyle.Primary,
+          handler: () => {
+            if (!form.checkValidity()) {
+              form.reportValidity()
+              return
+            }
+            const scale = numInputValueWithDefault(scaleInput, 1)
+            const padding = numInputValueWithDefault(paddingInput, 0)
+
+            const { palette } = animation
+            const frames = animation.frames.map((f) => ({
+              ...f.transformedBytes({ scale, padding }),
+              duration: f.duration
+            }))
+            console.log(frames)
+            const { width, height } = frames[0]
+            const gif = encodeGif({ width, height, frames, palette })
+            this.saveFile(nameInput.value.trim(), gif, 'image/gif')
+            viewStore.dismiss()
+          }
+        }
+      ],
+      afterPresent: () => nameInput.select()
+    })
+  }
+
   saveCanvasImage(filename, canvas) {
     canvas.toBlob((blob) => {
       const url = URL.createObjectURL(blob)
@@ -194,18 +273,21 @@ export class FileStore {
     })
   }
 
-  saveUpscaledCanvasImage(filename, canvas, scale = 10) {
+  saveTransformedCanvasImage(filename, canvas, scale = 10, padding = 0) {
     if (Math.max(canvas.width, canvas.height) > 256)
       return this.saveCanvasImage(filename, canvas)
 
+    const sw = canvas.width * scale
+    const sh = canvas.height * scale
+
     const upscaledCanvas = domCreate({
       tag: 'canvas',
-      w: canvas.width * scale,
-      h: canvas.height * scale
+      w: sw + 2 * padding,
+      h: sh + 2 * padding
     })
     const ctx = upscaledCanvas.getContext('2d')
     ctx.imageSmoothingEnabled = false
-    ctx.drawImage(canvas, 0, 0, upscaledCanvas.width, upscaledCanvas.height)
+    ctx.drawImage(canvas, padding, padding, sw, sh)
 
     this.saveCanvasImage(filename, upscaledCanvas)
   }
