@@ -57,13 +57,20 @@ export class AnimationStore {
   #loadFromDataModel(dataModel) {
     const { animationState, animations } = dataModel
     const { selectedAnimation, selectedFrame } = animationState
+    const referencedPalettes = new Set()
 
     if (!animationState || !animations) return false
 
-    this.#model.animationList = animations.map(({ frames, ...dataModel }) =>
-      Animation.fromDataModel(dataModel, frames)
-    )
+    this.#model.animationList = animations.map(({ frames, ...dataModel }) => {
+      const animation = Animation.fromDataModel(dataModel, frames)
+      referencedPalettes.add(animation.palette)
+      return animation
+    })
     this.refreshAnimationsMap()
+
+    for (const value of mySet) {
+      fn(value)
+    }
 
     this.#model.selectedAnimation = this.animationForName(selectedAnimation)
     this.#model.selectedFrame = selectedFrame ?? 0
@@ -545,6 +552,10 @@ export class AnimationStore {
 
   animationForName(name) {
     return this.#animationMap[name]
+  }
+
+  paletteUsage(name) {
+    return this.animations.reduce((n, { palette }) => n + (palette === name), 0)
   }
 
   get frameItems() {

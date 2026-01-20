@@ -61,6 +61,10 @@ export class Palette {
     return this.#DOM.colorItems ?? this.#render().colorItems
   }
 
+  get usage() {
+    return Store.context.animationStore.paletteUsage(this.name)
+  }
+
   get length() {
     return this.#model.colors.length
   }
@@ -85,6 +89,7 @@ export class Palette {
     const { item } = this.#DOM
     item.querySelector('.name').textContent = this.name
     item.querySelector('.size').textContent = `${this.length} colors`
+    item.querySelector('.usage').textContent = `${this.usage} animations`
 
     this.#DOM.colorItems = this.#model.colors.map((color, index) =>
       domCreate({

@@ -5,8 +5,14 @@ import { domQueryOne, elementIndex, forElements, removeClass } from './utils.js'
 
 export class Input {
   static init() {
-    const { animationStore, editStore, fileStore, undoStore, viewStore } =
-      Store.context
+    const {
+      animationStore,
+      editStore,
+      fileStore,
+      undoStore,
+      viewStore,
+      paletteStore
+    } = Store.context
     const editCanvas = domQueryOne('#editor canvas')
     const editor = domQueryOne('#editor')
     const palette = domQueryOne('#palette')
@@ -25,6 +31,9 @@ export class Input {
       switch (menuItem) {
         case 'animations':
           animationStore.presentAnimationList()
+          break
+        case 'palettes':
+          paletteStore.presentPaletteList()
           break
         case 'exportSheet':
           fileStore.exportSpriteSheetDialog()

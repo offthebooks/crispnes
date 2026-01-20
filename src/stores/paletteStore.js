@@ -1,7 +1,9 @@
+import { ButtonStyle } from '../consts.js'
 import { Palette } from '../types/palette.js'
 import {
   domCreate,
   domQueryOne,
+  focusElement,
   untitledNameUniqueFromStrings
 } from '../utils.js'
 import { Store } from './store.js'
@@ -16,11 +18,15 @@ export class PaletteStore {
   #model
   #selected
   #paletteMap
+  #DOM
 
   constructor() {
     this.#model = { ...defaultModel }
     this.#selected = null
     this.#paletteMap = {}
+    this.#DOM = {
+      paletteItems: domCreate({ tag: 'ol', cls: 'paletteItems' })
+    }
   }
 
   async init() {
@@ -37,7 +43,6 @@ export class PaletteStore {
       this.#persist()
     }
 
-    // paletteItemsEl.replaceChildren(...this.paletteListItems)
     paletteColorsEl.replaceChildren(...this.paletteColorItems)
   }
 
@@ -112,10 +117,6 @@ export class PaletteStore {
     )
   }
 
-  get paletteListItems() {
-    return this.palettes.map((p) => p.item)
-  }
-
   get paletteColorItems() {
     return this.palette.colorItems.slice(1)
   }
@@ -126,5 +127,30 @@ export class PaletteStore {
 
   paletteForName(name) {
     return this.#paletteMap[name]
+  }
+
+  get paletteItemsList() {
+    this.#DOM.paletteItems.replaceChildren(...this.palettes.map((p) => p.item))
+    return this.#DOM.paletteItems
+  }
+
+  presentPaletteList() {
+    const { viewStore } = Store.context
+    const content = this.paletteItemsList
+
+    viewStore.pushView({
+      title: 'Palettes',
+      content,
+      buttons: [
+        {
+          label: '<i class="add icon"></i> Add Palette',
+          handler: () => this.presentPaletteEdit(),
+          style: ButtonStyle.Primary
+        }
+      ],
+      closeLabel: 'Close'
+    })
+
+    focusElement(this.palette.item)
   }
 }
