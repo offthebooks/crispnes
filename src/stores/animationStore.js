@@ -68,9 +68,7 @@ export class AnimationStore {
     })
     this.refreshAnimationsMap()
 
-    for (const value of mySet) {
-      fn(value)
-    }
+    for (const p of referencedPalettes) p.renderItem()
 
     this.#model.selectedAnimation = this.animationForName(selectedAnimation)
     this.#model.selectedFrame = selectedFrame ?? 0
@@ -176,6 +174,7 @@ export class AnimationStore {
       this.animations.push(animation)
       this.#animationMap[name] = animation
       this.animation = animation
+      palette.renderItem()
       this.#persist()
     }
 
@@ -212,6 +211,7 @@ export class AnimationStore {
         animations: [animation.dataModel],
         frames: animation.framesData
       })
+      animation.palette.renderItem()
     }
 
     undoStore.record({ name: 'delete animation', undo, redo })
@@ -220,7 +220,7 @@ export class AnimationStore {
 
   cleanupAnimation(animation) {
     const { dataStore } = Store.context
-    const { name, framesIndices } = animation
+    const { name, framesIndices, palette } = animation
     const removeIndex = this.animations.indexOf(animation)
 
     if (removeIndex === -1)
@@ -230,6 +230,8 @@ export class AnimationStore {
 
     delete this.#animationMap[animation.name]
     this.#model.animationList.splice(removeIndex, 1)
+    palette.renderItem() // Update palette referenced animation count
+
     const { animationState } = this
 
     dataStore.save({
@@ -554,8 +556,11 @@ export class AnimationStore {
     return this.#animationMap[name]
   }
 
-  paletteUsage(name) {
-    return this.animations.reduce((n, { palette }) => n + (palette === name), 0)
+  paletteUsage(palette) {
+    return this.animations.reduce(
+      (n, { palette: { name } }) => n + (name === palette),
+      0
+    )
   }
 
   get frameItems() {

@@ -84,12 +84,16 @@ export class Palette {
     this.#model.colors.splice(index, 1)
   }
 
-  #render() {
+  renderItem() {
     this.#DOM.item ??= elementFromTemplate(Palette.itemTemplate)
     const { item } = this.#DOM
     item.querySelector('.name').textContent = this.name
     item.querySelector('.size').textContent = `${this.length} colors`
     item.querySelector('.usage').textContent = `${this.usage} animations`
+  }
+
+  #render() {
+    this.renderItem()
 
     this.#DOM.colorItems = this.#model.colors.map((color, index) =>
       domCreate({
